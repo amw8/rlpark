@@ -1,5 +1,6 @@
 package rltoys.algorithms.learning.predictions.td;
 
+import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.traces.PATraces;
 import rltoys.algorithms.representations.traces.Traces;
@@ -7,7 +8,7 @@ import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.SVector;
 
-public class GTDBetaLambda implements Predictor {
+public class GTDBetaLambda implements Predictor, LinearLearner {
   private static final long serialVersionUID = 8687476023177671278L;
   protected double alpha_v;
   protected double alpha_w;
@@ -57,5 +58,16 @@ public class GTDBetaLambda implements Predictor {
   @Override
   public double predict(RealVector x) {
     return v.dotProduct(x);
+  }
+
+  @Override
+  public void resetWeight(int index) {
+    v.data[index] = 0;
+    w.data[index] = 0;
+  }
+
+  @Override
+  public PVector weights() {
+    return v;
   }
 }

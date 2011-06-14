@@ -31,7 +31,11 @@ public class AverageRewardCritic implements OnPolicyTD {
   }
 
   @Override
-  public PVector theta() {
-    return td.theta();
+  public PVector weights() {
+    return td.weights();
+  }
+
+  @Override
+  public void resetWeight(int index) {
   }
 }

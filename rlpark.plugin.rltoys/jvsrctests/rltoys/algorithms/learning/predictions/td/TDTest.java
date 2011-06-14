@@ -154,7 +154,7 @@ public class TDTest {
     TDHelper td = new TDHelper(tdFactory.create(agentState.size));
     int nbEpisode = 0;
     double[] solution = problem.expectedDiscountedSolution();
-    while (distanceToSolution(solution, td.td.theta()) > 0.05) {
+    while (distanceToSolution(solution, td.td.weights()) > 0.05) {
       StepData stepData = agentState.step();
       RealVector currentFeatureState = agentState.currentFeatureState();
       td.learn(stepData.r_tp1, currentFeatureState);
@@ -164,7 +164,7 @@ public class TDTest {
       }
     }
     Assert.assertTrue(nbEpisode > 2);
-    Assert.assertTrue(td.td.theta().checkValues());
+    Assert.assertTrue(td.td.weights().checkValues());
   }
 
   static public double distanceToSolution(double[] solution, PVector theta) {

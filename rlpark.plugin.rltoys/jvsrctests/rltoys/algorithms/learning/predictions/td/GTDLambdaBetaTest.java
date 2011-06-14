@@ -37,8 +37,13 @@ public class GTDLambdaBetaTest {
     }
 
     @Override
-    public PVector theta() {
-      return gtdlambda.v;
+    public PVector weights() {
+      return gtdlambda.weights();
+    }
+
+    @Override
+    public void resetWeight(int index) {
+      gtdlambda.resetWeight(index);
     }
   }
 

@@ -1,5 +1,6 @@
 package rltoys.algorithms.learning.control.gq;
 
+import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.traces.PATraces;
 import rltoys.algorithms.representations.traces.Traces;
@@ -9,7 +10,7 @@ import rltoys.math.vector.SVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
-public class GQ implements Predictor {
+public class GQ implements Predictor, LinearLearner {
   private static final long serialVersionUID = -4971665888576276439L;
   @Monitor(level = 4)
   public final PVector theta;
@@ -20,7 +21,7 @@ public class GQ implements Predictor {
   @Monitor(level = 4)
   private final PVector w;
   private final Traces e;
-  private double delta_t;
+  public double delta_t;
 
   public GQ(double alpha_theta, double alpha_w, double beta, double lambda, int nbFeatures) {
     this(alpha_theta, alpha_w, beta, lambda, nbFeatures, new PATraces());
@@ -61,7 +62,13 @@ public class GQ implements Predictor {
     return theta.dotProduct(x);
   }
 
-  public PVector theta() {
+  @Override
+  public PVector weights() {
     return theta;
+  }
+
+  @Override
+  public void resetWeight(int index) {
+    theta.data[index] = 0;
   }
 }

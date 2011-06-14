@@ -34,4 +34,10 @@ public class TDC extends TD {
       return new PVector(phi_t.getDimension());
     return phi_tp1.mapMultiply(phi_t.dotProduct(w)).mapMultiply(alpha_v * gamma);
   }
+
+  @Override
+  public void resetWeight(int index) {
+    super.resetWeight(index);
+    w.data[index] = 0;
+  }
 }

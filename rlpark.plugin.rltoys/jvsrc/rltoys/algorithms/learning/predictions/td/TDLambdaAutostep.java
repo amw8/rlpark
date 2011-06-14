@@ -135,7 +135,15 @@ public class TDLambdaAutostep implements OnPolicyTD {
   }
 
   @Override
-  public PVector theta() {
+  public PVector weights() {
     return v;
+  }
+
+  @Override
+  public void resetWeight(int index) {
+    v.data[index] = 0;
+    alpha.data[index] = .1;
+    h.data[index] = 0;
+    s.data[index] = 0;
   }
 }

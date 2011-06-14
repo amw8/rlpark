@@ -59,11 +59,16 @@ public class TD implements OnPolicyTD {
   }
 
   @Override
-  public PVector theta() {
+  public PVector weights() {
     return v;
   }
 
   public double v_t() {
     return v_t;
+  }
+
+  @Override
+  public void resetWeight(int index) {
+    v.data[index] = 0;
   }
 }

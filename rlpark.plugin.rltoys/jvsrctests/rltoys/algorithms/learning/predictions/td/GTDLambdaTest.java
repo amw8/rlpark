@@ -38,7 +38,7 @@ public class GTDLambdaTest {
     int nbEpisode = 0;
     double[] solution = agentState.computeSolution(targetPolicy, gamma, lambda);
     PVector phi_t = null;
-    while (TDTest.distanceToSolution(solution, gtd.theta()) > 0.05) {
+    while (TDTest.distanceToSolution(solution, gtd.weights()) > 0.05) {
       StepData stepData = agentState.step();
       double rho = 0.0;
       if (stepData.a_t != null)
@@ -53,6 +53,6 @@ public class GTDLambdaTest {
       phi_t = phi_tp1 != null ? phi_tp1.copy() : null;
     }
     Assert.assertTrue(nbEpisode > 100);
-    Assert.assertTrue(gtd.theta().checkValues());
+    Assert.assertTrue(gtd.weights().checkValues());
   }
 }
