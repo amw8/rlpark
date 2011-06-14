@@ -1,0 +1,9 @@
+bin
+.DS_Store
+build
+dist
+private
+doxygen
+zephyr.jar
+.junittests_parametersweep
+.junitdiscofile.bin

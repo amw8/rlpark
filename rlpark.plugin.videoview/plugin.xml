@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="zephyr.filehandler">
+      <client
+            class="rlpark.plugin.videoview.internal.VideoFileHandler">
+      </client>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="rlpark.plugin.videoview.internal.VideoView"
+            id="rlpark.plugin.videoview.playview"
+            name="Video"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="zephyr.viewprovider">
+      <client
+            class="rlpark.plugin.videoview.internal.VideoView$VideoViewProvider"
+            name="Video"
+            viewid="rlpark.plugin.videoview.playview">
+      </client>
+   </extension>
+
+</plugin>

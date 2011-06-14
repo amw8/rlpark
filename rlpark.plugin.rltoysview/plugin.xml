@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="rlpark.plugin.rltoysview.internal.vectors.RealVectorView"
+            icon="icons/vectorview.gif"
+            id="rlpark.plugin.rltoysview.vectorview"
+            name="Vector"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="true"
+            class="rlpark.plugin.rltoysview.views.nostate.NoStateView"
+            id="rlpark.plugin.rltoysview.notstateview"
+            name="NoState"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="true"
+            class="rlpark.plugin.rltoysview.views.pendulum.SwingPendulumView"
+            id="rlpark.plugin.rltoysview.swingpendulumview"
+            name="Swing Pendulum"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="true"
+            class="rlpark.plugin.rltoysview.internal.policystructure.NormalDistributionView"
+            icon="icons/policiesview.png"
+            id="rlpark.plugin.rltoysview.policyview"
+            name="Policy"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="zephyr.viewprovider">
+      <client
+            class="rlpark.plugin.rltoysview.views.nostate.NoStateView$Provider"
+            name="NoState View"
+            viewid="rlpark.plugin.rltoysview.notstateview">
+      </client>
+      <client
+            class="rlpark.plugin.rltoysview.views.pendulum.SwingPendulumView$Provider"
+            name="Swing Pendulum"
+            viewid="rlpark.plugin.rltoysview.swingpendulumview">
+      </client>
+      <client
+            class="rlpark.plugin.rltoysview.internal.policystructure.NormalDistributionView$Provider"
+            icon="icons/policiesview.png"
+            name="Policy View"
+            popup="false"
+            viewid="rlpark.plugin.rltoysview.policyview">
+      </client>
+      <client
+            class="rlpark.plugin.rltoysview.internal.vectors.RealVectorView$Provider"
+            icon="icons/vectorview.gif"
+            name="Vector View"
+            popup="false"
+            viewid="rlpark.plugin.rltoysview.vectorview">
+      </client>
+   </extension>
+   <extension
+         point="zephyr.classpath">
+      <classpath>
+         classpath body text
+      </classpath>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:window?before=zephyr.plugin.core.separator.closeview">
+         <command
+               commandId="zephyr.plugin.core.views.showView"
+               icon="icons/vectorview.gif"
+               label="New Vector View"
+               style="push">
+            <parameter
+                  name="org.eclipse.ui.views.showView.viewId"
+                  value="rlpark.plugin.rltoysview.vectorview">
+            </parameter>
+         </command>
+         <command
+               commandId="zephyr.plugin.core.views.showView"
+               icon="icons/policiesview.png"
+               label="New Policy View"
+               style="push">
+            <parameter
+                  name="org.eclipse.ui.views.showView.viewId"
+                  value="rlpark.plugin.rltoysview.policyview">
+            </parameter>
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>

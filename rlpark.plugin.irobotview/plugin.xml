@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="zephyr.viewprovider">
+      <client
+            class="rlpark.plugin.irobotview.views.RoombaView$Provider"
+            name="Roomba View"
+            popup="true"
+            viewid="zephyr.plugin.irobotview.view.roombaview">
+      </client>
+      <client
+            class="rlpark.plugin.irobotview.views.CreateView$Provider"
+            name="Create View"
+            popup="true"
+            viewid="zephyr.plugin.irobotview.view.createview">
+      </client>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="rlpark.plugin.irobotview.views.RoombaView"
+            id="zephyr.plugin.irobotview.view.roombaview"
+            name="Roomba View"
+            restorable="true">
+      </view>
+      <view
+            class="rlpark.plugin.irobotview.views.CreateView"
+            id="zephyr.plugin.irobotview.view.createview"
+            name="Create View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:menu.file?before=zephyr.plugin.core.zephyrend">
+         <menu
+               label="iRobot Create">
+            <command
+                  commandId="zephyr.plugin.irobotview.servercreate"
+                  label="Start Server..."
+                  style="push">
+            </command>
+            <command
+                  commandId="zephyr.plugin.irobotview.connectcreateclient"
+                  label="Connect To Server..."
+                  style="push">
+            </command>
+            <command
+                  commandId="zephyr.plugin.irobotview.connectcreate"
+                  label="Connect To Serial Port..."
+                  style="push">
+            </command>
+         </menu>
+         <menu
+               label="iRobot Roomba">
+            <command
+                  commandId="zephyr.plugin.irobotview.serverroomba"
+                  label="Start Server..."
+                  style="push">
+            </command>
+            <command
+                  commandId="zephyr.plugin.irobotview.command.connectroombaclient"
+                  label="Connect To Server..."
+                  style="push">
+            </command>
+            <command
+                  commandId="zephyr.plugin.irobotview.command.connectroomba"
+                  label="Connect To Serial Port..."
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+    <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="rlpark.plugin.irobotview.command.ConnectCreate"
+            description="Connect to a serial port to a Create"
+            id="zephyr.plugin.irobotview.connectcreate"
+            name="Connect to a Create">
+      </command>
+      <command
+            defaultHandler="rlpark.plugin.irobotview.command.ConnectRoomba"
+            description="Connect to a serial port to a Roomba"
+            id="zephyr.plugin.irobotview.command.connectroomba"
+            name="Connect to a Roomba">
+      </command>
+      <command
+            defaultHandler="rlpark.plugin.irobotview.command.ConnectCreateClient"
+            description="Connect a client to a Create server"
+            id="zephyr.plugin.irobotview.connectcreateclient"
+            name="Connect to a Create server">
+      </command>
+      <command
+            defaultHandler="rlpark.plugin.irobotview.command.ConnectRoombaClient"
+            description="Connect a client to a Roomba server"
+            id="zephyr.plugin.irobotview.command.connectroombaclient"
+            name="Connect to a Roomba server">
+      </command>
+      <command
+            defaultHandler="rlpark.plugin.irobotview.command.ServerCreate"
+            description="Start a Create Server..."
+            id="zephyr.plugin.irobotview.servercreate"
+            name="Start a Create Server">
+      </command>
+      <command
+            defaultHandler="rlpark.plugin.irobotview.command.ServerRoomba"
+            description="Start a Roomba Server..."
+            id="zephyr.plugin.irobotview.serverroomba"
+            name="Start a Roomba Server">
+      </command>
+   </extension>
+   <extension
+         id="critterview.filehandler"
+         point="zephyr.filehandler">
+      <client
+            class="rlpark.plugin.irobotview.FileHandler">
+      </client>
+   </extension>
+ </plugin>

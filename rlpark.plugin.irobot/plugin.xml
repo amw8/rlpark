@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="zephyr.runnable">
+      <client
+            autostart="false"
+            class="rlpark.plugin.irobot.examples.CreateIntroSessionZephyr"
+            id="rlpark.plugin.irobot.createintrosession">
+      </client>
+   </extension>
+   <extension
+         point="zephyr.classpath">
+      <classpath>
+         classpath body text
+      </classpath>
+   </extension>
+
+</plugin>

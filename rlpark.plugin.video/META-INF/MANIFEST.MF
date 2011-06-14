@@ -1,0 +1,40 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: rlpark.plugin.video
+Bundle-SymbolicName: rlpark.plugin.video
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Thomas
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: xuggler/jars/commons-cli.jar,
+ xuggler/jars/logback-classic.jar,
+ xuggler/jars/logback-core.jar,
+ xuggler/jars/slf4j-api.jar,
+ xuggler/jars/xuggle-xuggler.jar,
+ .
+Bundle-NativeCode: 
+ xuggler/macos/libtheoradec.dylib;
+ xuggler/macos/libfaac.dylib;
+ xuggler/macos/libavcodec.dylib;
+ xuggler/macos/libspeex.dylib;
+ xuggler/macos/libtheoraenc.dylib;
+ xuggler/macos/libxuggle-ferry.dylib;
+ xuggler/macos/libmp3lame.dylib;
+ xuggler/macos/libavdevice.dylib;
+ xuggler/macos/libspeexdsp.dylib;
+ xuggler/macos/libvorbis.dylib;
+ xuggler/macos/libxuggle-xuggler-io.dylib;
+ xuggler/macos/libogg.dylib;
+ xuggler/macos/libxuggle-xuggler.dylib;
+ xuggler/macos/libxuggle-xuggler.jnilib;
+ xuggler/macos/libavformat.dylib;
+ xuggler/macos/libswscale.dylib;
+ xuggler/macos/libvorbisenc.dylib;
+ xuggler/macos/libopencore-amrnb.dylib;
+ xuggler/macos/libtheora.dylib;
+ xuggler/macos/libavutil.dylib;
+ xuggler/macos/libopencore-amrwb.dylib;
+ xuggler/macos/libvorbisfile.dylib;
+ osname=Mac OS X; processor=x86-64
+Export-Package: rlpark.plugin.video
+Require-Bundle: zephyr.plugin.core.api;bundle-version="1.0.0"
+
