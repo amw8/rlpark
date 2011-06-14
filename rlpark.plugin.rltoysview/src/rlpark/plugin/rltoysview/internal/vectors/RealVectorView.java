@@ -103,8 +103,8 @@ public class RealVectorView extends BackgroundCanvasView<RealVector> {
 
   @Override
   public void dispose() {
-    colors.dispose();
     super.dispose();
+    colors.dispose();
   }
 
   @Override

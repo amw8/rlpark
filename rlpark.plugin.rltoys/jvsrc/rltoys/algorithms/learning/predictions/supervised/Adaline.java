@@ -1,6 +1,7 @@
 package rltoys.algorithms.learning.predictions.supervised;
 
 import rltoys.algorithms.learning.predictions.LearningAlgorithm;
+import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
@@ -8,7 +9,7 @@ import zephyr.plugin.core.api.monitoring.wrappers.Abs;
 import zephyr.plugin.core.api.monitoring.wrappers.Squared;
 
 @Monitor
-public class Adaline implements LearningAlgorithm {
+public class Adaline implements LearningAlgorithm, LinearLearner {
   private static final long serialVersionUID = -1427180343679219960L;
   private final double alpha;
   @Monitor(level = 4)
@@ -37,7 +38,13 @@ public class Adaline implements LearningAlgorithm {
     return weights.dotProduct(x);
   }
 
+  @Override
   public PVector weights() {
     return weights;
+  }
+
+  @Override
+  public void resetWeight(int i) {
+    weights.data[i] = 0;
   }
 }
