@@ -77,7 +77,7 @@ public class RandomNetworkAdaptive extends RandomNetwork {
       LTU ltu = ltus[activeLTUIndex];
       if (ltu == null || !(ltu instanceof LTUAdaptiveDensity))
         continue;
-      ((LTUAdaptiveDensity) ltu).increaseDensity(random, obs);
+      ((LTUAdaptiveDensity) ltu).decreaseDensity(random, obs);
     }
   }
 }

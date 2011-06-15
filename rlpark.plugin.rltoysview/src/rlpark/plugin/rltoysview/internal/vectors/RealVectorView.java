@@ -93,7 +93,6 @@ public class RealVectorView extends BackgroundCanvasView<RealVector> {
   public void set(RealVector instance) {
     colorScale.init();
     setViewName();
-    copy = instance.copy();
   }
 
   @Override

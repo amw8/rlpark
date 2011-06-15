@@ -39,7 +39,7 @@ public class DropScalarGroup extends DataGroup implements ScalarInterpreter {
   public void interpret(ByteBuffer buffer, double[] values) {
     assert values.length == dropDatas.length;
     for (int i = 0; i < values.length; i++)
-      values[i] = ((ScalarReader) dropDatas[i]).getInt(buffer);
+      values[i] = ((ScalarReader) dropDatas[i]).getDouble(buffer);
   }
 
   public void interpret(ByteBuffer buffer, int[] values) {

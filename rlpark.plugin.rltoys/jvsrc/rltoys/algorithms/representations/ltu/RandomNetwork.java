@@ -26,6 +26,7 @@ public class RandomNetwork implements Serializable {
   @IgnoreMonitor
   private final List<LTU> disconnectedLTUs = new ArrayList<LTU>();
   protected int nbConnection = 0;
+  protected int nbActive = 0;
 
   @SuppressWarnings("unchecked")
   public RandomNetwork(int inputSize, int outputSize) {
@@ -85,6 +86,7 @@ public class RandomNetwork implements Serializable {
 
   public BVector project(BinaryVector obs) {
     updateActiveLTUs(obs);
+    nbActive = output.nonZeroElements();
     return output.copy();
   }
 
