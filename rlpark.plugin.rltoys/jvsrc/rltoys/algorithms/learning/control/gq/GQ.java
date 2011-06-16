@@ -21,7 +21,7 @@ public class GQ implements Predictor, LinearLearner {
   @Monitor(level = 4)
   private final PVector w;
   private final Traces e;
-  public double delta_t;
+  private double delta_t;
 
   public GQ(double alpha_theta, double alpha_w, double beta, double lambda, int nbFeatures) {
     this(alpha_theta, alpha_w, beta, lambda, nbFeatures, new PATraces());
@@ -70,5 +70,10 @@ public class GQ implements Predictor, LinearLearner {
   @Override
   public void resetWeight(int index) {
     theta.data[index] = 0;
+  }
+
+  @Override
+  public double error() {
+    return delta_t;
   }
 }

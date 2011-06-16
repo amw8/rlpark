@@ -17,6 +17,7 @@ public class GTDBetaLambda implements Predictor, LinearLearner {
   protected final PVector v;
   private final PVector w;
   private final Traces e;
+  private double delta_t;
 
   public GTDBetaLambda(double alpha_v, double alpha_w, double lambda, int nbFeatures) {
     this(alpha_v, alpha_w, lambda, nbFeatures, new PATraces());
@@ -36,7 +37,7 @@ public class GTDBetaLambda implements Predictor, LinearLearner {
     if (phi_t == null)
       return initEpisode();
     double v_tp1 = phi_tp1 != null ? v.dotProduct(phi_tp1) : 0.0;
-    double delta_t = rho_t * (r_tp1 + beta_tp1 * z_tp1 + (1 - beta_tp1) * v_tp1) - v.dotProduct(phi_t);
+    delta_t = rho_t * (r_tp1 + beta_tp1 * z_tp1 + (1 - beta_tp1) * v_tp1) - v.dotProduct(phi_t);
     e.update(rho_tm1 * (1 - beta_t) * lambda, phi_t);
     RealVector e_delta_t = e.vect().mapMultiply(delta_t);
     RealVector tdCorrection = null;
@@ -69,5 +70,10 @@ public class GTDBetaLambda implements Predictor, LinearLearner {
   @Override
   public PVector weights() {
     return v;
+  }
+
+  @Override
+  public double error() {
+    return delta_t;
   }
 }

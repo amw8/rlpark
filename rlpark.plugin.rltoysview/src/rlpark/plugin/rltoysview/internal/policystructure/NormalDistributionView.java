@@ -60,7 +60,7 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
       return;
     actionHistory.append(normalDistribution.a_t);
     if (actorCritic != null) {
-      double delta_t = ((TD) actorCritic.critic).delta_t;
+      double delta_t = ((TD) actorCritic.critic).error();
       tdErrorNormalized.update(delta_t);
       tdErrorNormalized.update(-delta_t);
       tdErrorHistory.append(delta_t);

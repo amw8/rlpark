@@ -146,4 +146,9 @@ public class TDLambdaAutostep implements OnPolicyTD {
     h.data[index] = 0;
     s.data[index] = 0;
   }
+
+  @Override
+  public double error() {
+    return delta_t;
+  }
 }

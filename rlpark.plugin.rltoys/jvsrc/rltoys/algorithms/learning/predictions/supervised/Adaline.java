@@ -47,4 +47,9 @@ public class Adaline implements LearningAlgorithm, LinearLearner {
   public void resetWeight(int i) {
     weights.data[i] = 0;
   }
+
+  @Override
+  public double error() {
+    return error;
+  }
 }

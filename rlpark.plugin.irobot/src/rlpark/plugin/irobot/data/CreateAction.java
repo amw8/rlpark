@@ -4,6 +4,8 @@ import rltoys.environments.envio.actions.ActionArray;
 
 public class CreateAction extends ActionArray {
   private static final long serialVersionUID = -3988828504637894677L;
+  public static final int Left = 0;
+  public static final int Right = 1;
   public static final int DefaultVelocity = 200;
   public static final CreateAction DontMove = new CreateAction(0, 0);
   public static final CreateAction SpinLeftForward = new CreateAction(DefaultVelocity, 0);
@@ -26,10 +28,15 @@ public class CreateAction extends ActionArray {
   }
 
   public double right() {
-    return actions[1];
+    return actions[Right];
   }
 
   public double left() {
-    return actions[0];
+    return actions[Left];
+  }
+
+  public void set(double wheelLeft, double wheelRight) {
+    actions[Left] = wheelLeft;
+    actions[Right] = wheelRight;
   }
 }

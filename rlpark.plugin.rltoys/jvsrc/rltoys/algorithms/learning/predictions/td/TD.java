@@ -17,7 +17,7 @@ public class TD implements OnPolicyTD {
   @Monitor
   protected double v_tp1;
   @Monitor(wrappers = { Squared.ID, Abs.ID })
-  public double delta_t;
+  protected double delta_t;
 
   public TD(double alpha_v, int nbFeatures) {
     this(Double.NaN, alpha_v, nbFeatures);
@@ -70,5 +70,10 @@ public class TD implements OnPolicyTD {
   @Override
   public void resetWeight(int index) {
     v.data[index] = 0;
+  }
+
+  @Override
+  public double error() {
+    return delta_t;
   }
 }

@@ -6,4 +6,6 @@ public interface LinearLearner {
   void resetWeight(int index);
 
   PVector weights();
+
+  double error();
 }

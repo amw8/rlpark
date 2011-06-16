@@ -45,6 +45,11 @@ public class GTDLambdaBetaTest {
     public void resetWeight(int index) {
       gtdlambda.resetWeight(index);
     }
+
+    @Override
+    public double error() {
+      return gtdlambda.error();
+    }
   }
 
   static class OffPolicyGTD {

@@ -38,4 +38,9 @@ public class AverageRewardCritic implements OnPolicyTD {
   @Override
   public void resetWeight(int index) {
   }
+
+  @Override
+  public double error() {
+    return td.error();
+  }
 }

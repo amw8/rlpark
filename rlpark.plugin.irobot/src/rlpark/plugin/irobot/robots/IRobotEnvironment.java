@@ -18,9 +18,8 @@ import zephyr.plugin.core.api.monitoring.abstracts.Monitored;
 import zephyr.plugin.core.api.synchronization.Clock;
 
 abstract public class IRobotEnvironment extends RobotEnvironment implements MonitorContainer, IRobotProblem {
+  protected final CreateAction lastSent = new CreateAction(0, 0);
   private final IRobotObservationReceiver connection;
-  private CreateAction agentAction;
-  private TStep currentStep;
 
   protected IRobotEnvironment(ObservationReceiver receiver, boolean persistent) {
     super(receiver, persistent);
@@ -82,6 +81,18 @@ abstract public class IRobotEnvironment extends RobotEnvironment implements Moni
 
   @Override
   public void addToMonitor(DataMonitor monitor) {
+    monitor.add("ActionWheelLeft", 0, new Monitored() {
+      @Override
+      public double monitoredValue() {
+        return lastSent.left();
+      }
+    });
+    monitor.add("ActionWheelRight", 0, new Monitored() {
+      @Override
+      public double monitoredValue() {
+        return lastSent.right();
+      }
+    });
     addToMonitor(monitor, this);
   }
 
@@ -104,7 +115,12 @@ abstract public class IRobotEnvironment extends RobotEnvironment implements Moni
     sendAction(agentAction.left(), agentAction.right());
   }
 
-  abstract public void sendAction(double left, double right);
+  public void sendAction(double left, double right) {
+    lastSent.set(left, right);
+    sendActionToRobot(left, right);
+  }
+
+  abstract protected void sendActionToRobot(double left, double right);
 
   protected short toActionValue(double maxAction, double value) {
     return (short) Math.min(maxAction, Math.max(-maxAction, value));
@@ -118,6 +134,8 @@ abstract public class IRobotEnvironment extends RobotEnvironment implements Moni
   @Override
   public void run(Clock clock, Agent agent) {
     CreateAgent createAgent = (CreateAgent) agent;
+    CreateAction agentAction = null;
+    TStep currentStep = null;
     while (!isClosed() && clock.tick()) {
       double[] obsArray = waitNewObs();
       TStep lastStep = currentStep;

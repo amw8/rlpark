@@ -43,7 +43,7 @@ public class RoombaRobot extends IRobotEnvironment {
   }
 
   @Override
-  public void sendAction(double left, double right) {
+  protected void sendActionToRobot(double left, double right) {
     short shortLeft = toActionValue(MaxAction, left);
     short shortRight = toActionValue(MaxAction, right);
     sendMessage(new byte[] { (byte) 146, (byte) (shortRight >> 8), (byte) shortRight,
