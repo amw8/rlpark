@@ -18,7 +18,7 @@ public class RewardObservationFunction implements RewardFunction, Labeled {
   }
 
   public void update(double[] o) {
-    reward = o[observationIndex];
+    reward = o != null ? o[observationIndex] : 0.0;
   }
 
   @Override
