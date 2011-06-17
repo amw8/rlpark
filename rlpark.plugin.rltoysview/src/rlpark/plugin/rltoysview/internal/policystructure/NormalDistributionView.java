@@ -13,7 +13,7 @@ import org.eclipse.ui.PartInitException;
 
 import rltoys.algorithms.learning.control.actorcritic.onpolicy.ActorCritic;
 import rltoys.algorithms.learning.control.actorcritic.policystructure.NormalDistribution;
-import rltoys.algorithms.learning.predictions.td.TD;
+import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.math.History;
 import rltoys.math.normalization.MinMaxNormalizer;
 import rltoys.math.ranges.Range;
@@ -60,7 +60,7 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
       return;
     actionHistory.append(normalDistribution.a_t);
     if (actorCritic != null) {
-      double delta_t = ((TD) actorCritic.critic).error();
+      double delta_t = ((LinearLearner) actorCritic.critic).error();
       tdErrorNormalized.update(delta_t);
       tdErrorNormalized.update(-delta_t);
       tdErrorHistory.append(delta_t);
