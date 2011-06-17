@@ -38,7 +38,8 @@ public class ObservationSynchronizer {
       firstInitialization.release();
       while (!receiver.isClosed() && !terminated) {
         ObservationVersatile obs = receiver.waitForData();
-        setLastObs(obs);
+        if (obs != null)
+          setLastObs(obs);
       }
       if (!persistent) {
         terminate();
