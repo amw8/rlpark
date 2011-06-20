@@ -1,4 +1,4 @@
-package rltoys.algorithms.representations.ltu;
+package rltoys.algorithms.representations.ltu.networks;
 
 import rltoys.algorithms.representations.Projector;
 import rltoys.math.vector.BVector;

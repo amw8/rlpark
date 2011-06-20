@@ -1,4 +1,4 @@
-package rltoys.algorithms.representations.ltu;
+package rltoys.algorithms.representations.ltu.units;
 
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 

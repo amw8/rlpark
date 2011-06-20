@@ -3,6 +3,7 @@ package rltoys.demons;
 import org.junit.Assert;
 import org.junit.Test;
 
+import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.math.vector.BVector;
 import rltoys.math.vector.RealVector;
@@ -19,6 +20,11 @@ public class DemonSchedulerTest {
       this.x_t = x_t;
       this.a_t = a_t;
       this.x_tp1 = x_tp1;
+    }
+
+    @Override
+    public LinearLearner learner() {
+      return null;
     }
   }
 

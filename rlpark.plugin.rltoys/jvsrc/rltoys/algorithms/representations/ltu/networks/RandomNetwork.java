@@ -1,4 +1,4 @@
-package rltoys.algorithms.representations.ltu;
+package rltoys.algorithms.representations.ltu.networks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import rltoys.algorithms.representations.ltu.units.LTU;
+import rltoys.algorithms.representations.ltu.units.LTUConst;
 import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
 import zephyr.plugin.core.api.monitoring.annotations.IgnoreMonitor;

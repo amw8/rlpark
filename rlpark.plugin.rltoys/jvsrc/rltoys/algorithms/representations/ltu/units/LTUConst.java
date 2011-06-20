@@ -1,10 +1,11 @@
-package rltoys.algorithms.representations.ltu;
+package rltoys.algorithms.representations.ltu.units;
 
 import java.util.HashSet;
 import java.util.Set;
 
 
 public class LTUConst implements LTU {
+  private static final HashSet<Integer> EmptyInputSet = new HashSet<Integer>();
   private static final long serialVersionUID = -4023678527356755535L;
   private final int index;
   private final boolean isActive;
@@ -25,7 +26,7 @@ public class LTUConst implements LTU {
 
   @Override
   public Set<Integer> inputs() {
-    return new HashSet<Integer>();
+    return EmptyInputSet;
   }
 
   @Override

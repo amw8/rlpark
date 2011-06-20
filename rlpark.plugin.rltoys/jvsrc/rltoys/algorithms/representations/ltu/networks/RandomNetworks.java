@@ -1,6 +1,9 @@
-package rltoys.algorithms.representations.ltu;
+package rltoys.algorithms.representations.ltu.networks;
 
 import java.util.Random;
+
+import rltoys.algorithms.representations.ltu.units.LTU;
+import rltoys.algorithms.representations.ltu.units.LTUConst;
 
 public class RandomNetworks {
   public static void fullyConnect(Random random, RandomNetwork randomNetwork, LTU prototype) {

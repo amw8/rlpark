@@ -1,4 +1,4 @@
-package rltoys.algorithms.representations.ltu;
+package rltoys.algorithms.representations.ltu.units;
 
 import java.io.Serializable;
 import java.util.Set;

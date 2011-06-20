@@ -8,6 +8,11 @@ import org.junit.Test;
 
 import rltoys.algorithms.learning.predictions.LearningAlgorithm;
 import rltoys.algorithms.learning.predictions.supervised.Adaline;
+import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
+import rltoys.algorithms.representations.ltu.networks.RandomNetworkAdaptive;
+import rltoys.algorithms.representations.ltu.networks.RandomNetworks;
+import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
+import rltoys.algorithms.representations.ltu.units.LTUThreshold;
 import rltoys.math.vector.BUncheckedVector;
 import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;

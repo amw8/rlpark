@@ -43,4 +43,9 @@ public class AverageRewardCritic implements OnPolicyTD {
   public double error() {
     return td.error();
   }
+
+  @Override
+  public double prediction() {
+    return td.prediction();
+  }
 }

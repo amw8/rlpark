@@ -151,8 +151,10 @@ public class BVector implements BinaryVector {
 
   public void mergeSubVector(int i, BVector other) {
     assert i + other.size <= size;
-    for (Integer j : other.indexes)
+    for (Integer j : other.indexes) {
+      assert j + i < size;
       indexes.add(j + i);
+    }
   }
 
   @Override
@@ -179,6 +181,7 @@ public class BVector implements BinaryVector {
 
   @Override
   public void setOn(int i) {
+    assert i < size;
     indexes.add(i);
   }
 

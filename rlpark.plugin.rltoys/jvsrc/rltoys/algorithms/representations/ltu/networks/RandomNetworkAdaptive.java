@@ -1,9 +1,11 @@
-package rltoys.algorithms.representations.ltu;
+package rltoys.algorithms.representations.ltu.networks;
 
 import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 
+import rltoys.algorithms.representations.ltu.units.LTU;
+import rltoys.algorithms.representations.ltu.units.LTUAdaptiveDensity;
 import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;

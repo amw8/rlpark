@@ -48,4 +48,11 @@ public class GrayCode {
     }
     return baseN;
   }
+
+  public static byte[] toGrayCode(byte[] rawData) {
+    byte[] result = rawData.clone();
+    for (int i = 0; i < rawData.length; i++)
+      result[i] = byteToGrayCode(rawData[i]);
+    return result;
+  }
 }

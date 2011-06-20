@@ -76,4 +76,9 @@ public class TD implements OnPolicyTD {
   public double error() {
     return delta_t;
   }
+
+  @Override
+  public double prediction() {
+    return v_t;
+  }
 }

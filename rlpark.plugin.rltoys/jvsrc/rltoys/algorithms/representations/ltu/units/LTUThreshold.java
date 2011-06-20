@@ -1,4 +1,4 @@
-package rltoys.algorithms.representations.ltu;
+package rltoys.algorithms.representations.ltu.units;
 
 import java.util.HashMap;
 import java.util.Map;

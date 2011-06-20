@@ -50,6 +50,11 @@ public class GTDLambdaBetaTest {
     public double error() {
       return gtdlambda.error();
     }
+
+    @Override
+    public double prediction() {
+      return gtdlambda.prediction();
+    }
   }
 
   static class OffPolicyGTD {

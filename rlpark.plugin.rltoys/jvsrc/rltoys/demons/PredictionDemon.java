@@ -1,6 +1,7 @@
 package rltoys.demons;
 
-import rltoys.algorithms.learning.predictions.td.TD;
+import rltoys.algorithms.learning.predictions.LinearLearner;
+import rltoys.algorithms.learning.predictions.td.OnPolicyTD;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.labels.Labeled;
@@ -11,9 +12,9 @@ public class PredictionDemon implements Demon, Labeled {
   private static final long serialVersionUID = -6966208035134604865L;
   private final RewardFunction rewardFunction;
   @Monitor
-  private final TD td;
+  private final OnPolicyTD td;
 
-  public PredictionDemon(RewardFunction rewardFunction, TD td) {
+  public PredictionDemon(RewardFunction rewardFunction, OnPolicyTD td) {
     this.rewardFunction = rewardFunction;
     this.td = td;
   }
@@ -24,19 +25,24 @@ public class PredictionDemon implements Demon, Labeled {
   }
 
   public double prediction() {
-    return td.v_t();
+    return td.prediction();
   }
 
   public RewardFunction rewardFunction() {
     return rewardFunction;
   }
 
-  public TD predicter() {
+  public OnPolicyTD predicter() {
     return td;
   }
 
   @Override
   public String label() {
-    return "demon" + Labels.label(rewardFunction) + String.valueOf(td.gamma());
+    return "demon" + Labels.label(rewardFunction);
+  }
+
+  @Override
+  public LinearLearner learner() {
+    return td;
   }
 }

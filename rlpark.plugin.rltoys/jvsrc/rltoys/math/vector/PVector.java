@@ -207,7 +207,9 @@ public class PVector implements RealVector {
   public RealVector ebeMultiplyToSelf(RealVector v) {
     if (v instanceof PVector)
       return ebeMultiplyToSelf(((PVector) v).data);
-    throw new NotImplemented();
+    for (int i = 0; i < data.length; i++)
+      data[i] *= v.getEntry(i);
+    return this;
   }
 
   private RealVector ebeMultiplyToSelf(double[] other) {

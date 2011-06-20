@@ -7,4 +7,6 @@ import rltoys.math.vector.RealVector;
 
 public interface OnPolicyTD extends Predictor, LinearLearner {
   double update(RealVector phi_t, RealVector phi_tp1, double r_tp1);
+
+  double prediction();
 }

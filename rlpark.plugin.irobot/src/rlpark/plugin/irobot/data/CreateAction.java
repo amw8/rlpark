@@ -17,6 +17,9 @@ public class CreateAction extends ActionArray {
   public static final CreateAction Backward = new CreateAction(-DefaultVelocity, -DefaultVelocity);
   public static final CreateAction Forward = new CreateAction(DefaultVelocity, DefaultVelocity);
 
+  public static final CreateAction[] AllActions = { DontMove, SpinLeftForward, SpinLeftBackward, SpinRightForward,
+      SpinRightBackward, SpinLeft, SpinRight, Backward, Forward };
+
   public static final CreateAction DoNothing = new CreateAction(null);
 
   public CreateAction(double wheelLeft, double wheelRight) {

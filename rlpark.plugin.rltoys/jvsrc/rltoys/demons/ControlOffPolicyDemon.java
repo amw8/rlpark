@@ -1,6 +1,7 @@
 package rltoys.demons;
 
 import rltoys.algorithms.learning.control.gq.GreedyGQ;
+import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
@@ -43,5 +44,10 @@ public class ControlOffPolicyDemon implements Demon {
 
   public Policy targetPolicy() {
     return gq.targetPolicy();
+  }
+
+  @Override
+  public LinearLearner learner() {
+    return gq.gq();
   }
 }

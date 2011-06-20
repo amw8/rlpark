@@ -1,5 +1,6 @@
 package rltoys.demons;
 
+import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.learning.predictions.td.GTD;
 import rltoys.algorithms.representations.acting.Policy;
@@ -41,5 +42,10 @@ public class PredictionOffPolicyDemon implements Demon {
 
   public Policy targetPolicy() {
     return target;
+  }
+
+  @Override
+  public LinearLearner learner() {
+    return gtd;
   }
 }

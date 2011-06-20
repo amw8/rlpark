@@ -75,7 +75,8 @@ public class TDLambdaAutostep implements OnPolicyTD {
       updateNormalizationAndStepSizeNonSparse(delta_t, phi_t);
     RealVector alphaDeltaE = e.vect().ebeMultiply(alpha).mapMultiplyToSelf(delta_t);
     v.addToSelf(alphaDeltaE);
-    h.addToSelf(alphaDeltaE.subtractToSelf(phi_t.ebeMultiply(alpha).ebeMultiplyToSelf(phi_t).ebeMultiplyToSelf(h)));
+    h.addToSelf(alphaDeltaE.subtractToSelf(phi_t.ebeMultiply(alpha).ebeMultiplyToSelf(e.vect()).mapAbsToSelf()
+        .ebeMultiplyToSelf(h)));
     return delta_t;
   }
 
@@ -86,7 +87,7 @@ public class TDLambdaAutostep implements OnPolicyTD {
       @Override
       public void element(int i, double peDatai) {
         s.data[i] = Math.max(absDeltaEH.getEntry(i), s.data[i]
-            + (alpha.data[i] * phi_t.getEntry(i) * phi_t.getEntry(i) / tau) * (absDeltaEH.getEntry(i) - s.data[i]));
+            + (alpha.data[i] * Math.abs(peDatai * phi_t.getEntry(i)) / tau) * (absDeltaEH.getEntry(i) - s.data[i]));
         s.data[i] = s.data[i] == 0 ? 1 : s.data[i];
         alpha.data[i] = alpha.data[i] * Math.exp(Mu * delta_t * peDatai * h.data[i] / s.data[i]);
       }
@@ -110,7 +111,7 @@ public class TDLambdaAutostep implements OnPolicyTD {
     PVector absDeltaEH = (PVector) computeAbsDeltaEH(delta_t);
     for (int i = 0; i < pe.size; i++) {
       s.data[i] = Math.max(absDeltaEH.data[i], s.data[i]
-          + (alpha.data[i] * phi_t.getEntry(i) * phi_t.getEntry(i) / tau) * (absDeltaEH.data[i] - s.data[i]));
+          + (alpha.data[i] * Math.abs(pe.data[i] * phi_t.getEntry(i)) / tau) * (absDeltaEH.data[i] - s.data[i]));
       s.data[i] = s.data[i] == 0 ? 1 : s.data[i];
       alpha.data[i] = alpha.data[i] * Math.exp(Mu * delta_t * pe.data[i] * h.data[i] / s.data[i]);
     }
@@ -150,5 +151,14 @@ public class TDLambdaAutostep implements OnPolicyTD {
   @Override
   public double error() {
     return delta_t;
+  }
+
+  @Override
+  public double prediction() {
+    return v_t;
+  }
+
+  public double gamma() {
+    return gamma;
   }
 }

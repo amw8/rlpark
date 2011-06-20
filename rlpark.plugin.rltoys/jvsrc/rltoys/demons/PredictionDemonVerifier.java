@@ -2,6 +2,10 @@ package rltoys.demons;
 
 import java.io.Serializable;
 
+import rltoys.algorithms.learning.predictions.td.OnPolicyTD;
+import rltoys.algorithms.learning.predictions.td.TD;
+import rltoys.algorithms.learning.predictions.td.TDLambdaAutostep;
+import rltoys.utils.NotImplemented;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.monitoring.wrappers.Abs;
 import zephyr.plugin.core.api.monitoring.wrappers.Squared;
@@ -31,7 +35,7 @@ public class PredictionDemonVerifier implements Serializable {
   public PredictionDemonVerifier(PredictionDemon predictionDemon, double precision) {
     this.predictionDemon = predictionDemon;
     rewardFunction = predictionDemon.rewardFunction();
-    double gamma = predictionDemon.predicter().gamma();
+    double gamma = extractGamma(predictionDemon.predicter());
     this.precision = precision;
     offsetLength = gamma > 0 ? (int) Math.ceil(Math.log(precision) / Math.log(gamma)) : 1;
     predictionHistory = new double[offsetLength];
@@ -43,6 +47,14 @@ public class PredictionDemonVerifier implements Serializable {
     cacheFilled = false;
   }
 
+  public double extractGamma(OnPolicyTD learner) {
+    if (learner instanceof TD)
+      return ((TD) learner).gamma();
+    if (learner instanceof TDLambdaAutostep)
+      return ((TDLambdaAutostep) learner).gamma();
+    throw new NotImplemented();
+  }
+
   private void reset() {
     current = 0;
     cacheFilled = false;
@@ -52,10 +64,10 @@ public class PredictionDemonVerifier implements Serializable {
     observed = 0;
   }
 
-  public void update(boolean endOfEpisode) {
+  public double update(boolean endOfEpisode) {
     if (endOfEpisode) {
       reset();
-      return;
+      return 0.0;
     }
     if (cacheFilled) {
       errorComputed = true;
@@ -69,6 +81,7 @@ public class PredictionDemonVerifier implements Serializable {
       observedHistory[(current - i + offsetLength) % offsetLength] += reward * gammas[i];
     predictionHistory[current] = predictionDemon.prediction();
     updateCurrent();
+    return error;
   }
 
   protected void updateCurrent() {
