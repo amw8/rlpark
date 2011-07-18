@@ -17,8 +17,6 @@ public class PTargetTest {
 
   public Agent createAgent() {
     return new Agent() {
-      private static final long serialVersionUID = -872691013415672363L;
-
       @Override
       public Action getAtp1(TStep step) {
         double[] action = new double[nbTarget];

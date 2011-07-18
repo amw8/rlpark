@@ -12,7 +12,6 @@ import rltoys.math.vector.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 public class ContinuousAgent implements Agent, OffPolicyLearner {
-  private static final long serialVersionUID = -3674569940529377958L;
   @Monitor
   private final Control control;
   @Monitor

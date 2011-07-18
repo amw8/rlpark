@@ -8,7 +8,6 @@ import rltoys.environments.envio.Agent;
 import rltoys.environments.envio.observations.TStep;
 
 public class RandomAgent implements Agent {
-  private static final long serialVersionUID = 5585016330810380595L;
   private final RandomPolicy policy;
 
   public RandomAgent(Random random, Action[] actions) {

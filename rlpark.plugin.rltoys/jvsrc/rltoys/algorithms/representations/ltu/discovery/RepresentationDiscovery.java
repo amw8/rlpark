@@ -20,8 +20,6 @@ public class RepresentationDiscovery {
   private final LTU prototype;
   private final Random random;
   private int worstUnit;
-  private int nbWorstUnitRequested;
-
   public RepresentationDiscovery(Random random, RandomNetwork network, WeightSorter sorter, LTU prototype,
       int nbProtectedUnit, int nbMaxInputForUnit) {
     this.random = random;
@@ -64,10 +62,8 @@ public class RepresentationDiscovery {
 
   protected int findWorstUnit() {
     int worstUnit = -1;
-    nbWorstUnitRequested = 0;
     do {
       worstUnit = sorter.nextWorst();
-      nbWorstUnitRequested++;
     } while (protectedUnits.contains(worstUnit));
     return worstUnit;
   }

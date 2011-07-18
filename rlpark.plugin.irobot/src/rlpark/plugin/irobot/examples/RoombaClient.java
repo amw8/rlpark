@@ -4,7 +4,6 @@ import rlpark.plugin.irobot.data.RoombaLeds;
 import rlpark.plugin.irobot.robots.RoombaRobot;
 
 public class RoombaClient {
-  private static final long serialVersionUID = -7517786948909040635L;
   private int cleanColor;
   private final RoombaRobot environment = new RoombaRobot();
   private final RoombaLeds leds = new RoombaLeds();

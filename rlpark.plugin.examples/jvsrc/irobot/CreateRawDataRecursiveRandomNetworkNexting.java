@@ -52,9 +52,9 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
   private final PredictionDemonVerifier[] verifiers;
   private final StateUpdate stateUpdate;
   private final RepresentationDiscovery discovery;
-  private double allDemonsError = 0.0;
   private BVector x_t;
   private Action a_t;
+  double error;
 
   public CreateRawDataRecursiveRandomNetworkNexting() {
     RandomNetwork representation = new RandomNetworkAdaptive(random, NetworkOutputVectorSize + rawObsVectorSize + 1,
@@ -119,10 +119,8 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
 
   protected void updateDemons(RealVector x_t, Action a_t, RealVector x_tp1) {
     demonScheduler.update(x_t, a_t, x_tp1);
-    allDemonsError = 0.0;
     for (PredictionDemonVerifier verifier : verifiers) {
-      double error = verifier.update(false);
-      allDemonsError += error * error;
+      error = verifier.update(false);
     }
   }
 

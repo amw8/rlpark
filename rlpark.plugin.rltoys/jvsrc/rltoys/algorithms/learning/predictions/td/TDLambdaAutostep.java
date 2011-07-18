@@ -14,7 +14,8 @@ import zephyr.plugin.core.api.monitoring.wrappers.Squared;
 @Monitor
 public class TDLambdaAutostep implements OnPolicyTD {
   private static final long serialVersionUID = 1567652945995637498L;
-  static private final double Mu = 0.01;
+  static protected double Mu = 0.01;
+  static protected double Tau = 1000;
   @Monitor(level = 4)
   final private PVector v;
   private double v_t;
@@ -23,36 +24,48 @@ public class TDLambdaAutostep implements OnPolicyTD {
   private double delta_t;
 
   final protected Traces e;
-  final protected double tau;
   @Monitor(level = 4)
   final protected PVector alpha;
   @Monitor(level = 4)
   final protected PVector h;
   @Monitor(level = 4)
-  final protected PVector s;
+  final protected PVector normalizer;
   protected double maxOneM2;
   private final double gamma;
   private final double lambda;
   private double m;
+  double tempM = 0.0;
 
   public TDLambdaAutostep(double lambda, double gamma, int nbFeatures) {
-    this(lambda, gamma, 1000.0, nbFeatures, new PATraces());
+    this(lambda, gamma, 0.1, nbFeatures, new PATraces());
   }
 
   public TDLambdaAutostep(double lambda, double gamma, int nbFeatures, ATraces prototype) {
-    this(lambda, gamma, 1000.0, nbFeatures, prototype);
+    this(lambda, gamma, 0.1, nbFeatures, prototype);
   }
 
-  public TDLambdaAutostep(double lambda, double gamma, double tau, int nbFeatures, Traces prototype) {
+  public TDLambdaAutostep(double lambda, double gamma, double initAlpha, int nbFeatures) {
+    this(lambda, gamma, initAlpha, nbFeatures, new PATraces());
+  }
+
+  public TDLambdaAutostep(double lambda, double gamma, double initAlpha, int nbFeatures, Traces prototype) {
     this.lambda = lambda;
     e = prototype.newTraces(nbFeatures);
     this.gamma = gamma;
-    this.tau = tau;
     v = new PVector(nbFeatures);
     alpha = new PVector(nbFeatures);
-    alpha.set(0.1);
+    alpha.set(initAlpha);
     h = new PVector(nbFeatures);
-    s = new PVector(nbFeatures);
+    normalizer = new PVector(nbFeatures);
+    normalizer.set(1.0);
+  }
+
+  public void setMu(double Mu) {
+    TDLambdaAutostep.Mu = Mu;
+  }
+
+  public void setTau(double Tau) {
+    TDLambdaAutostep.Tau = Tau;
   }
 
   protected double initEpisode() {
@@ -86,18 +99,30 @@ public class TDLambdaAutostep implements OnPolicyTD {
     pe.forEach(new ElementIterator() {
       @Override
       public void element(int i, double peDatai) {
-        s.data[i] = Math.max(absDeltaEH.getEntry(i), s.data[i]
-            + (alpha.data[i] * Math.abs(peDatai * phi_t.getEntry(i)) / tau) * (absDeltaEH.getEntry(i) - s.data[i]));
-        s.data[i] = s.data[i] == 0 ? 1 : s.data[i];
-        alpha.data[i] = alpha.data[i] * Math.exp(Mu * delta_t * peDatai * h.data[i] / s.data[i]);
+        normalizer.data[i] = Math.max(
+                                      absDeltaEH.getEntry(i),
+                                      normalizer.data[i]
+                                          + (alpha.data[i] * Math.abs(peDatai * phi_t.getEntry(i)) / Tau)
+                                          * (absDeltaEH.getEntry(i) - normalizer.data[i]));
+        normalizer.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), normalizer.data[i]);
+        alpha.data[i] = alpha.data[i] * Math.exp(Mu * delta_t * peDatai * h.data[i] / normalizer.data[i]);
+        alpha.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), alpha.data[i]);
       }
     });
-    m = computeM(phi_t);
-    maxOneM2 = Math.max(1, m / 2);
+    tempM = 0.0;
+    pe.forEach(new ElementIterator() {
+      @Override
+      public void element(int index, double peDatai) {
+        tempM += alpha.data[index] * Math.abs(peDatai * phi_t.getEntry(index));
+      }
+    });
+    m = tempM;
+    maxOneM2 = Math.max(1, m);
     pe.forEach(new ElementIterator() {
       @Override
       public void element(int index, double value) {
-        alpha.data[index] = alpha.data[index] / maxOneM2;
+        if (phi_t.getEntry(index) != 0)
+          alpha.data[index] = alpha.data[index] / maxOneM2;
       }
     });
   }
@@ -110,20 +135,24 @@ public class TDLambdaAutostep implements OnPolicyTD {
     PVector pe = (PVector) e.vect();
     PVector absDeltaEH = (PVector) computeAbsDeltaEH(delta_t);
     for (int i = 0; i < pe.size; i++) {
-      s.data[i] = Math.max(absDeltaEH.data[i], s.data[i]
-          + (alpha.data[i] * Math.abs(pe.data[i] * phi_t.getEntry(i)) / tau) * (absDeltaEH.data[i] - s.data[i]));
-      s.data[i] = s.data[i] == 0 ? 1 : s.data[i];
-      alpha.data[i] = alpha.data[i] * Math.exp(Mu * delta_t * pe.data[i] * h.data[i] / s.data[i]);
+      normalizer.data[i] = Math.max(absDeltaEH.data[i],
+                                    normalizer.data[i]
+                                        + (alpha.data[i] * Math.abs(pe.data[i] * phi_t.getEntry(i)) / Tau)
+                                        * (absDeltaEH.data[i] - normalizer.data[i]));
+      normalizer.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), normalizer.data[i]);
+      alpha.data[i] = alpha.data[i] * Math.exp(Mu * delta_t * pe.data[i] * h.data[i] / normalizer.data[i]);
+      alpha.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), alpha.data[i]);
     }
-    m = computeM(phi_t);
-    maxOneM2 = Math.max(1, m / 2);
-    for (int i = 0; i < phi_t.getDimension(); i++) {
-      alpha.data[i] = alpha.data[i] / maxOneM2;
+    tempM = 0.0;
+    for (int i = 0; i < pe.size; i++) {
+      tempM += alpha.data[i] * Math.abs(pe.data[i] * phi_t.getEntry(i));
     }
-  }
-
-  private double computeM(RealVector phi_t) {
-    return phi_t.ebeMultiply(alpha).dotProduct(phi_t);
+    m = tempM;
+    maxOneM2 = Math.max(1, m);
+    for (int i = 0; i < pe.size; i++) {
+      if (phi_t.getEntry(i) * pe.data[i] != 0)
+        alpha.data[i] = alpha.data[i] / maxOneM2;
+    }
   }
 
   public Traces eligibility() {
@@ -145,7 +174,7 @@ public class TDLambdaAutostep implements OnPolicyTD {
     v.data[index] = 0;
     alpha.data[index] = .1;
     h.data[index] = 0;
-    s.data[index] = 0;
+    normalizer.data[index] = 0;
   }
 
   @Override

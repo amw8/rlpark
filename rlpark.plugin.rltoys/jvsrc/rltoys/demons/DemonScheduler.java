@@ -19,7 +19,6 @@ public class DemonScheduler implements Serializable {
   private static final long serialVersionUID = 6003588160245867945L;
 
   protected class DemonUpdater implements Runnable {
-    private static final long serialVersionUID = 4610329716833966956L;
     private final int offset;
 
     DemonUpdater(int offset) {

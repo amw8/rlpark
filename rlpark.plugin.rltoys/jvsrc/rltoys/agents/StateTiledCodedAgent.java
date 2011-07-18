@@ -11,7 +11,6 @@ import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 public class StateTiledCodedAgent implements Agent {
-  private static final long serialVersionUID = 3256878947900519007L;
   @Monitor
   private final Control control;
   @Monitor
