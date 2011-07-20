@@ -3,7 +3,7 @@ package rlpark.plugin.videoview.internal;
 import java.io.IOException;
 import java.util.List;
 
-import rlpark.plugin.video.VideoPlayer;
+import rlpark.plugin.xuggler.VideoPlayer;
 import zephyr.plugin.core.Utils;
 import zephyr.plugin.core.api.Zephyr;
 import zephyr.plugin.filehandling.IFileHandler;

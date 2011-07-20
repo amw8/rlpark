@@ -7,70 +7,52 @@ import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.part.ViewPart;
 
-import rlpark.plugin.video.ImageListener;
-import rlpark.plugin.video.VideoPlayer;
-import zephyr.plugin.core.api.codeparser.codetree.ClassNode;
-import zephyr.plugin.core.api.codeparser.interfaces.CodeNode;
-import zephyr.plugin.core.api.synchronization.Clock;
+import rlpark.plugin.video.ImageProvider;
 import zephyr.plugin.core.helpers.ClassViewProvider;
-import zephyr.plugin.core.views.ProvidedView;
+import zephyr.plugin.core.views.helpers.ForegroundCanvasView;
 
-public class VideoView extends ViewPart implements ImageListener, ProvidedView {
+public class VideoView extends ForegroundCanvasView<ImageProvider> {
   static public class VideoViewProvider extends ClassViewProvider {
     public VideoViewProvider() {
-      super(VideoPlayer.class);
+      super(ImageProvider.class);
     }
   }
 
-  private final Runnable drawer = new Runnable() {
-    @Override
-    public void run() {
-      displayImage();
+  private ImageProvider imageProvider;
+  private Image image;
+
+  @Override
+  protected void paint(GC gc) {
+    if (image == null) {
+      gc.fillRectangle(canvas.getBounds());
+      return;
     }
-  };
-  private ImageData imageData;
-  Image image;
-  private Composite parent;
-
-  public VideoView() {
+    int width = image.getImageData().width;
+    int height = image.getImageData().height;
+    gc.drawImage(image, 0, 0, width, height, 0, 0, width, height);
   }
 
   @Override
-  public void createPartControl(Composite parent) {
-    this.parent = parent;
-    parent.addPaintListener(new PaintListener() {
-      @Override
-      public void paintControl(PaintEvent e) {
-        if (image != null)
-          e.gc.drawImage(image, 0, 0);
-      }
-    });
+  protected void set(ImageProvider current) {
+    imageProvider = current;
+    image = null;
   }
 
   @Override
-  public void setFocus() {
-  }
-
-  protected void displayImage() {
-    if (image != null)
-      image.dispose();
-    if (imageData == null)
-      return;
-    if (parent.isDisposed())
-      return;
-    image = new Image(parent.getDisplay(), imageData);
-    parent.redraw();
-    parent.update();
+  protected boolean synchronize() {
+    BufferedImage bufferedImage = imageProvider.image();
+    if (bufferedImage == null) {
+      image = null;
+      return true;
+    }
+    image = new Image(parent.getDisplay(), convertToSWT(bufferedImage));
+    return true;
   }
 
   static ImageData convertToSWT(BufferedImage bufferedImage) {
@@ -139,37 +121,5 @@ public class VideoView extends ViewPart implements ImageListener, ProvidedView {
       return data;
     }
     return null;
-  }
-
-  @Override
-  public void setImage(BufferedImage bufferedImage) {
-    if (parent.isDisposed())
-      return;
-    imageData = convertToSWT(bufferedImage);
-    Display display = parent.getDisplay();
-    if (display != null)
-      display.syncExec(drawer);
-  }
-
-  @Override
-  public boolean synchronize(Clock clock) {
-    return false;
-  }
-
-  @Override
-  public void repaint() {
-  }
-
-  @Override
-  public boolean[] provide(CodeNode[] codeNode) {
-    Object drawn = ((ClassNode) codeNode[0]).instance();
-    ((VideoPlayer) drawn).setImageLister(this);
-    return new boolean[] { true };
-  }
-
-  @Override
-  public void dispose() {
-    if (image != null)
-      image.dispose();
   }
 }

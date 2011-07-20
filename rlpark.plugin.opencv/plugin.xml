@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="zephyr.runnable">
+      <client
+            autostart="false"
+            class="rlpark.plugin.opencv.runnables.WebCam"
+            id="rlpark.plugin.opencv.webcam">
+      </client>
+      <client
+            autostart="false"
+            class="rlpark.plugin.opencv.runnables.MotionDetection"
+            id="rlpark.plugin.opencv.motiondetection">
+      </client>
+   </extension>
+
+</plugin>

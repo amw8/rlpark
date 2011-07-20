@@ -12,6 +12,7 @@
       <view
             allowMultiple="true"
             class="rlpark.plugin.videoview.internal.VideoView"
+            icon="icons/film.png"
             id="rlpark.plugin.videoview.playview"
             name="Video"
             restorable="true">
@@ -21,7 +22,9 @@
          point="zephyr.viewprovider">
       <client
             class="rlpark.plugin.videoview.internal.VideoView$VideoViewProvider"
+            icon="icons/film.png"
             name="Video"
+            popup="false"
             viewid="rlpark.plugin.videoview.playview">
       </client>
    </extension>

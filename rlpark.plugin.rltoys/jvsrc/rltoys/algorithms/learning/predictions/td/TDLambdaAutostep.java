@@ -1,6 +1,5 @@
 package rltoys.algorithms.learning.predictions.td;
 
-import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.PATraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.PVector;
@@ -40,7 +39,7 @@ public class TDLambdaAutostep implements OnPolicyTD {
     this(lambda, gamma, 0.1, nbFeatures, new PATraces());
   }
 
-  public TDLambdaAutostep(double lambda, double gamma, int nbFeatures, ATraces prototype) {
+  public TDLambdaAutostep(double lambda, double gamma, int nbFeatures, Traces prototype) {
     this(lambda, gamma, 0.1, nbFeatures, prototype);
   }
 
