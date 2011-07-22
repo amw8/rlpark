@@ -13,8 +13,8 @@ import zephyr.plugin.core.api.monitoring.wrappers.Squared;
 @Monitor
 public class TDLambdaAutostep implements OnPolicyTD {
   private static final long serialVersionUID = 1567652945995637498L;
-  static protected double Mu = 0.01;
-  static protected double Tau = 1000;
+  protected double mu = 0.01;
+  protected double tau = 1000;
   @Monitor(level = 4)
   final private PVector v;
   private double v_t;
@@ -59,12 +59,12 @@ public class TDLambdaAutostep implements OnPolicyTD {
     normalizer.set(1.0);
   }
 
-  public void setMu(double Mu) {
-    TDLambdaAutostep.Mu = Mu;
+  public void setMu(double mu) {
+    this.mu = mu;
   }
 
-  public void setTau(double Tau) {
-    TDLambdaAutostep.Tau = Tau;
+  public void setTau(double tau) {
+    this.tau = tau;
   }
 
   protected double initEpisode() {
@@ -101,10 +101,10 @@ public class TDLambdaAutostep implements OnPolicyTD {
         normalizer.data[i] = Math.max(
                                       absDeltaEH.getEntry(i),
                                       normalizer.data[i]
-                                          + (alpha.data[i] * Math.abs(peDatai * phi_t.getEntry(i)) / Tau)
+                                          + (alpha.data[i] * Math.abs(peDatai * phi_t.getEntry(i)) / tau)
                                           * (absDeltaEH.getEntry(i) - normalizer.data[i]));
         normalizer.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), normalizer.data[i]);
-        alpha.data[i] = alpha.data[i] * Math.exp(Mu * delta_t * peDatai * h.data[i] / normalizer.data[i]);
+        alpha.data[i] = alpha.data[i] * Math.exp(mu * delta_t * peDatai * h.data[i] / normalizer.data[i]);
         alpha.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), alpha.data[i]);
       }
     });
@@ -136,10 +136,10 @@ public class TDLambdaAutostep implements OnPolicyTD {
     for (int i = 0; i < pe.size; i++) {
       normalizer.data[i] = Math.max(absDeltaEH.data[i],
                                     normalizer.data[i]
-                                        + (alpha.data[i] * Math.abs(pe.data[i] * phi_t.getEntry(i)) / Tau)
+                                        + (alpha.data[i] * Math.abs(pe.data[i] * phi_t.getEntry(i)) / tau)
                                         * (absDeltaEH.data[i] - normalizer.data[i]));
       normalizer.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), normalizer.data[i]);
-      alpha.data[i] = alpha.data[i] * Math.exp(Mu * delta_t * pe.data[i] * h.data[i] / normalizer.data[i]);
+      alpha.data[i] = alpha.data[i] * Math.exp(mu * delta_t * pe.data[i] * h.data[i] / normalizer.data[i]);
       alpha.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), alpha.data[i]);
     }
     tempM = 0.0;

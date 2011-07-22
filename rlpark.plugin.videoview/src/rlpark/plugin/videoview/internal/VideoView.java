@@ -46,10 +46,16 @@ public class VideoView extends ForegroundCanvasView<ImageProvider> {
 
   @Override
   protected boolean synchronize() {
+    if (parent.isDisposed())
+      return true;
     BufferedImage bufferedImage = imageProvider.image();
     if (bufferedImage == null) {
       image = null;
       return true;
+    }
+    if (image != null) {
+      image.dispose();
+      image = null;
     }
     image = new Image(parent.getDisplay(), convertToSWT(bufferedImage));
     return true;

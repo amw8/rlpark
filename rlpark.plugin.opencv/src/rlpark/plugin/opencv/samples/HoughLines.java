@@ -99,7 +99,7 @@ public class HoughLines {
                 float rho=point.x();
                 float theta=point.y();
 
-                double a = Math.cos((double) theta), b = Math.sin((double) theta);
+                double a = Math.cos(theta), b = Math.sin(theta);
                 double x0 = a * rho, y0 = b * rho;
                 CvPoint pt1 = new CvPoint((int) Math.round(x0 + 1000 * (-b)), (int) Math.round(y0 + 1000 * (a))), pt2 = new CvPoint((int) Math.round(x0 - 1000 * (-b)), (int) Math.round(y0 - 1000 * (a)));
                 System.out.println("Line spoted: ");
@@ -120,7 +120,7 @@ public class HoughLines {
                 float rho=point.x();
                 float theta=point.y();
 
-                double a = Math.cos((double) theta), b = Math.sin((double) theta);
+                double a = Math.cos(theta), b = Math.sin(theta);
                 double x0 = a * rho, y0 = b * rho;
                 CvPoint pt1 = new CvPoint((int) Math.round(x0 + 1000 * (-b)), (int) Math.round(y0 + 1000 * (a))), pt2 = new CvPoint((int) Math.round(x0 - 1000 * (-b)), (int) Math.round(y0 - 1000 * (a)));
                 System.out.println("Line spotted: ");
