@@ -18,7 +18,7 @@ University of Alberta
 
    <launcherArgs>
       <programArgs>-data @user.home/.crittergui</programArgs>
-      <vmArgs>-Xmx512m</vmArgs>
+      <vmArgs>-Xmx1024m</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
