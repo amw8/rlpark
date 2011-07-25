@@ -4,12 +4,12 @@ import rlpark.plugin.irobot.data.IRobotDrops;
 import rlpark.plugin.irobot.robots.CreateRobot;
 import rlpark.plugin.irobot.robots.IRobotEnvironment;
 import rltoys.environments.envio.observations.Legend;
-import zephyr.plugin.core.api.ZephyrRunnable;
+import zephyr.plugin.core.api.Zephyr;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.synchronization.Clock;
 
 @Monitor
-public class CreateIntroSessionZephyr implements ZephyrRunnable {
+public class CreateIntroSessionZephyr implements Runnable {
   // Used to communicate with the robot
   final private IRobotEnvironment robot = new CreateRobot("/dev/cu.ElementSerial-ElementSe");
   // Legend tells us what is where in the observation array
@@ -20,6 +20,10 @@ public class CreateIntroSessionZephyr implements ZephyrRunnable {
   final private int bumpLeftObsIndex = legend.indexOf(IRobotDrops.BumpLeft);
   // Clock used to synchronize data with Zephyr
   final private Clock clock = new Clock("IntroSessionZephyr");
+
+  public CreateIntroSessionZephyr() {
+    Zephyr.advertise(clock, this);
+  }
 
   @Override
   public void run() {
@@ -32,15 +36,9 @@ public class CreateIntroSessionZephyr implements ZephyrRunnable {
     }
   }
 
-  // Used to synchronize data with Zephyr
-  @Override
-  public Clock clock() {
-    return clock;
-  }
-
   // Required only if you want to run this class directly from Java (without
   // Zephyr)
-  // public static void main(String[] args) {
-  // new CreateIntroSessionZephyr().run();
-  // }
+  public static void main(String[] args) {
+    new CreateIntroSessionZephyr().run();
+  }
 }

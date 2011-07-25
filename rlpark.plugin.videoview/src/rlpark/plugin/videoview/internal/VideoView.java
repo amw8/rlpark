@@ -57,6 +57,7 @@ public class VideoView extends ForegroundCanvasView<ImageProvider> {
       image.dispose();
       image = null;
     }
+    // TODO getDisplay parent can be disposed
     image = new Image(parent.getDisplay(), convertToSWT(bufferedImage));
     return true;
   }

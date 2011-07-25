@@ -126,11 +126,28 @@ abstract public class IRobotEnvironment extends RobotEnvironment implements Moni
     return (short) Math.min(maxAction, Math.max(-maxAction, value));
   }
 
+
+  /**
+   * Do not use this method, use your own main loop instead using sendAction(),
+   * setLed() waitNewObs() and lastReceivedObs()
+   * 
+   * @see rlpark.plugin.robot.RobotEnvironment#run(zephyr.plugin.core.api.synchronization
+   *      .Clock, rltoys.environments.envio.Agent)
+   */
+  @Deprecated
   public void run(Agent agent) {
     String name = String.format("%s[%s]", getClass().getSimpleName(), agent.getClass().getSimpleName());
     run(new Clock(name), agent);
   }
 
+  /**
+   * Do not use this method, use your own main loop instead using sendAction(),
+   * setLed() waitNewObs() and lastReceivedObs()
+   * 
+   * @see rlpark.plugin.robot.RobotEnvironment#run(zephyr.plugin.core.api.synchronization
+   *      .Clock, rltoys.environments.envio.Agent)
+   */
+  @Deprecated
   @Override
   public void run(Clock clock, Agent agent) {
     CreateAgent createAgent = (CreateAgent) agent;

@@ -86,6 +86,14 @@ public abstract class RobotEnvironment implements Closeable, Labeled {
     return obsSync.isTerminated();
   }
 
+  /**
+   * Do not use this method, use your own main loop instead using sendAction(),
+   * setLed() waitNewObs() and lastReceivedObs()
+   * 
+   * @see rlpark.plugin.robot.RobotEnvironment#run(zephyr.plugin.core.api.synchronization
+   *      .Clock, rltoys.environments.envio.Agent)
+   */
+  @Deprecated
   public abstract void run(Clock clock, Agent agent);
 
   abstract public Legend legend();

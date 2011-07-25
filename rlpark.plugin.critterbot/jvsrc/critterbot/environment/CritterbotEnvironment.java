@@ -33,10 +33,26 @@ public class CritterbotEnvironment extends RobotEnvironment implements Critterbo
     return critterbotConnection.legend();
   }
 
+  /**
+   * Do not use this method, use your own main loop instead using sendAction(),
+   * setLed() waitNewObs() and lastReceivedObs()
+   * 
+   * @see rlpark.plugin.robot.RobotEnvironment#run(zephyr.plugin.core.api.synchronization
+   *      .Clock, rltoys.environments.envio.Agent)
+   */
+  @Deprecated
   public void run(Agent agent) {
     run(new Clock("CritterbotEnvironment"), agent);
   }
 
+  /**
+   * Do not use this method, use your own main loop instead using sendAction(),
+   * setLed() waitNewObs() and lastReceivedObs()
+   * 
+   * @see rlpark.plugin.robot.RobotEnvironment#run(zephyr.plugin.core.api.synchronization
+   *      .Clock, rltoys.environments.envio.Agent)
+   */
+  @Deprecated
   @Override
   public void run(Clock clock, Agent agent) {
     CritterbotAgent critterbotAgent = (CritterbotAgent) agent;
