@@ -259,7 +259,7 @@ public class BUncheckedVector implements BinaryVector {
 
   @Override
   public RealVector ebeMultiply(RealVector other) {
-    return copyAsSVector().ebeMultiply(other);
+    return copyAsSVector().ebeMultiplyToSelf(other);
   }
 
   @Override

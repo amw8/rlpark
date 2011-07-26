@@ -2,6 +2,7 @@ package rltoys.algorithms.representations.ltu;
 
 import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
 import rltoys.math.vector.BVector;
+import rltoys.math.vector.BinaryVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 public class StateUpdate {
@@ -17,7 +18,7 @@ public class StateUpdate {
     networkInput = new BVector(network.inputSize);
   }
 
-  public BVector updateState(BVector o_tp1) {
+  public BVector updateState(BinaryVector o_tp1) {
     if (o_tp1 == null) {
       networkOutput = null;
       return null;

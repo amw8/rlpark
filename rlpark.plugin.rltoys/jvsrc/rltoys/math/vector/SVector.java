@@ -2,7 +2,6 @@ package rltoys.math.vector;
 
 import static rltoys.utils.Utils.notImplemented;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,23 +23,23 @@ public class SVector implements SparseVector, MonitorContainer {
     this(orig.getDimension());
     if (orig instanceof SVector)
       set((SVector) orig);
-    else if (orig instanceof BVector)
-      initWithConstantValue(((BVector) orig).indexes, 1.0);
+    else if (orig instanceof BinaryVector)
+      initWithConstantValue((BinaryVector) orig, 1.0);
     else if (orig instanceof BConstantVector) {
       BConstantVector castedOrig = (BConstantVector) orig;
-      initWithConstantValue(castedOrig.indexes(), castedOrig.constant);
+      initWithConstantValue(castedOrig.bvector, castedOrig.constant);
     } else
       set(orig.accessData());
   }
 
-  private void initWithConstantValue(Collection<Integer> indexes, double value) {
-    for (Integer index : indexes)
+  private void initWithConstantValue(BinaryVector binaryVector, double value) {
+    for (Integer index : binaryVector)
       setEntry(index, value);
   }
 
-  public SVector(BVector orig) {
-    this(orig.size);
-    initWithConstantValue(orig.indexes, 1.0);
+  public SVector(BinaryVector orig) {
+    this(orig.getDimension());
+    initWithConstantValue(orig, 1.0);
   }
 
   public SVector(double... o) {

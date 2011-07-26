@@ -149,9 +149,9 @@ public class BVector implements BinaryVector {
     mergeSubVector(i, bother);
   }
 
-  public void mergeSubVector(int i, BVector other) {
-    assert i + other.size <= size;
-    for (Integer j : other.indexes) {
+  public void mergeSubVector(int i, BinaryVector other) {
+    assert i + other.getDimension() <= size;
+    for (Integer j : other) {
       assert j + i < size;
       indexes.add(j + i);
     }
