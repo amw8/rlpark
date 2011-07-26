@@ -1,9 +1,9 @@
 package rlpark.plugin.robot.sync;
 
-import java.nio.ByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
 
 public interface ScalarInterpreter {
-  void interpret(ByteBuffer buffer, double[] values);
+  void interpret(LightByteBuffer buffer, double[] values);
 
   int size();
 }

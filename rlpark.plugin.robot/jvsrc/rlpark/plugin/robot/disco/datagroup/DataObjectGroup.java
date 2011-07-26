@@ -1,8 +1,6 @@
 package rlpark.plugin.robot.disco.datagroup;
 
-
-import java.nio.ByteBuffer;
-
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
 import rlpark.plugin.robot.disco.drops.Drop;
 import rlpark.plugin.robot.disco.drops.DropData;
 
@@ -15,7 +13,7 @@ public abstract class DataObjectGroup<T> extends DataGroup {
     super(prefix, drop);
   }
 
-  protected abstract T getValue(ByteBuffer byteBuffer, DropData dropData);
+  protected abstract T getValue(LightByteBuffer byteBuffer, DropData dropData);
 
   public void set(T... values) {
     assert values.length == dropDatas.length;
@@ -23,7 +21,7 @@ public abstract class DataObjectGroup<T> extends DataGroup {
       setValue(dropDatas[i], values[i]);
   }
 
-  public void get(ByteBuffer byteBuffer, T[] values) {
+  public void get(LightByteBuffer byteBuffer, T[] values) {
     assert values.length == dropDatas.length;
     for (int i = 0; i < values.length; i++)
       values[i] = getValue(byteBuffer, dropDatas[i]);

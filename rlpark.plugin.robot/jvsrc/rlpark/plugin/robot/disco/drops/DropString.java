@@ -1,6 +1,8 @@
 package rlpark.plugin.robot.disco.drops;
 
-import java.nio.ByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+
+
 
 public class DropString extends DropData {
 
@@ -24,7 +26,7 @@ public class DropString extends DropData {
     return new DropString(label, value, readOnly, index);
   }
 
-  public boolean checkString(ByteBuffer buffer) {
+  public boolean checkString(LightByteBuffer buffer) {
     if (buffer.getInt(0) != value.length())
       return false;
     byte[] charName = new byte[value.length()];
@@ -33,7 +35,7 @@ public class DropString extends DropData {
     return value.equals(new String(charName));
   }
 
-  static public String getData(ByteBuffer buffer, int index) {
+  static public String getData(LightByteBuffer buffer, int index) {
     final int stringSize = buffer.capacity();
     byte[] byteName = new byte[stringSize];
     for (int i = 0; i < stringSize; i++)
@@ -42,7 +44,7 @@ public class DropString extends DropData {
   }
 
   @Override
-  public void putData(ByteBuffer buffer) {
+  public void putData(LightByteBuffer buffer) {
     buffer.putInt(value.length());
     for (byte b : value.getBytes())
       buffer.put(b);

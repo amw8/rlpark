@@ -1,18 +1,18 @@
 package rlpark.plugin.robot.sync;
 
-import java.nio.ByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
 
 public class ObservationVersatile {
-  private final ByteBuffer buffer;
+  private final LightByteBuffer buffer;
   private final double[] doubleValues;
 
-  public ObservationVersatile(ByteBuffer buffer, ScalarInterpreter interpreter) {
+  public ObservationVersatile(LightByteBuffer buffer, ScalarInterpreter interpreter) {
     this.buffer = buffer;
     doubleValues = new double[interpreter.size()];
     interpreter.interpret(buffer, doubleValues);
   }
 
-  public ByteBuffer buffer() {
+  public LightByteBuffer buffer() {
     return buffer;
   }
 

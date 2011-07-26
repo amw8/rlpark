@@ -1,6 +1,8 @@
 package rlpark.plugin.robot.disco.drops;
 
-import java.nio.ByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+
+
 
 public class DropTime extends DropData {
   static final public long startingTime = System.currentTimeMillis();
@@ -29,11 +31,11 @@ public class DropTime extends DropData {
   }
 
   @Override
-  public void putData(ByteBuffer buffer) {
+  public void putData(LightByteBuffer buffer) {
     buffer.putInt((int) time);
   }
 
-  public long getData(ByteBuffer buffer, int index) {
+  public long getData(LightByteBuffer buffer, int index) {
     // long longValue = buffer.getInt(index);
     // time = 0xFFFFFFFFL & longValue;
     return System.currentTimeMillis();

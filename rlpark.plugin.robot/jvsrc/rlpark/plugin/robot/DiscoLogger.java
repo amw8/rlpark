@@ -37,6 +37,7 @@ public class DiscoLogger {
     try {
       objout.writeObject(packet);
       objout.flush();
+      objout.reset();
     } catch (IOException e) {
       e.printStackTrace();
       close();

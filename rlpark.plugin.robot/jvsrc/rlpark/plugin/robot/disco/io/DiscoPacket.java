@@ -1,8 +1,9 @@
 package rlpark.plugin.robot.disco.io;
 
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
 
 public class DiscoPacket implements Serializable {
   private static final long serialVersionUID = -4603810414251911563L;
@@ -17,9 +18,9 @@ public class DiscoPacket implements Serializable {
   public final String name;
   public final long time;
   public final Direction direction;
-  private transient ByteBuffer byteBuffer = null;
+  private transient LightByteBuffer byteBuffer = null;
 
-  DiscoPacket(Direction direction, String name, ByteBuffer buffer) {
+  DiscoPacket(Direction direction, String name, LightByteBuffer buffer) {
     this(direction, name, buffer.order(), buffer.array());
     this.byteBuffer = buffer;
   }
@@ -36,12 +37,10 @@ public class DiscoPacket implements Serializable {
     return "BIG_ENDIAN".equals(order) ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN;
   }
 
-  public ByteBuffer byteBuffer() {
+  public LightByteBuffer byteBuffer() {
     if (byteBuffer != null)
       return byteBuffer;
-    byteBuffer = ByteBuffer.allocate(buffer.length);
-    byteBuffer.order(order());
-    System.arraycopy(buffer, 0, byteBuffer.array(), 0, buffer.length);
+    byteBuffer = new LightByteBuffer(buffer, order());
     return byteBuffer;
   }
 }

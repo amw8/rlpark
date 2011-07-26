@@ -1,9 +1,8 @@
 package rlpark.plugin.robot.disco.datatype;
 
-import java.nio.ByteBuffer;
 
 public interface ScalarReader {
-  int getInt(ByteBuffer buffer);
+  int getInt(LightByteBuffer buffer);
 
-  double getDouble(ByteBuffer buffer);
+  double getDouble(LightByteBuffer buffer);
 }

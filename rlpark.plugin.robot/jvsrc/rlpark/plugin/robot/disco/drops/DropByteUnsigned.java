@@ -1,8 +1,8 @@
 package rlpark.plugin.robot.disco.drops;
 
-import java.nio.ByteBuffer;
 
 import rlpark.plugin.robot.disco.datatype.GrayCodeConverter;
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
 import rlpark.plugin.robot.disco.datatype.Ranged;
 import rlpark.plugin.robot.disco.datatype.ScalarReader;
 import rltoys.math.GrayCode;
@@ -25,19 +25,19 @@ public class DropByteUnsigned extends DropData implements Ranged, ScalarReader, 
   }
 
   @Override
-  public int getInt(ByteBuffer buffer) {
+  public int getInt(LightByteBuffer buffer) {
     return buffer.get(index) & 0xFF;
   }
 
   @Override
-  public void convert(ByteBuffer source, ByteBuffer target) {
+  public void convert(LightByteBuffer source, LightByteBuffer target) {
     value = getInt(source);
     value = GrayCode.byteToGrayCode((byte) value);
     putData(target);
   }
 
   @Override
-  public void putData(ByteBuffer buffer) {
+  public void putData(LightByteBuffer buffer) {
     buffer.put((byte) value);
   }
 
@@ -52,7 +52,7 @@ public class DropByteUnsigned extends DropData implements Ranged, ScalarReader, 
   }
 
   @Override
-  public double getDouble(ByteBuffer buffer) {
+  public double getDouble(LightByteBuffer buffer) {
     return getInt(buffer);
   }
 }

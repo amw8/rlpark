@@ -1,6 +1,8 @@
 package rlpark.plugin.robot.disco.drops;
 
-import java.nio.ByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+
+
 
 public abstract class DropData {
   public static final int FloatSize = Float.SIZE / 8;
@@ -31,5 +33,5 @@ public abstract class DropData {
 
   abstract public int size();
 
-  abstract public void putData(ByteBuffer buffer);
+  abstract public void putData(LightByteBuffer buffer);
 }

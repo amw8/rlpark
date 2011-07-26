@@ -1,7 +1,10 @@
 package rlpark.plugin.robot.disco.drops;
 
-import java.nio.ByteBuffer;
+
 import java.util.Arrays;
+
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+
 
 public class DropArray extends DropData {
   final private DropData[] dropDatas;
@@ -44,7 +47,7 @@ public class DropArray extends DropData {
   }
 
   @Override
-  public void putData(ByteBuffer buffer) {
+  public void putData(LightByteBuffer buffer) {
     for (DropData data : dropDatas)
       data.putData(buffer);
   }

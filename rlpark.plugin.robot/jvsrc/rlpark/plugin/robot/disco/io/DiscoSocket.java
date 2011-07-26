@@ -5,10 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
 import rlpark.plugin.robot.disco.drops.Drop;
 import rlpark.plugin.robot.disco.drops.DropString;
 import rlpark.plugin.robot.disco.io.DiscoPacket.Direction;
@@ -24,7 +24,7 @@ public class DiscoSocket {
   private final DataOutputStream out;
   final public Signal<DiscoPacket> onPacket = new Signal<DiscoPacket>();
   public double readLatency;
-  private final ByteBuffer sizeBuffer;
+  private final LightByteBuffer sizeBuffer;
 
   public DiscoSocket(int port) throws UnknownHostException, IOException {
     this("localhost", port);
@@ -73,15 +73,12 @@ public class DiscoSocket {
     sizeBuffer = allocate(4);
   }
 
-  private ByteBuffer allocate(int capacity) {
-    assert capacity > 0;
-    ByteBuffer buffer = ByteBuffer.allocate(capacity);
-    buffer.order(byteOrder);
-    return buffer;
+  private LightByteBuffer allocate(int capacity) {
+    return new LightByteBuffer(capacity, byteOrder);
   }
 
   synchronized public void send(Drop sendDrop) throws IOException {
-    ByteBuffer buffer = allocate(sendDrop.packetSize());
+    LightByteBuffer buffer = allocate(sendDrop.packetSize());
     sendDrop.putData(buffer);
     byte[] byteArray = Arrays.copyOfRange(buffer.array(), sendDrop.headerSize(), buffer.array().length);
     onPacket.fire(new DiscoPacket(Direction.Send, sendDrop.name(), buffer.order(), byteArray));
@@ -92,7 +89,7 @@ public class DiscoSocket {
     int stringSize = readSize();
     if (stringSize > 100 || stringSize <= 0)
       throw new RuntimeException("Name error: length is not > 0 && < 100");
-    ByteBuffer stringBuffer = allocate(stringSize);
+    LightByteBuffer stringBuffer = allocate(stringSize);
     in.readFully(stringBuffer.array(), 0, stringSize);
     return DropString.getData(stringBuffer, 0);
   }
@@ -113,7 +110,7 @@ public class DiscoSocket {
 
   public DiscoPacket recv() throws IOException {
     String name = readName();
-    ByteBuffer buffer = allocate(readSize());
+    LightByteBuffer buffer = allocate(readSize());
     in.readFully(buffer.array(), 0, buffer.capacity());
     DiscoPacket packet = new DiscoPacket(Direction.Recv, name, buffer);
     onPacket.fire(packet);

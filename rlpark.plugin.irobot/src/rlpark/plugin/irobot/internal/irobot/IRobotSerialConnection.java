@@ -2,7 +2,6 @@ package rlpark.plugin.irobot.internal.irobot;
 
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import rlpark.plugin.irobot.data.IRobotDrops;
 import rlpark.plugin.irobot.data.IRobotObservationReceiver;
@@ -10,6 +9,7 @@ import rlpark.plugin.irobot.internal.descriptors.IRobotSerialDescriptor;
 import rlpark.plugin.irobot.internal.serial.SerialPortToRobot;
 import rlpark.plugin.irobot.internal.statemachine.SerialLinkStateMachine;
 import rlpark.plugin.robot.disco.datagroup.DropScalarGroup;
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
 import rlpark.plugin.robot.disco.drops.Drop;
 import rlpark.plugin.robot.sync.ObservationVersatile;
 import rltoys.environments.envio.observations.Legend;
@@ -33,7 +33,7 @@ public class IRobotSerialConnection implements IRobotObservationReceiver {
       receiveData(sensorData);
     }
   };
-  private final ByteBuffer byteBuffer;
+  private final LightByteBuffer byteBuffer;
   private Chrono timeSinceReset = null;
 
   public IRobotSerialConnection(String fileName, IRobotSerialDescriptor serialDescriptor) {
@@ -42,12 +42,12 @@ public class IRobotSerialConnection implements IRobotObservationReceiver {
     sensors = new DropScalarGroup(sensorDrop);
     ranges = IRobotDrops.rangeProvider(sensors).ranges(legend());
     this.serialDescriptor = serialDescriptor;
-    byteBuffer = ByteBuffer.allocate(sensorDrop.dataSize());
+    byteBuffer = new LightByteBuffer(sensorDrop.dataSize());
   }
 
   synchronized protected void receiveData(byte[] sensorData) {
     byteBuffer.clear();
-    byteBuffer.put(sensorData, 0, sensorData.length);
+    byteBuffer.put(sensorData);
     notifyAll();
   }
 

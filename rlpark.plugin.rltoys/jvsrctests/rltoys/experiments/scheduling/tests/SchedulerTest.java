@@ -16,7 +16,7 @@ import rltoys.experiments.scheduling.network.internal.NetworkClassLoader;
 public class SchedulerTest {
   private static final String Localhost = "localhost";
   private static final int Port = 5000;
-  public static final int Timeout = 100000;
+  public static final int Timeout = 1000000;
 
   @BeforeClass
   static public void junitMode() {

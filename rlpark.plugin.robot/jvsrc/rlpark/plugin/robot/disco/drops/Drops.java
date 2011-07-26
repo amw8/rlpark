@@ -1,10 +1,10 @@
 package rlpark.plugin.robot.disco.drops;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import rlpark.plugin.robot.disco.datatype.GrayCodeConverter;
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
 
 public class Drops {
   public static List<DropData> flatten(Drop drop) {
@@ -25,8 +25,8 @@ public class Drops {
         flatten.add(dropData);
   }
 
-  public static byte[] toGrayCode(ByteBuffer buffer, List<DropData> dropDatas) {
-    ByteBuffer result = ByteBuffer.allocate(buffer.capacity());
+  public static byte[] toGrayCode(LightByteBuffer buffer, List<DropData> dropDatas) {
+    LightByteBuffer result = new LightByteBuffer(buffer.capacity(), buffer.order());
     for (DropData dropData : dropDatas) {
       if (dropData instanceof GrayCodeConverter) {
         ((GrayCodeConverter) dropData).convert(buffer, result);

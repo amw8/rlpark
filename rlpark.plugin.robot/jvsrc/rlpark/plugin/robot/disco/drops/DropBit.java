@@ -1,7 +1,7 @@
 package rlpark.plugin.robot.disco.drops;
 
-import java.nio.ByteBuffer;
 
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
 import rlpark.plugin.robot.disco.datatype.Ranged;
 import rlpark.plugin.robot.disco.datatype.ScalarReader;
 import rltoys.math.ranges.Range;
@@ -26,13 +26,13 @@ public class DropBit extends DropData implements Ranged, ScalarReader {
   }
 
   @Override
-  public int getInt(ByteBuffer buffer) {
+  public int getInt(LightByteBuffer buffer) {
     byte b = buffer.get(index);
     return (b & mask) != 0 ? 1 : 0;
   }
 
   @Override
-  public void putData(ByteBuffer buffer) {
+  public void putData(LightByteBuffer buffer) {
   }
 
   @Override
@@ -46,7 +46,7 @@ public class DropBit extends DropData implements Ranged, ScalarReader {
   }
 
   @Override
-  public double getDouble(ByteBuffer buffer) {
+  public double getDouble(LightByteBuffer buffer) {
     return getInt(buffer);
   }
 }

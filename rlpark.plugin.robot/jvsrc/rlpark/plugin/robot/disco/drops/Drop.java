@@ -1,7 +1,10 @@
 package rlpark.plugin.robot.disco.drops;
 
-import java.nio.ByteBuffer;
+
 import java.util.Arrays;
+
+import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+
 
 
 public class Drop {
@@ -34,7 +37,7 @@ public class Drop {
     return sum;
   }
 
-  public void putData(ByteBuffer buffer) {
+  public void putData(LightByteBuffer buffer) {
     dropName.putData(buffer);
     buffer.putInt(dataSize());
     for (DropData data : dropDatas)
