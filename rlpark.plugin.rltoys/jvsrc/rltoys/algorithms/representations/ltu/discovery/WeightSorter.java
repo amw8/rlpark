@@ -31,13 +31,21 @@ public class WeightSorter {
   private final Integer[] order;
   private Comparator<Integer> comparator;
   private int worst;
+  private final int startSorting;
+  private final int endSorting;
 
   public WeightSorter(LinearLearner[] learners) {
+    this(learners, 0, -1);
+  }
+
+  public WeightSorter(LinearLearner[] learners, int startSorting, int endSorting) {
     this.learners = learners;
     sums = new PVector(learners[0].weights().size);
-    order = new Integer[sums.size];
-    for (int i = 0; i < sums.size; i++)
-      order[i] = i;
+    this.startSorting = startSorting;
+    this.endSorting = endSorting > 0 ? endSorting : sums.getDimension();
+    order = new Integer[this.endSorting - this.startSorting];
+    for (int i = this.startSorting; i < this.endSorting; i++)
+      order[i - this.startSorting] = i;
   }
 
   protected Comparator<Integer> createComparator() {
@@ -56,7 +64,7 @@ public class WeightSorter {
     sums.set(0);
     for (LinearLearner learner : learners) {
       PVector weight = learner.weights();
-      for (int i = 0; i < sums.size; i++)
+      for (int i = startSorting; i < endSorting; i++)
         sums.data[i] += Math.abs(weight.data[i]);
     }
   }

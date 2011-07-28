@@ -263,8 +263,8 @@ public class BVector implements BinaryVector {
   }
 
   @Override
-  public RealVector ebeMultiply(RealVector v) {
-    throw new NotImplemented();
+  public RealVector ebeMultiply(RealVector other) {
+    return copyAsSVector().ebeMultiplyToSelf(other);
   }
 
   @Override

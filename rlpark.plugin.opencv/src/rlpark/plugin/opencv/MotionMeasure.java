@@ -14,7 +14,7 @@ public class MotionMeasure {
   private final OpenCVImageBuffer background = new OpenCVImageBuffer(DEPTH, 1);
   private final OpenCVImageBuffer difference = new OpenCVImageBuffer(DEPTH, 1);
   private double area;
-  private final double lambda = 0.9;
+  private final double lambda = 0.99;
   private double measure;
 
   public double update(IplImage currentFrame) {

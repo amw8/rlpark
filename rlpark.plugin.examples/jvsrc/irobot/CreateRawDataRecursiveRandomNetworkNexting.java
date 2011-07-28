@@ -64,7 +64,7 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
     int stateVectorSize = stateUpdate.stateSize();
     demonScheduler = createNextingDemons(Gammas, MaxDensity * stateVectorSize, stateVectorSize);
     verifiers = createDemonVerifiers();
-    WeightSorter sorter = new WeightSorter(extractLinearLearners());
+    WeightSorter sorter = new WeightSorter(extractLinearLearners(), 0, representation.outputSize);
     discovery = new RepresentationDiscovery(random, representation, sorter, prototype, NetworkOutputVectorSize / 10, 5);
     discovery.fillNetwork();
     Zephyr.advertise(clock, this);
