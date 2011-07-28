@@ -1,6 +1,6 @@
 package rlpark.plugin.robot.disco.drops;
 
-import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 
 
 
@@ -33,5 +33,5 @@ public abstract class DropData {
 
   abstract public int size();
 
-  abstract public void putData(LightByteBuffer buffer);
+  abstract public void putData(LiteByteBuffer buffer);
 }

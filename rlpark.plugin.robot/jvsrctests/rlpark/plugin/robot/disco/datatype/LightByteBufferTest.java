@@ -6,7 +6,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 
 public class LightByteBufferTest {
   @Test
@@ -17,7 +17,7 @@ public class LightByteBufferTest {
 
   private void testBytes(ByteOrder order) {
     byte[] values = new byte[] { Byte.MIN_VALUE, Byte.MAX_VALUE, 45, -47 };
-    LightByteBuffer buffer = new LightByteBuffer(values.length, order);
+    LiteByteBuffer buffer = new LiteByteBuffer(values.length, order);
     for (byte value : values)
       buffer.put(value);
     buffer.reset();
@@ -33,7 +33,7 @@ public class LightByteBufferTest {
 
   private void testInts(ByteOrder order) {
     int[] values = new int[] { Integer.MIN_VALUE, Integer.MAX_VALUE, 45, -47, 25899, -58632147 };
-    LightByteBuffer buffer = new LightByteBuffer(values.length * Integer.SIZE / 8, order);
+    LiteByteBuffer buffer = new LiteByteBuffer(values.length * Integer.SIZE / 8, order);
     for (int value : values)
       buffer.putInt(value);
     buffer.reset();
@@ -49,7 +49,7 @@ public class LightByteBufferTest {
 
   private void testShorts(ByteOrder order) {
     short[] values = new short[] { Short.MIN_VALUE, Short.MAX_VALUE, 45, -47, 25899, -5863 };
-    LightByteBuffer buffer = new LightByteBuffer(values.length * Short.SIZE / 8, order);
+    LiteByteBuffer buffer = new LiteByteBuffer(values.length * Short.SIZE / 8, order);
     for (short value : values)
       buffer.putShort(value);
     buffer.reset();
@@ -65,7 +65,7 @@ public class LightByteBufferTest {
 
   private void testFloats(ByteOrder order) {
     float[] values = new float[] { Float.MIN_VALUE, Float.MAX_VALUE, 45.3325845f, -47.2566f, 25899.2584f, -5863.5885f };
-    LightByteBuffer buffer = new LightByteBuffer(values.length * Float.SIZE / 8, order);
+    LiteByteBuffer buffer = new LiteByteBuffer(values.length * Float.SIZE / 8, order);
     for (float value : values)
       buffer.putFloat(value);
     buffer.reset();

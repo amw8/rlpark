@@ -2,7 +2,7 @@ package rlpark.plugin.robot.disco.drops;
 
 import java.awt.Color;
 
-import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 
 
 
@@ -22,7 +22,7 @@ public class DropColor extends DropData {
     this.color = color == null ? Color.YELLOW : color;
   }
 
-  public Color color(LightByteBuffer buffer) {
+  public Color color(LiteByteBuffer buffer) {
     short red = (short) (0xFF & buffer.get(index));
     short green = (short) (0xFF & buffer.get(index + DropData.ByteSize));
     short blue = (short) (0xFF & buffer.get(index + DropData.ByteSize * 2));
@@ -35,7 +35,7 @@ public class DropColor extends DropData {
   }
 
   @Override
-  public void putData(LightByteBuffer buffer) {
+  public void putData(LiteByteBuffer buffer) {
     buffer.put((byte) color.getRed());
     buffer.put((byte) color.getGreen());
     buffer.put((byte) color.getBlue());

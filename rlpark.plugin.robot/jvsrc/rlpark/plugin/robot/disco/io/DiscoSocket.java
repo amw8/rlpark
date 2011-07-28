@@ -8,7 +8,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 import rlpark.plugin.robot.disco.drops.Drop;
 import rlpark.plugin.robot.disco.drops.DropString;
 import rlpark.plugin.robot.disco.io.DiscoPacket.Direction;
@@ -24,7 +24,7 @@ public class DiscoSocket {
   private final DataOutputStream out;
   final public Signal<DiscoPacket> onPacket = new Signal<DiscoPacket>();
   public double readLatency;
-  private final LightByteBuffer sizeBuffer;
+  private final LiteByteBuffer sizeBuffer;
 
   public DiscoSocket(int port) throws UnknownHostException, IOException {
     this("localhost", port);
@@ -73,12 +73,12 @@ public class DiscoSocket {
     sizeBuffer = allocate(4);
   }
 
-  private LightByteBuffer allocate(int capacity) {
-    return new LightByteBuffer(capacity, byteOrder);
+  private LiteByteBuffer allocate(int capacity) {
+    return new LiteByteBuffer(capacity, byteOrder);
   }
 
   synchronized public void send(Drop sendDrop) throws IOException {
-    LightByteBuffer buffer = allocate(sendDrop.packetSize());
+    LiteByteBuffer buffer = allocate(sendDrop.packetSize());
     sendDrop.putData(buffer);
     byte[] byteArray = Arrays.copyOfRange(buffer.array(), sendDrop.headerSize(), buffer.array().length);
     onPacket.fire(new DiscoPacket(Direction.Send, sendDrop.name(), buffer.order(), byteArray));
@@ -89,7 +89,7 @@ public class DiscoSocket {
     int stringSize = readSize();
     if (stringSize > 100 || stringSize <= 0)
       throw new RuntimeException("Name error: length is not > 0 && < 100");
-    LightByteBuffer stringBuffer = allocate(stringSize);
+    LiteByteBuffer stringBuffer = allocate(stringSize);
     in.readFully(stringBuffer.array(), 0, stringSize);
     return DropString.getData(stringBuffer, 0);
   }
@@ -110,7 +110,7 @@ public class DiscoSocket {
 
   public DiscoPacket recv() throws IOException {
     String name = readName();
-    LightByteBuffer buffer = allocate(readSize());
+    LiteByteBuffer buffer = allocate(readSize());
     in.readFully(buffer.array(), 0, buffer.capacity());
     DiscoPacket packet = new DiscoPacket(Direction.Recv, name, buffer);
     onPacket.fire(packet);

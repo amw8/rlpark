@@ -2,7 +2,7 @@ package rlpark.plugin.robot.disco.datatype;
 
 
 public interface ScalarReader {
-  int getInt(LightByteBuffer buffer);
+  int getInt(LiteByteBuffer buffer);
 
-  double getDouble(LightByteBuffer buffer);
+  double getDouble(LiteByteBuffer buffer);
 }

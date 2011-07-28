@@ -1,7 +1,7 @@
 package rlpark.plugin.robot.disco.datagroup;
 
 
-import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 import rlpark.plugin.robot.disco.datatype.ScalarReader;
 import rlpark.plugin.robot.disco.datatype.ScalarWriter;
 import rlpark.plugin.robot.disco.drops.Drop;
@@ -36,13 +36,13 @@ public class DropScalarGroup extends DataGroup implements ScalarInterpreter {
   }
 
   @Override
-  public void interpret(LightByteBuffer buffer, double[] values) {
+  public void interpret(LiteByteBuffer buffer, double[] values) {
     assert values.length == dropDatas.length;
     for (int i = 0; i < values.length; i++)
       values[i] = ((ScalarReader) dropDatas[i]).getDouble(buffer);
   }
 
-  public void interpret(LightByteBuffer buffer, int[] values) {
+  public void interpret(LiteByteBuffer buffer, int[] values) {
     assert values.length == dropDatas.length;
     for (int i = 0; i < values.length; i++)
       values[i] = ((ScalarReader) dropDatas[i]).getInt(buffer);

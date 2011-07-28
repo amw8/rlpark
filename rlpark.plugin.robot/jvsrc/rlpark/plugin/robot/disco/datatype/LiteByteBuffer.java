@@ -3,22 +3,22 @@ package rlpark.plugin.robot.disco.datatype;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-public class LightByteBuffer {
+public class LiteByteBuffer {
   private final byte[] array;
   private final ByteOrder order;
   private int offset;
 
-  public LightByteBuffer(int dataSize) {
+  public LiteByteBuffer(int dataSize) {
     this(dataSize, ByteOrder.BIG_ENDIAN);
   }
 
-  public LightByteBuffer(int capacity, ByteOrder order) {
+  public LiteByteBuffer(int capacity, ByteOrder order) {
     assert capacity > 0;
     this.order = order;
     array = new byte[capacity];
   }
 
-  public LightByteBuffer(byte[] buffer, ByteOrder order) {
+  public LiteByteBuffer(byte[] buffer, ByteOrder order) {
     this.order = order;
     array = buffer.clone();
   }

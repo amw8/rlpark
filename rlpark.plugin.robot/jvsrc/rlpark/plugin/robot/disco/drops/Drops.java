@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rlpark.plugin.robot.disco.datatype.GrayCodeConverter;
-import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 
 public class Drops {
   public static List<DropData> flatten(Drop drop) {
@@ -25,8 +25,8 @@ public class Drops {
         flatten.add(dropData);
   }
 
-  public static byte[] toGrayCode(LightByteBuffer buffer, List<DropData> dropDatas) {
-    LightByteBuffer result = new LightByteBuffer(buffer.capacity(), buffer.order());
+  public static byte[] toGrayCode(LiteByteBuffer buffer, List<DropData> dropDatas) {
+    LiteByteBuffer result = new LiteByteBuffer(buffer.capacity(), buffer.order());
     for (DropData dropData : dropDatas) {
       if (dropData instanceof GrayCodeConverter) {
         ((GrayCodeConverter) dropData).convert(buffer, result);

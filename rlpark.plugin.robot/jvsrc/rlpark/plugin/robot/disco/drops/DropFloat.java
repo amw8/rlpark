@@ -1,7 +1,7 @@
 package rlpark.plugin.robot.disco.drops;
 
 
-import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 import rlpark.plugin.robot.disco.datatype.ScalarReader;
 import rlpark.plugin.robot.disco.datatype.ScalarWriter;
 
@@ -29,12 +29,12 @@ public class DropFloat extends DropData implements ScalarReader, ScalarWriter {
   }
 
   @Override
-  public int getInt(LightByteBuffer buffer) {
+  public int getInt(LiteByteBuffer buffer) {
     return (int) getDouble(buffer);
   }
 
   @Override
-  public void putData(LightByteBuffer buffer) {
+  public void putData(LiteByteBuffer buffer) {
     buffer.putFloat(value);
   }
 
@@ -44,7 +44,7 @@ public class DropFloat extends DropData implements ScalarReader, ScalarWriter {
   }
 
   @Override
-  public double getDouble(LightByteBuffer buffer) {
+  public double getDouble(LiteByteBuffer buffer) {
     return buffer.getFloat(index);
   }
 

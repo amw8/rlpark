@@ -3,7 +3,7 @@ package rlpark.plugin.robot.disco.drops;
 
 import java.util.Arrays;
 
-import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 
 
 public class DropArray extends DropData {
@@ -47,7 +47,7 @@ public class DropArray extends DropData {
   }
 
   @Override
-  public void putData(LightByteBuffer buffer) {
+  public void putData(LiteByteBuffer buffer) {
     for (DropData data : dropDatas)
       data.putData(buffer);
   }

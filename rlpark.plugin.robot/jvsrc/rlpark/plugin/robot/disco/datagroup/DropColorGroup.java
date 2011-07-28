@@ -2,7 +2,7 @@ package rlpark.plugin.robot.disco.datagroup;
 
 import java.awt.Color;
 
-import rlpark.plugin.robot.disco.datatype.LightByteBuffer;
+import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 import rlpark.plugin.robot.disco.drops.Drop;
 import rlpark.plugin.robot.disco.drops.DropColor;
 import rlpark.plugin.robot.disco.drops.DropData;
@@ -24,7 +24,7 @@ public class DropColorGroup extends DataObjectGroup<Color> {
   }
 
   @Override
-  protected Color getValue(LightByteBuffer byteBuffer, DropData dropData) {
+  protected Color getValue(LiteByteBuffer byteBuffer, DropData dropData) {
     return ((DropColor) dropData).color(byteBuffer);
   }
 }
