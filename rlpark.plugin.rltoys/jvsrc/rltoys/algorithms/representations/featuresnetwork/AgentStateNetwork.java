@@ -8,19 +8,19 @@ import rltoys.math.representations.Function;
 import rltoys.utils.Utils;
 
 
-public class AgentState extends AbstractAgentState {
+public class AgentStateNetwork extends AbstractAgentState {
   private static final long serialVersionUID = -5137795720223046479L;
 
-  public AgentState(Function... stateFeatures) {
+  public AgentStateNetwork(Function... stateFeatures) {
     this(Utils.asList(stateFeatures));
   }
 
-  public AgentState(List<Function> stateFeatures) {
+  public AgentStateNetwork(List<Function> stateFeatures) {
     for (Function function : stateFeatures)
       addStateFeature((Feature) function);
   }
 
-  public AgentState(int size) {
+  public AgentStateNetwork(int size) {
     this();
     for (int i = 0; i < size; i++)
       addStateFeature(new Constant(0));

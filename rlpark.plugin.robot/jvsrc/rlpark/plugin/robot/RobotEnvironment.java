@@ -3,6 +3,7 @@ package rlpark.plugin.robot;
 import rlpark.plugin.robot.sync.ObservationReceiver;
 import rlpark.plugin.robot.sync.ObservationSynchronizer;
 import rlpark.plugin.robot.sync.ObservationVersatile;
+import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.Agent;
 import rltoys.environments.envio.observations.Legend;
 import zephyr.plugin.core.api.labels.Labeled;
@@ -97,4 +98,6 @@ public abstract class RobotEnvironment implements Closeable, Labeled {
   public abstract void run(Clock clock, Agent agent);
 
   abstract public Legend legend();
+
+  abstract public void sendAction(Action a);
 }

@@ -22,7 +22,8 @@ public class AgentRobotRunnable implements Runnable {
     if (environment.isClosed())
       return;
     Zephyr.advertise(clock, environment);
-    environment.run(clock, agent);
+    while (clock.tick() && !environment.isClosed())
+      environment.sendAction(agent.getAtp1(environment.waitNewObs()));
     environment.close();
   }
 }

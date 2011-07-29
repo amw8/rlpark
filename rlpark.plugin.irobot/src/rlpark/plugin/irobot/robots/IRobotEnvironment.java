@@ -8,9 +8,9 @@ import rlpark.plugin.robot.RobotEnvironment;
 import rlpark.plugin.robot.disco.datagroup.DropScalarGroup;
 import rlpark.plugin.robot.disco.drops.Drop;
 import rlpark.plugin.robot.sync.ObservationReceiver;
+import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.Agent;
 import rltoys.environments.envio.observations.Legend;
-import rltoys.environments.envio.observations.TStep;
 import rltoys.math.ranges.Range;
 import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
 import zephyr.plugin.core.api.monitoring.abstracts.MonitorContainer;
@@ -150,17 +150,18 @@ abstract public class IRobotEnvironment extends RobotEnvironment implements Moni
   @Deprecated
   @Override
   public void run(Clock clock, Agent agent) {
-    CreateAgent createAgent = (CreateAgent) agent;
     CreateAction agentAction = null;
-    TStep currentStep = null;
     while (!isClosed() && clock.tick()) {
       double[] obsArray = waitNewObs();
-      TStep lastStep = currentStep;
-      currentStep = new TStep(lastStep, agentAction, obsArray);
-      agentAction = createAgent.getAtp1(currentStep);
+      agentAction = (CreateAction) agent.getAtp1(obsArray);
       if (agentAction != null && agentAction.actions != null)
         sendAction(agentAction);
     }
+  }
+
+  @Override
+  public void sendAction(Action a) {
+    sendAction((CreateAction) a);
   }
 
   protected static Range[] getRanges(Drop drop) {

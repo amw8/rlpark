@@ -1,18 +1,21 @@
 package critterbot.examples;
 
-import rltoys.environments.envio.observations.TStep;
-import critterbot.CritterbotAgent;
+import rltoys.algorithms.representations.actions.Action;
+import rltoys.environments.envio.Agent;
+import zephyr.plugin.core.api.synchronization.Clock;
 import critterbot.actions.CritterbotAction;
 import critterbot.actions.VoltageSpaceAction;
 import critterbot.environment.CritterbotEnvironment;
 import critterbot.environment.CritterbotRobot;
 import critterbot.environment.CritterbotRobot.SoundMode;
 
-public class ConstantAgent implements CritterbotAgent {
+public class ConstantAgent implements Runnable, Agent {
+  private final CritterbotEnvironment environment = new CritterbotRobot(SoundMode.None);
+  private final Clock clock = new Clock("ConstantAgent");
   private final CritterbotAction action;
 
   public ConstantAgent() {
-    this(null);
+    this(CritterbotAction.DoNothing);
   }
 
   public ConstantAgent(CritterbotAction action) {
@@ -20,19 +23,17 @@ public class ConstantAgent implements CritterbotAgent {
   }
 
   @Override
-  public CritterbotAction getAtp1(TStep step) {
-    if (action != null)
-      return action;
-    return new VoltageSpaceAction(10, 10, 10);
+  public Action getAtp1(double[] obs) {
+    return action;
   }
 
   @Override
-  public String toString() {
-    return action.toString();
+  public void run() {
+    while (clock.tick() && !environment.isClosed())
+      environment.sendAction(action);
   }
 
   public static void main(String[] args) {
-    CritterbotEnvironment environment = new CritterbotRobot(SoundMode.None);
-    environment.run(new ConstantAgent());
+    new ConstantAgent(new VoltageSpaceAction(10, 10, 10)).run();
   }
 }

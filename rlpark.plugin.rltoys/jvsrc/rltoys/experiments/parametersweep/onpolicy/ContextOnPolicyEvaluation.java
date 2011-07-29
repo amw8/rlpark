@@ -1,6 +1,6 @@
 package rltoys.experiments.parametersweep.onpolicy;
 
-import rltoys.environments.envio.Agent;
+import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.RLProblem;
 import rltoys.environments.envio.Runner;
 import rltoys.experiments.ExperimentCounter;
@@ -19,7 +19,7 @@ public class ContextOnPolicyEvaluation implements Context {
 
   public Runner createRunner(ExperimentCounter counter, Parameters parameters) {
     RLProblem problem = environmentFactory.createEnvironment(counter.newRandom());
-    Agent agent = agentFactory.createAgent(problem, parameters, counter.newRandom());
+    RLAgent agent = agentFactory.createAgent(problem, parameters, counter.newRandom());
     int nbEpisode = parameters.nbEpisode();
     int maxEpisodeTimeSteps = parameters.maxEpisodeTimeSteps();
     return new Runner(problem, agent, nbEpisode, maxEpisodeTimeSteps);

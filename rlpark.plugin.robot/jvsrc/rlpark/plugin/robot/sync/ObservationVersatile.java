@@ -1,23 +1,17 @@
 package rlpark.plugin.robot.sync;
 
-import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 
 public class ObservationVersatile {
-  private final LiteByteBuffer buffer;
   private final double[] doubleValues;
+  private final byte[] byteValues;
 
-  public ObservationVersatile(LiteByteBuffer buffer, ScalarInterpreter interpreter) {
-    this.buffer = buffer;
-    doubleValues = new double[interpreter.size()];
-    interpreter.interpret(buffer, doubleValues);
-  }
-
-  public LiteByteBuffer buffer() {
-    return buffer;
+  public ObservationVersatile(byte[] byteValues, double[] doubleValues) {
+    this.byteValues = byteValues;
+    this.doubleValues = doubleValues;
   }
 
   public byte[] rawData() {
-    return buffer.array();
+    return byteValues;
   }
 
   public double[] doubleValues() {

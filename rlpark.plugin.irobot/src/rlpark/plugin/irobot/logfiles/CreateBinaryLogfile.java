@@ -5,6 +5,7 @@ import java.io.IOException;
 import rlpark.plugin.irobot.data.IRobotDrops;
 import rlpark.plugin.irobot.robots.IRobotEnvironment;
 import rlpark.plugin.irobot.robots.IRobotProblem;
+import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.disco.datagroup.DropScalarGroup;
 import rlpark.plugin.robot.disco.drops.Drop;
 import rlpark.plugin.robot.disco.io.DiscoLogfile;
@@ -30,7 +31,7 @@ public class CreateBinaryLogfile implements MonitorContainer, IRobotProblem {
     while (discoLogFile.hasNext()) {
       DiscoPacket packet = discoLogFile.next();
       if (sensorDrop.name().equals(packet.name))
-        return new ObservationVersatile(packet.byteBuffer(), sensorGroup);
+        return Robots.createObservation(packet.byteBuffer(), sensorGroup);
     }
     return null;
   }

@@ -3,14 +3,13 @@ package critterbot.examples;
 import java.awt.Color;
 import java.util.Arrays;
 
-import rltoys.environments.envio.observations.TStep;
-import critterbot.CritterbotAgent;
+import zephyr.plugin.core.api.synchronization.Clock;
 import critterbot.actions.XYThetaAction;
 import critterbot.colors.ColoredValue;
 import critterbot.environment.CritterbotEnvironment;
 import critterbot.environment.CritterbotRobot;
 
-public class HLightSeeker implements CritterbotAgent {
+public class HLightSeeker {
   static final double ActionMax = 20.0;
   static final int lightGoal = 2;
   static final double alpha = 0.7;
@@ -31,9 +30,8 @@ public class HLightSeeker implements CritterbotAgent {
     return lights[lightIndex(index)];
   }
 
-  @Override
-  public XYThetaAction getAtp1(TStep step) {
-    int[] lights = environment.getCritterbotObservation(step).light;
+  public XYThetaAction getAtp1(double[] obs) {
+    int[] lights = environment.getCritterbotObservation(obs).light;
     lightValue = light(lights, lightGoal);
     double rotation = Math.signum(light(lights, lightGoal - 1) - light(lights, lightGoal + 1));
     double x = -Math.signum(light(lights, lightGoal) - light(lights, lightGoal + 2));
@@ -46,6 +44,9 @@ public class HLightSeeker implements CritterbotAgent {
 
   public static void main(String[] args) {
     CritterbotEnvironment environment = new CritterbotRobot();
-    environment.run(new HLightSeeker(environment));
+    HLightSeeker agent = new HLightSeeker(environment);
+    Clock clock = new Clock();
+    while (clock.tick() && !environment.isClosed())
+      environment.sendAction(agent.getAtp1(environment.waitNewObs()));
   }
 }

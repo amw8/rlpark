@@ -2,6 +2,7 @@ package critterbot.environment;
 
 import java.io.IOException;
 
+import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.disco.datagroup.DropScalarGroup;
 import rlpark.plugin.robot.disco.drops.Drop;
 import rlpark.plugin.robot.disco.drops.DropArray;
@@ -45,7 +46,7 @@ public class CritterbotSound implements ObservationReceiver {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return packet != null ? new ObservationVersatile(packet.byteBuffer(), soundData) : null;
+    return packet != null ? Robots.createObservation(packet.byteBuffer(), soundData) : null;
   }
 
   @Override

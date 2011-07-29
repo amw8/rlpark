@@ -203,8 +203,7 @@ public class Utils {
 
   public static void save(Serializable serialized, File file) {
     try {
-      FileOutputStream fos = new FileOutputStream(file);
-      ObjectOutputStream out = new ObjectOutputStream(fos);
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
       out.writeObject(serialized);
       out.close();
     } catch (IOException e) {

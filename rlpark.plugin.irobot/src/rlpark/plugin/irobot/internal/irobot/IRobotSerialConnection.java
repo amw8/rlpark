@@ -8,6 +8,7 @@ import rlpark.plugin.irobot.data.IRobotObservationReceiver;
 import rlpark.plugin.irobot.internal.descriptors.IRobotSerialDescriptor;
 import rlpark.plugin.irobot.internal.serial.SerialPortToRobot;
 import rlpark.plugin.irobot.internal.statemachine.SerialLinkStateMachine;
+import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.disco.datagroup.DropScalarGroup;
 import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 import rlpark.plugin.robot.disco.drops.Drop;
@@ -129,7 +130,7 @@ public class IRobotSerialConnection implements IRobotObservationReceiver {
   @Override
   public synchronized ObservationVersatile waitForData() {
     waitForRawData();
-    return new ObservationVersatile(byteBuffer, sensors);
+    return Robots.createObservation(byteBuffer, sensors);
   }
 
   @Override

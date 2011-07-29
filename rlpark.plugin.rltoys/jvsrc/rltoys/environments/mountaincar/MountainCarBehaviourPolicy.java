@@ -6,13 +6,13 @@ import java.util.Random;
 
 import rltoys.algorithms.representations.acting.StochasticPolicy;
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.environments.envio.Agent;
+import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.actions.ActionArray;
-import rltoys.environments.envio.observations.TStep;
+import rltoys.environments.envio.observations.TRStep;
 import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
 
-public class MountainCarBehaviourPolicy extends StochasticPolicy implements Agent {
+public class MountainCarBehaviourPolicy extends StochasticPolicy implements RLAgent {
   private static final long serialVersionUID = -8033945251597842725L;
   private final Map<Action, Double> actionDistribution = new LinkedHashMap<Action, Double>();
   private final int velocityIndex;
@@ -26,7 +26,7 @@ public class MountainCarBehaviourPolicy extends StochasticPolicy implements Agen
   }
 
   @Override
-  public Action getAtp1(TStep step) {
+  public Action getAtp1(TRStep step) {
     actionDistribution.clear();
     a_tp1 = null;
     if (!step.isEpisodeEnding())

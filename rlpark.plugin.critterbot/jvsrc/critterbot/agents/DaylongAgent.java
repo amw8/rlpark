@@ -3,18 +3,20 @@ package critterbot.agents;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Random;
 
-import rltoys.environments.envio.observations.TStep;
+import rltoys.agents.RandomAgent;
+import rltoys.environments.envio.Agent;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
-import zephyr.plugin.core.api.monitoring.fileloggers.FileLogger;
-import critterbot.CritterbotAgent;
+import zephyr.plugin.core.api.monitoring.fileloggers.TimedFileLogger;
+import zephyr.plugin.core.api.synchronization.Clock;
 import critterbot.CritterbotObservation;
 import critterbot.actions.CritterbotAction;
+import critterbot.actions.XYThetaAction;
 import critterbot.environment.CritterbotEnvironment;
 import critterbot.environment.CritterbotRobot;
-import critterbot.examples.RandomAgent;
 
-public class DaylongAgent implements CritterbotAgent {
+public class DaylongAgent {
   public static interface DaylongSlaveAgent {
     void setInControl(boolean inControl);
   }
@@ -23,40 +25,40 @@ public class DaylongAgent implements CritterbotAgent {
   @Monitor(emptyLabel = true)
   private final CritterbotEnvironment environment;
   private final DockingAgent dockingAgent;
-  private CritterbotObservation obs;
+  private CritterbotObservation critterObs;
   private long timeVoltageAbove = -1;
   private long timeDocked = -1;
   @Monitor
-  private final CritterbotAgent agent;
-  private final FileLogger logFile;
+  private final Agent agent;
+  private final TimedFileLogger logFile;
   @Monitor
   private boolean daylongInControl;
 
-  public DaylongAgent(String filepath, CritterbotEnvironment environment, CritterbotAgent agent, double chargingVoltage)
+  public DaylongAgent(String filepath, CritterbotEnvironment environment, Agent agent, double chargingVoltage)
       throws IOException {
     this.environment = environment;
     this.chargingVoltage = chargingVoltage;
     dockingAgent = new DockingAgent(environment);
     this.agent = agent;
-    logFile = new FileLogger(filepath, true, false);
+    logFile = new TimedFileLogger(filepath, false);
     logFile.add(this);
     System.out.println("Critterbot will charge at " + chargingVoltage);
   }
 
   private void updateCharging() {
-    double voltageMax = Math.max(obs.bat[0], Math.max(obs.bat[1], obs.bat[2]));
+    double voltageMax = Math.max(critterObs.bat[0], Math.max(critterObs.bat[1], critterObs.bat[2]));
     if (timeVoltageAbove < 0 || voltageMax >= chargingVoltage || isDocked())
-      timeVoltageAbove = obs.time;
+      timeVoltageAbove = critterObs.time;
     if (!isDocked())
-      timeDocked = obs.time;
+      timeDocked = critterObs.time;
   }
 
   private boolean isDocked() {
-    return obs.busVoltage > 170;
+    return critterObs.busVoltage > 170;
   }
 
   private boolean needsCharging() {
-    return obs.time - timeVoltageAbove > 10000;
+    return critterObs.time - timeVoltageAbove > 10000;
   }
 
   private Color pickupColor() {
@@ -70,33 +72,44 @@ public class DaylongAgent implements CritterbotAgent {
   }
 
   public void setLeds(Color[] colors) {
-    if (obs == null)
+    if (critterObs == null)
       return;
     Arrays.fill(colors, pickupColor());
     colors[0] = Color.RED;
     colors[colors.length / 2] = Color.MAGENTA;
   }
 
-  @Override
-  public CritterbotAction getAtp1(TStep step) {
-    obs = environment.getCritterbotObservation(step);
+  public void run() {
+    Clock clock = new Clock("Daylong");
+    while (clock.tick() && !environment.isClosed())
+      environment.sendAction(getAtp1(environment.waitNewObs()));
+  }
+
+  public CritterbotAction getAtp1(double[] envObs) {
+    critterObs = environment.getCritterbotObservation(envObs);
     updateCharging();
     daylongInControl = needsCharging() || isDockedAndWait();
     if (agent instanceof DaylongSlaveAgent)
       ((DaylongSlaveAgent) agent).setInControl(!daylongInControl);
-    CritterbotAction action = daylongInControl ? dockingAgent.getAtp1(step) : agent.getAtp1(step);
-    logFile.update(step.time);
+    CritterbotAction action = getAction(envObs);
+    logFile.update();
     return action;
   }
 
+  public CritterbotAction getAction(double[] envObs) {
+    if (daylongInControl)
+      return dockingAgent.getAtp1(envObs);
+    return (CritterbotAction) agent.getAtp1(envObs);
+  }
+
   private boolean isDockedAndWait() {
-    return isDocked() && obs.time - timeDocked < 10000;
+    return isDocked() && critterObs.time - timeDocked < 10000;
   }
 
   public static void main(String[] args) throws IOException {
     CritterbotEnvironment environment = new CritterbotRobot();
-    RandomAgent funAgent = new RandomAgent(environment);
+    RandomAgent funAgent = new RandomAgent(new Random(0), XYThetaAction.sevenActions());
     DaylongAgent daylongAgent = new DaylongAgent("/tmp/daylong.crtrlog", environment, funAgent, 160);
-    environment.run(daylongAgent);
+    daylongAgent.run();
   }
 }

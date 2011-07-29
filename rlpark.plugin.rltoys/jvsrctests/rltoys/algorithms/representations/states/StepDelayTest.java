@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import rltoys.algorithms.representations.features.Identity;
 import rltoys.algorithms.representations.features.StepDelay;
-import rltoys.algorithms.representations.featuresnetwork.AgentState;
+import rltoys.algorithms.representations.featuresnetwork.AgentStateNetwork;
 
 
 public class StepDelayTest {
@@ -13,7 +13,7 @@ public class StepDelayTest {
   public void testStepDelay() {
     Identity identity = new Identity();
     StepDelay stepDelay = new StepDelay(identity);
-    AgentState agentState = new AgentState(stepDelay);
+    AgentStateNetwork agentState = new AgentStateNetwork(stepDelay);
     identity.setValue(4.0);
     agentState.update();
     identity.setValue(5.0);

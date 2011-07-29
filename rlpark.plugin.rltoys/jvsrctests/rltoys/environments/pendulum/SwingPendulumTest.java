@@ -7,13 +7,12 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.environments.envio.Agent;
+import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.TRStep;
-import rltoys.environments.envio.observations.TStep;
 
 public class SwingPendulumTest {
-  private TRStep runProblem(SwingPendulum problem, Agent agent) {
+  private TRStep runProblem(SwingPendulum problem, RLAgent agent) {
     TRStep step = problem.initialize();
     while (!step.isEpisodeEnding()) {
       step = problem.step(agent.getAtp1(step));
@@ -29,9 +28,9 @@ public class SwingPendulumTest {
   public void testZeroTorque() {
     SwingPendulum problem = new SwingPendulum(new Random(0));
     for (int i = 0; i < 10; i++) {
-      TRStep finalStep = runProblem(problem, new Agent() {
+      TRStep finalStep = runProblem(problem, new RLAgent() {
         @Override
-        public Action getAtp1(TStep step) {
+        public Action getAtp1(TRStep step) {
           return new ActionArray(0.0);
         }
       });
@@ -44,9 +43,9 @@ public class SwingPendulumTest {
   public void testMaximumTorque() {
     SwingPendulum problem = new SwingPendulum(new Random(0));
     for (int i = 0; i < 10; i++)
-      runProblem(problem, new Agent() {
+      runProblem(problem, new RLAgent() {
         @Override
-        public Action getAtp1(TStep step) {
+        public Action getAtp1(TRStep step) {
           return new ActionArray(Math.signum(step.o_tp1[1]) * SwingPendulum.uMax);
         }
       });

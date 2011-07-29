@@ -4,7 +4,6 @@
 package critterbot;
 
 import rltoys.environments.envio.Agent;
-import rltoys.environments.envio.observations.TStep;
 import critterbot.actions.CritterbotAction;
 
 /**
@@ -13,5 +12,5 @@ import critterbot.actions.CritterbotAction;
 @Deprecated
 public interface CritterbotAgent extends Agent {
   @Override
-  CritterbotAction getAtp1(TStep step);
+  CritterbotAction getAtp1(double[] obs);
 }

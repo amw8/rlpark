@@ -4,14 +4,14 @@ import rltoys.algorithms.learning.control.Control;
 import rltoys.algorithms.learning.control.OffPolicyControl;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.featuresnetwork.ObservationAgentState;
-import rltoys.environments.envio.Agent;
 import rltoys.environments.envio.OffPolicyLearner;
+import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.environments.envio.observations.TStep;
 import rltoys.math.vector.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-public class ContinuousAgent implements Agent, OffPolicyLearner {
+public class ContinuousAgent implements RLAgent, OffPolicyLearner {
   @Monitor
   private final Control control;
   @Monitor
@@ -23,8 +23,8 @@ public class ContinuousAgent implements Agent, OffPolicyLearner {
   }
 
   @Override
-  public Action getAtp1(TStep step) {
-    double r_tp1 = ((TRStep) step).r_tp1;
+  public Action getAtp1(TRStep step) {
+    double r_tp1 = step.r_tp1;
     PVector s_t = agentState.currentState() == null ? null : agentState.currentState().copy();
     agentState.update(step);
     PVector s_tp1 = agentState.currentState() == null ? null : agentState.currentState().copy();

@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import rlpark.plugin.robot.RobotEnvironment;
 import rlpark.plugin.robot.sync.ObservationReceiver;
+import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.Agent;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.ObsFilter;
@@ -11,7 +12,6 @@ import rltoys.environments.envio.observations.TStep;
 import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
 import zephyr.plugin.core.api.monitoring.abstracts.MonitorContainer;
 import zephyr.plugin.core.api.synchronization.Clock;
-import critterbot.CritterbotAgent;
 import critterbot.CritterbotObservation;
 import critterbot.CritterbotProblem;
 import critterbot.actions.CritterbotAction;
@@ -55,19 +55,14 @@ public class CritterbotEnvironment extends RobotEnvironment implements Critterbo
   @Deprecated
   @Override
   public void run(Clock clock, Agent agent) {
-    CritterbotAgent critterbotAgent = (CritterbotAgent) agent;
     double[] obsArray = waitNewObs();
-    TStep currentStep = new TStep(critterbotConnection.lastObservationDropTime(), (double[]) null, null, obsArray);
     while (!isClosed() && !clock.isTerminated()) {
       clock.tick();
-      CritterbotAction action = critterbotAgent.getAtp1(currentStep);
+      CritterbotAction action = (CritterbotAction) agent.getAtp1(obsArray);
       sendAction(action);
       if (action == null)
         break;
       obsArray = waitNewObs();
-      TStep lastStep = currentStep;
-      long time = critterbotConnection.lastObservationDropTime();
-      currentStep = new TStep(time, lastStep, action, obsArray);
     }
   }
 
@@ -87,8 +82,16 @@ public class CritterbotEnvironment extends RobotEnvironment implements Critterbo
     this.ledMode = ledMode;
   }
 
+  public CritterbotObservation getCritterbotObservation(double[] obs) {
+    return getCritterbotObservation(System.currentTimeMillis(), obs);
+  }
+
+  public CritterbotObservation getCritterbotObservation(long time, double[] obs) {
+    return new CritterbotObservation(legend(), time, obs);
+  }
+
   public CritterbotObservation getCritterbotObservation(TStep step) {
-    return new CritterbotObservation(legend(), step.time, step.o_tp1);
+    return getCritterbotObservation(step.time, step.o_tp1);
   }
 
   public ObsFilter getDefaultFilter() {
@@ -99,6 +102,11 @@ public class CritterbotEnvironment extends RobotEnvironment implements Critterbo
   public void addToMonitor(DataMonitor monitor) {
     CritterbotEnvironments.addObservationsLogged(this, monitor);
     CritterbotEnvironments.addActionsLogged(this, monitor);
+  }
+
+  @Override
+  public void sendAction(Action a) {
+    sendAction((CritterbotAction) a);
   }
 
   @Override

@@ -2,15 +2,15 @@ package critterbot.agents;
 
 import java.util.Random;
 
-import rltoys.environments.envio.observations.TStep;
-import critterbot.CritterbotAgent;
+import rltoys.environments.envio.Agent;
+import zephyr.plugin.core.api.synchronization.Clock;
 import critterbot.CritterbotObservation;
 import critterbot.actions.CritterbotAction;
 import critterbot.actions.XYThetaAction;
 import critterbot.environment.CritterbotEnvironment;
 import critterbot.environment.CritterbotRobot;
 
-public class DockingAgent implements CritterbotAgent {
+public class DockingAgent implements Agent {
   private static final int RIGHT_TIMEOUT = 1 * 100;
   private static final int ABANDON_TIMEOUT = 10 * 100;
   static private final double lambda = .01;
@@ -28,8 +28,8 @@ public class DockingAgent implements CritterbotAgent {
   }
 
   @Override
-  public CritterbotAction getAtp1(TStep step) {
-    CritterbotObservation obs = environment.getCritterbotObservation(step);
+  public CritterbotAction getAtp1(double[] envObs) {
+    CritterbotObservation obs = environment.getCritterbotObservation(envObs);
     // System.out.println(String.format("abandonMode: %b abandonTimeout: %d",
     // abandonMode, abandonTimeout));
     if (obs.busVoltage > 170)
@@ -126,6 +126,9 @@ public class DockingAgent implements CritterbotAgent {
 
   public static void main(String[] args) {
     final CritterbotEnvironment environment = new CritterbotRobot();
-    environment.run(new DockingAgent(environment));
+    Agent agent = new DockingAgent(environment);
+    Clock clock = new Clock("Docking");
+    while (clock.tick() && !environment.isClosed())
+      environment.sendAction((CritterbotAction) agent.getAtp1(environment.waitNewObs()));
   }
 }

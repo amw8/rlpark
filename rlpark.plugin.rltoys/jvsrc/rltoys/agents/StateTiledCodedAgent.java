@@ -4,13 +4,12 @@ import rltoys.algorithms.learning.control.Control;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.featuresnetwork.ObservationAgentState;
 import rltoys.algorithms.representations.tilescoding.TileCoders;
-import rltoys.environments.envio.Agent;
+import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.observations.TRStep;
-import rltoys.environments.envio.observations.TStep;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-public class StateTiledCodedAgent implements Agent {
+public class StateTiledCodedAgent implements RLAgent {
   @Monitor
   private final Control control;
   @Monitor
@@ -26,8 +25,8 @@ public class StateTiledCodedAgent implements Agent {
   }
 
   @Override
-  public Action getAtp1(TStep step) {
-    double r_tp1 = ((TRStep) step).r_tp1;
+  public Action getAtp1(TRStep step) {
+    double r_tp1 = step.r_tp1;
     agentState.update(step);
     RealVector phi_tp1 = tilesCoder.project(agentState.currentState().data);
     Action a_tp1 = control.step(phi_t, step.a_t, phi_tp1, r_tp1);

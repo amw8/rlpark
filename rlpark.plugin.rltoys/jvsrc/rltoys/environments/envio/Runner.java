@@ -19,12 +19,12 @@ public class Runner {
   public final Signal<RunnerEvent> onEpisodeEnd = new Signal<RunnerEvent>();
   public final Signal<RunnerEvent> onTimeStep = new Signal<RunnerEvent>();
   protected final RunnerEvent runnerEvent = new RunnerEvent();
-  private final Agent agent;
+  private final RLAgent agent;
   private final RLProblem environment;
   private final int maxEpisodeTimeSteps;
   private final int nbEpisode;
 
-  public Runner(RLProblem environment, Agent agent, int nbEpisode, int maxEpisodeTimeSteps) {
+  public Runner(RLProblem environment, RLAgent agent, int nbEpisode, int maxEpisodeTimeSteps) {
     this.environment = environment;
     this.agent = agent;
     this.nbEpisode = nbEpisode;

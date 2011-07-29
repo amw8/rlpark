@@ -6,14 +6,14 @@ import rltoys.algorithms.learning.control.Control;
 import rltoys.algorithms.learning.control.OffPolicyControl;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.tilescoding.TileCoders;
-import rltoys.environments.envio.Agent;
 import rltoys.environments.envio.OffPolicyLearner;
+import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.environments.envio.observations.TStep;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-public class TileCodingAgent implements Agent, OffPolicyLearner, Serializable {
+public class TileCodingAgent implements RLAgent, OffPolicyLearner, Serializable {
   private static final long serialVersionUID = 7140738339093983232L;
   @Monitor
   private final Control control;
@@ -25,8 +25,8 @@ public class TileCodingAgent implements Agent, OffPolicyLearner, Serializable {
   }
 
   @Override
-  public Action getAtp1(TStep step) {
-    double r_tp1 = ((TRStep) step).r_tp1;
+  public Action getAtp1(TRStep step) {
+    double r_tp1 = step.r_tp1;
     tileCoders.project(step.o_t);
     RealVector s_t = tileCoders.getCurrentState();
     tileCoders.project(step.o_tp1);

@@ -1,11 +1,11 @@
 package rlpark.plugin.irobot.examples;
 
 import rlpark.plugin.irobot.data.CreateAction;
-import rlpark.plugin.irobot.robots.CreateAgent;
 import rlpark.plugin.irobot.robots.CreateRobot;
-import rltoys.environments.envio.observations.TStep;
+import rltoys.environments.envio.Agent;
+import zephyr.plugin.core.api.synchronization.Clock;
 
-public class ConstantAgent implements CreateAgent {
+public class ConstantAgent implements Agent {
   private final CreateAction action;
 
   public ConstantAgent() {
@@ -17,7 +17,7 @@ public class ConstantAgent implements CreateAgent {
   }
 
   @Override
-  public CreateAction getAtp1(TStep step) {
+  public CreateAction getAtp1(double[] obs) {
     if (action != null)
       return action;
     return new CreateAction(20, 20);
@@ -30,6 +30,9 @@ public class ConstantAgent implements CreateAgent {
 
   public static void main(String[] args) {
     CreateRobot environment = new CreateRobot();
-    environment.run(new ConstantAgent());
+    ConstantAgent agent = new ConstantAgent();
+    Clock clock = new Clock();
+    while (clock.tick() && environment.isClosed())
+      environment.sendAction(agent.getAtp1(environment.waitNewObs()));
   }
 }

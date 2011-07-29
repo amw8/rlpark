@@ -9,7 +9,7 @@ import org.junit.Test;
 import rltoys.algorithms.representations.features.Feature;
 import rltoys.algorithms.representations.features.LinearCombination;
 import rltoys.algorithms.representations.features.UniformRandom;
-import rltoys.algorithms.representations.featuresnetwork.AgentState;
+import rltoys.algorithms.representations.featuresnetwork.AgentStateNetwork;
 import rltoys.math.History;
 import rltoys.math.representations.Function;
 import rltoys.math.vector.PVector;
@@ -40,7 +40,7 @@ public class AdalineTest {
 
   public static void learnTarget(LinearCombination target, List<Function> state,
       Adaline learner) {
-    AgentState agentState = new AgentState(state);
+    AgentStateNetwork agentState = new AgentStateNetwork(state);
     agentState.add(target);
     int nbUpdate = 0;
     double threshold = 1e-3;

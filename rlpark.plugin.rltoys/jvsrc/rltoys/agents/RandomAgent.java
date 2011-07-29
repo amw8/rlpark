@@ -5,7 +5,6 @@ import java.util.Random;
 import rltoys.algorithms.representations.acting.RandomPolicy;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.Agent;
-import rltoys.environments.envio.observations.TStep;
 
 public class RandomAgent implements Agent {
   private final RandomPolicy policy;
@@ -15,7 +14,7 @@ public class RandomAgent implements Agent {
   }
 
   @Override
-  public Action getAtp1(TStep step) {
+  public Action getAtp1(double[] obs) {
     return policy.decide(null);
   }
 
