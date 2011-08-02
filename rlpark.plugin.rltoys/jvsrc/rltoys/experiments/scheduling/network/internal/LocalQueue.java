@@ -1,35 +1,26 @@
 package rltoys.experiments.scheduling.network.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.signals.Signal;
 
 
 public class LocalQueue implements JobQueue {
+  private final Map<Runnable, Listener<JobDoneEvent>> listeners = new HashMap<Runnable, Listener<JobDoneEvent>>();
   private final Queue<Runnable> waiting = new LinkedList<Runnable>();
   private final Queue<Runnable> pending = new LinkedList<Runnable>();
   private final List<Runnable> done = new ArrayList<Runnable>();
   private final Set<Runnable> pendingLocally = new HashSet<Runnable>();
   private final Signal<JobDoneEvent> onJobDone = new Signal<JobDoneEvent>();
   private int nbJobs = 0;
-
-  public LocalQueue() {
-    this(new ArrayList<Runnable>());
-  }
-
-  public LocalQueue(List<? extends Runnable> jobs) {
-    addJobs(jobs);
-  }
-
-  synchronized public void addJobs(List<? extends Runnable> jobs) {
-    waiting.addAll(jobs);
-    nbJobs += jobs.size();
-  }
 
   @Override
   synchronized public Runnable request(boolean isLocal) {
@@ -60,15 +51,25 @@ public class LocalQueue implements JobQueue {
       return;
     this.done.add(done);
     pendingLocally.remove(todo);
-    onJobDone.fire(new JobDoneEvent(todo, done));
+    onJobDone(todo, done);
     notifyAll();
+  }
+
+  private void onJobDone(Runnable todo, Runnable done) {
+    JobDoneEvent event = new JobDoneEvent(todo, done);
+    Listener<JobDoneEvent> listener = listeners.get(todo);
+    if (listener != null)
+      listener.listen(event);
+    listeners.remove(todo);
+    onJobDone.fire(event);
   }
 
   synchronized public boolean areAllDone() {
     return waiting.isEmpty() && pending.isEmpty();
   }
 
-  synchronized public void add(Runnable job) {
+  synchronized public void add(Runnable job, Listener<JobDoneEvent> listener) {
+    listeners.put(job, listener);
     waiting.add(job);
     nbJobs += 1;
   }

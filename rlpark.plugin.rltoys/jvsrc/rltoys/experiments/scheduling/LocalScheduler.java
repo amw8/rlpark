@@ -7,7 +7,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import rltoys.experiments.scheduling.network.internal.JobQueue;
+import rltoys.experiments.scheduling.network.internal.JobQueue.JobDoneEvent;
 import rltoys.experiments.scheduling.network.internal.LocalQueue;
+import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class LocalScheduler implements Scheduler {
@@ -51,10 +53,6 @@ public class LocalScheduler implements Scheduler {
 
   public static int getDefaultNbThreads() {
     return Runtime.getRuntime().availableProcessors();
-  }
-
-  public LocalScheduler(int nbThread, List<? extends Runnable> jobs) {
-    this(nbThread, new LocalQueue(jobs));
   }
 
   public LocalScheduler(int nbThread, JobQueue runnables) {
@@ -113,7 +111,7 @@ public class LocalScheduler implements Scheduler {
   }
 
   @Override
-  public void add(Runnable job) {
-    ((LocalQueue) runnables).add(job);
+  public void add(Runnable job, Listener<JobDoneEvent> listener) {
+    ((LocalQueue) runnables).add(job, listener);
   }
 }

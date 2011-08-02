@@ -11,8 +11,10 @@ import java.util.Set;
 import rltoys.experiments.scheduling.LocalScheduler;
 import rltoys.experiments.scheduling.Scheduler;
 import rltoys.experiments.scheduling.network.internal.JobQueue;
+import rltoys.experiments.scheduling.network.internal.JobQueue.JobDoneEvent;
 import rltoys.experiments.scheduling.network.internal.LocalQueue;
 import rltoys.experiments.scheduling.network.internal.Messages;
+import zephyr.plugin.core.api.signals.Listener;
 
 public class ServerScheduler implements Scheduler {
   static final public int DefaultPort = 5000;
@@ -79,10 +81,10 @@ public class ServerScheduler implements Scheduler {
   }
 
   @Override
-  public void add(Runnable runnable) {
+  public void add(Runnable runnable, Listener<JobDoneEvent> listener) {
     if (!(runnable instanceof Serializable))
       throw new RuntimeException("Job needs to be serializable");
-    localQueue.add(runnable);
+    localQueue.add(runnable, listener);
   }
 
   public void removeClient(SocketClient socketClient) {

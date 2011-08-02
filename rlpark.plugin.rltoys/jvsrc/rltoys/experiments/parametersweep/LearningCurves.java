@@ -75,7 +75,7 @@ public class LearningCurves {
       counter.nextExperiment();
       for (Map.Entry<Context, List<Parameters>> entry : descriptions.entrySet())
         for (Parameters parameters : entry.getValue())
-          scheduler.add(entry.getKey().createLearningCurveJob(parameters, counter));
+          scheduler.add(entry.getKey().createLearningCurveJob(parameters, counter), null);
       scheduler.runAll();
     }
   }
