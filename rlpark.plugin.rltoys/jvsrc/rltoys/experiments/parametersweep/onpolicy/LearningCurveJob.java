@@ -52,7 +52,7 @@ public class LearningCurveJob implements Runnable, Serializable {
 
   @Override
   public void run() {
-    Runner runner = context.createRunner(counter, parameters);
+    Runner runner = context.createRunner(counter.currentIndex(), parameters);
     String fileName = counter.folderFilename(context.folderPath(), context.fileName());
     System.out.println(fileName);
     LoggerRow loggerRow = null;

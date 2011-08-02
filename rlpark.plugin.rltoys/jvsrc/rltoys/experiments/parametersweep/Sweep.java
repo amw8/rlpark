@@ -14,12 +14,11 @@ import rltoys.experiments.parametersweep.interfaces.ParametersProvider;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.scheduling.JobPool;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
-import rltoys.experiments.scheduling.schedulers.Schedulers;
 import zephyr.plugin.core.api.signals.Listener;
-import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class Sweep {
   static private boolean verbose = true;
@@ -27,7 +26,7 @@ public class Sweep {
   private final ContextProvider contextProvider;
   private final ExperimentCounter counter;
   private final Scheduler scheduler;
-  private int nbJobs;
+  int nbJobs;
 
 
   public Sweep(ParameterSweepProvider provider, ExperimentCounter counter) {
@@ -46,7 +45,7 @@ public class Sweep {
     this.scheduler = scheduler;
   }
 
-  private Set<FrozenParameters> createAndRunRequiredJobs(Context context, ParametersLogFile logFile) {
+  private void createAndSubmitRequiredJobs(Context context, ParametersLogFile logFile) {
     println(logFile.filepath);
     List<Parameters> allParameters = parametersProvider.provideParameters(context);
     Set<FrozenParameters> doneParameters = logFile.extractParameters(allParameters.get(0).labels());
@@ -57,31 +56,42 @@ public class Sweep {
     }
     print(String.format("Running %d/%d jobs for run %d...", todoJobList.size(),
                         allParameters.size(), counter.currentIndex()));
-    Listener<JobDoneEvent> listener = createJobListener(logFile, doneParameters, todoJobList);
-    runRequiredJob(listener, todoJobList);
-    return doneParameters;
+    submitRequiredJob(logFile, doneParameters, todoJobList);
   }
 
-  private void runRequiredJob(Listener<JobDoneEvent> listener, List<Runnable> todoJobList) {
-    scheduler.queue().onJobDone().connect(listener);
-    Schedulers.addAll(scheduler, todoJobList);
-    Chrono chrono = new Chrono();
-    nbJobs += scheduler.queue().nbJobs();
-    scheduler.runAll();
-    scheduler.queue().onJobDone().disconnect(listener);
-    println(chrono.toString());
+  private void submitRequiredJob(ParametersLogFile logFile, Set<FrozenParameters> doneParameters,
+      List<Runnable> todoJobList) {
+    Listener<JobDoneEvent> jobListener = createJobListener(logFile, doneParameters);
+    Listener<JobPool> poolListener = createPoolListener(logFile, doneParameters);
+    JobPool pool = new JobPool(poolListener);
+    for (Runnable job : todoJobList)
+      pool.add(job, jobListener);
+    pool.submitTo(scheduler);
+  }
+
+  private Listener<JobPool> createPoolListener(final ParametersLogFile logFile,
+      final Set<FrozenParameters> doneParameters) {
+    return new Listener<JobPool>() {
+      @Override
+      public void listen(JobPool eventInfo) {
+        try {
+          logFile.writeParameters(doneParameters);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    };
   }
 
   private Listener<JobDoneEvent> createJobListener(final ParametersLogFile logFile,
-      final Set<FrozenParameters> doneParametersSet, final List<Runnable> todoJobList) {
+      final Set<FrozenParameters> doneParametersSet) {
     return new Listener<JobDoneEvent>() {
       @Override
       public void listen(JobDoneEvent eventInfo) {
-        if (!todoJobList.contains(eventInfo.todo))
-          return;
         Parameters doneParameters = ((JobWithParameters) eventInfo.done).parameters();
         doneParametersSet.add(doneParameters.froze());
         logFile.appendParameters(doneParameters);
+        nbJobs++;
       }
     };
   }
@@ -99,20 +109,20 @@ public class Sweep {
     System.out.println(message);
   }
 
-  public void runSweep() throws IOException {
+  public void runSweep() {
     while (counter.hasNext()) {
       counter.nextExperiment();
-      runOneSweep();
+      submitOneSweep();
     }
+    scheduler.runAll();
   }
 
-  private void runOneSweep() throws IOException {
+  private void submitOneSweep() {
     List<Context> contexts = contextProvider.provideContexts();
     for (Context context : contexts) {
       String filename = counter.folderFilename(context.folderPath(), context.fileName());
       ParametersLogFile logFile = new ParametersLogFile(filename);
-      Set<FrozenParameters> resultingParameters = createAndRunRequiredJobs(context, logFile);
-      logFile.writeParameters(resultingParameters);
+      createAndSubmitRequiredJobs(context, logFile);
     }
   }
 

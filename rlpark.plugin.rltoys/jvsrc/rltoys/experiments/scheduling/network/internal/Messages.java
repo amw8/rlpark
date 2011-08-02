@@ -1,6 +1,8 @@
 package rltoys.experiments.scheduling.network.internal;
 
+import java.io.EOFException;
 import java.io.IOException;
+import java.net.SocketException;
 
 public class Messages {
   static private boolean verbose = true;
@@ -55,7 +57,14 @@ public class Messages {
   }
 
   static public void displayError(Throwable throwable) {
-    if (verbose)
+    Class<?>[] classIgnored = new Class<?>[] { EOFException.class, SocketException.class };
+    boolean ignored = false;
+    for (Class<?> classType : classIgnored)
+      if (classType.isInstance(throwable)) {
+        ignored = true;
+        break;
+      }
+    if (verbose || !ignored)
       throwable.printStackTrace();
   }
 

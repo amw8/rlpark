@@ -17,9 +17,9 @@ public class ContextOnPolicyEvaluation implements Context {
     this.agentFactory = agentFactory;
   }
 
-  public Runner createRunner(ExperimentCounter counter, Parameters parameters) {
-    RLProblem problem = environmentFactory.createEnvironment(counter.newRandom());
-    RLAgent agent = agentFactory.createAgent(problem, parameters, counter.newRandom());
+  public Runner createRunner(int counter, Parameters parameters) {
+    RLProblem problem = environmentFactory.createEnvironment(ExperimentCounter.newRandom(counter));
+    RLAgent agent = agentFactory.createAgent(problem, parameters, ExperimentCounter.newRandom(counter));
     int nbEpisode = parameters.nbEpisode();
     int maxEpisodeTimeSteps = parameters.maxEpisodeTimeSteps();
     return new Runner(problem, agent, nbEpisode, maxEpisodeTimeSteps);

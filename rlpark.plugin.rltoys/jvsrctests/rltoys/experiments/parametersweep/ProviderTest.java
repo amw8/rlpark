@@ -20,17 +20,17 @@ public class ProviderTest implements ParameterSweepProvider, Context {
   static public class SweepJob implements JobWithParameters {
     private static final long serialVersionUID = 4238136913870025414L;
     private final Parameters parameters;
-    private final ExperimentCounter counter;
+    private final int counter;
 
     SweepJob(Parameters parameters, ExperimentCounter counter) {
       this.parameters = parameters;
-      this.counter = counter;
+      this.counter = counter.currentIndex();
     }
 
     @Override
     public void run() {
       parameters.putResult(SweepDone, 1);
-      parameters.putResult("counter", counter.currentIndex());
+      parameters.putResult("counter", counter);
     }
 
     @Override

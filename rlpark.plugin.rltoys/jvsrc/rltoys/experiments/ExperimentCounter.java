@@ -1,15 +1,12 @@
 package rltoys.experiments;
 
 import java.io.File;
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ExperimentCounter implements Serializable {
-  private static final long serialVersionUID = 1190927316181825300L;
-
+public class ExperimentCounter {
   public final File folder;
   private static final String LOGEXTENSION = "logtxt";
   public static final String DefaultFileName = "data";
@@ -79,10 +76,14 @@ public class ExperimentCounter implements Serializable {
   }
 
   public Random newRandom() {
-    return new Random(counter);
+    return newRandom(counter);
   }
 
   public int currentIndex() {
     return counter;
+  }
+
+  public static Random newRandom(int counter) {
+    return new Random(counter);
   }
 }

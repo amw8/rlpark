@@ -14,12 +14,12 @@ public class SweepJob implements JobWithParameters {
   private final ContextOnPolicyEvaluation context;
   private long computationTime;
   double reward;
-  private final ExperimentCounter counter;
+  private final int counter;
 
   public SweepJob(ContextOnPolicyEvaluation context, Parameters parameters, ExperimentCounter counter) {
     this.context = context;
     this.parameters = parameters;
-    this.counter = counter;
+    this.counter = counter.currentIndex();
   }
 
   private Listener<RunnerEvent> createRewardListener() {

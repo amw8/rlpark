@@ -1,10 +1,14 @@
 package rltoys.environments.envio;
 
+import java.io.Serializable;
+
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.observations.TRStep;
 import zephyr.plugin.core.api.signals.Signal;
 
-public class Runner {
+public class Runner implements Serializable {
+  private static final long serialVersionUID = 465593140388569561L;
+
   static public class RunnerEvent {
     public int nbTotalTimeSteps = 0;
     public int episode = 0;

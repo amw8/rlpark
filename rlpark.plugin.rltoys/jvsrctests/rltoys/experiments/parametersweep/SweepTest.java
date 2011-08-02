@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import rltoys.experiments.ExperimentCounter;
@@ -29,6 +30,7 @@ public class SweepTest {
     Sweep.disableVerbose();
   }
 
+  @Ignore
   @Test
   public void testSweepLocalScheduler() throws IOException {
     LocalScheduler scheduler = new LocalScheduler();
@@ -71,7 +73,7 @@ public class SweepTest {
     return true;
   }
 
-  private int runFullSweep(Scheduler scheduler, int nbParameters) throws IOException {
+  private int runFullSweep(Scheduler scheduler, int nbParameters) {
     ProviderTest provider = new ProviderTest(nbParameters);
     ExperimentCounter counter = new ExperimentCounter(NbRun, JUnitFolder);
     Sweep sweep = new Sweep(scheduler, provider, counter);
