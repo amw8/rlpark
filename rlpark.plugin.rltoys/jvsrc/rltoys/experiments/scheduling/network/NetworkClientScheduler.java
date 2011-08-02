@@ -3,9 +3,9 @@ package rltoys.experiments.scheduling.network;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import rltoys.experiments.scheduling.LocalScheduler;
-import rltoys.experiments.scheduling.network.internal.JobQueue;
+import rltoys.experiments.scheduling.interfaces.JobQueue;
 import rltoys.experiments.scheduling.network.internal.NetworkJobQueue;
+import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import zephyr.plugin.core.api.signals.Listener;
 
 public class NetworkClientScheduler {

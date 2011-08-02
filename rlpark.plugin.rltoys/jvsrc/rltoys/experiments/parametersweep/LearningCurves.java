@@ -15,8 +15,8 @@ import rltoys.experiments.parametersweep.interfaces.ParametersProvider;
 import rltoys.experiments.parametersweep.onpolicy.ContextOnPolicyEvaluation;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
-import rltoys.experiments.scheduling.LocalScheduler;
-import rltoys.experiments.scheduling.Scheduler;
+import rltoys.experiments.scheduling.interfaces.Scheduler;
+import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 
 public class LearningCurves {
   private final ParametersProvider parametersProvider;

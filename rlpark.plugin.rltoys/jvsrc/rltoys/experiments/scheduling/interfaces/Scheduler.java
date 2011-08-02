@@ -1,9 +1,8 @@
-package rltoys.experiments.scheduling;
+package rltoys.experiments.scheduling.interfaces;
 
 import java.util.List;
 
-import rltoys.experiments.scheduling.network.internal.JobQueue;
-import rltoys.experiments.scheduling.network.internal.JobQueue.JobDoneEvent;
+
 import zephyr.plugin.core.api.signals.Listener;
 
 public interface Scheduler {

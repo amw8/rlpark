@@ -7,11 +7,11 @@ import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import rltoys.experiments.scheduling.LocalScheduler;
 import rltoys.experiments.scheduling.network.NetworkClientScheduler;
 import rltoys.experiments.scheduling.network.ServerScheduler;
 import rltoys.experiments.scheduling.network.internal.Messages;
 import rltoys.experiments.scheduling.network.internal.NetworkClassLoader;
+import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 
 public class SchedulerTest {
   private static final String Localhost = "localhost";

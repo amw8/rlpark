@@ -12,10 +12,10 @@ import org.junit.Test;
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
-import rltoys.experiments.scheduling.LocalScheduler;
-import rltoys.experiments.scheduling.Scheduler;
+import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.network.NetworkClientScheduler;
 import rltoys.experiments.scheduling.network.ServerScheduler;
+import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import rltoys.experiments.scheduling.tests.SchedulerTest;
 
 public class SweepTest {

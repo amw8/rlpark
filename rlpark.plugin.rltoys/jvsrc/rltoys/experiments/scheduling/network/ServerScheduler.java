@@ -8,12 +8,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import rltoys.experiments.scheduling.LocalScheduler;
-import rltoys.experiments.scheduling.Scheduler;
-import rltoys.experiments.scheduling.network.internal.JobQueue;
-import rltoys.experiments.scheduling.network.internal.JobQueue.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.JobQueue;
+import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.network.internal.LocalQueue;
 import rltoys.experiments.scheduling.network.internal.Messages;
+import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import zephyr.plugin.core.api.signals.Listener;
 
 public class ServerScheduler implements Scheduler {

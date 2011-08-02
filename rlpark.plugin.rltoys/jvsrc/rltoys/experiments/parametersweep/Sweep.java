@@ -14,10 +14,10 @@ import rltoys.experiments.parametersweep.interfaces.ParametersProvider;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
-import rltoys.experiments.scheduling.LocalScheduler;
-import rltoys.experiments.scheduling.Scheduler;
-import rltoys.experiments.scheduling.Schedulers;
-import rltoys.experiments.scheduling.network.internal.JobQueue.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.Scheduler;
+import rltoys.experiments.scheduling.schedulers.LocalScheduler;
+import rltoys.experiments.scheduling.schedulers.Schedulers;
 import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
 

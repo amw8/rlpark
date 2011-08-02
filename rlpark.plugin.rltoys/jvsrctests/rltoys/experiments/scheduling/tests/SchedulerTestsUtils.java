@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
-import rltoys.experiments.scheduling.Scheduler;
+import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.network.ServerScheduler;
-import rltoys.experiments.scheduling.network.internal.JobQueue.JobDoneEvent;
 import rltoys.experiments.scheduling.network.internal.NetworkClassLoader;
 import zephyr.plugin.core.api.signals.Listener;
 
@@ -27,14 +27,14 @@ public class SchedulerTestsUtils {
     }
   }
 
-  static private List<Job> createJobs(int nbJobs) {
+  static List<Job> createJobs(int nbJobs) {
     List<Job> jobs = new ArrayList<Job>();
     for (int i = 0; i < nbJobs; i++)
       jobs.add(new Job());
     return jobs;
   }
 
-  static private void assertAreDone(List<? extends Runnable> jobs, boolean isDone) {
+  static void assertAreDone(List<? extends Runnable> jobs, boolean isDone) {
     for (Runnable job : jobs)
       Assert.assertEquals(isDone, ((Job) job).done);
   }
@@ -59,10 +59,10 @@ public class SchedulerTestsUtils {
     }
   }
 
-  private static Listener<JobDoneEvent> createListener(final int[] nbJobDone) {
-    return new Listener<JobDoneEvent>() {
+  static <T> Listener<T> createListener(final int[] nbJobDone) {
+    return new Listener<T>() {
       @Override
-      public void listen(JobDoneEvent eventInfo) {
+      public void listen(T eventInfo) {
         nbJobDone[0]++;
       }
     };

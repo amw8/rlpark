@@ -1,4 +1,4 @@
-package rltoys.experiments.scheduling;
+package rltoys.experiments.scheduling.schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import rltoys.experiments.scheduling.network.internal.JobQueue;
-import rltoys.experiments.scheduling.network.internal.JobQueue.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.JobQueue;
+import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.network.internal.LocalQueue;
 import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
