@@ -7,21 +7,21 @@
             allowMultiple="true"
             class="rlpark.plugin.rltoysview.internal.vectors.RealVectorView"
             icon="icons/vectorview.gif"
-            id="rlpark.plugin.rltoysview.vectorview"
+            id="zephyr.rlpark.plugin.rltoysview.vectorview"
             name="Vector"
             restorable="true">
       </view>
       <view
             allowMultiple="true"
             class="rlpark.plugin.rltoysview.views.nostate.NoStateView"
-            id="rlpark.plugin.rltoysview.notstateview"
+            id="zephyr.rlpark.plugin.rltoysview.notstateview"
             name="NoState"
             restorable="true">
       </view>
       <view
             allowMultiple="true"
             class="rlpark.plugin.rltoysview.views.pendulum.SwingPendulumView"
-            id="rlpark.plugin.rltoysview.swingpendulumview"
+            id="zephyr.rlpark.plugin.rltoysview.swingpendulumview"
             name="Swing Pendulum"
             restorable="true">
       </view>
@@ -29,7 +29,7 @@
             allowMultiple="true"
             class="rlpark.plugin.rltoysview.internal.policystructure.NormalDistributionView"
             icon="icons/policiesview.png"
-            id="rlpark.plugin.rltoysview.policyview"
+            id="zephyr.rlpark.plugin.rltoysview.policyview"
             name="Policy"
             restorable="true">
       </view>
@@ -39,26 +39,26 @@
       <client
             class="rlpark.plugin.rltoysview.views.nostate.NoStateView$Provider"
             name="NoState View"
-            viewid="rlpark.plugin.rltoysview.notstateview">
+            viewid="zephyr.rlpark.plugin.rltoysview.notstateview">
       </client>
       <client
             class="rlpark.plugin.rltoysview.views.pendulum.SwingPendulumView$Provider"
             name="Swing Pendulum"
-            viewid="rlpark.plugin.rltoysview.swingpendulumview">
+            viewid="zephyr.rlpark.plugin.rltoysview.swingpendulumview">
       </client>
       <client
             class="rlpark.plugin.rltoysview.internal.policystructure.NormalDistributionView$Provider"
             icon="icons/policiesview.png"
             name="Policy View"
             popup="false"
-            viewid="rlpark.plugin.rltoysview.policyview">
+            viewid="zephyr.rlpark.plugin.rltoysview.policyview">
       </client>
       <client
             class="rlpark.plugin.rltoysview.internal.vectors.RealVectorView$Provider"
             icon="icons/vectorview.gif"
             name="Vector View"
             popup="false"
-            viewid="rlpark.plugin.rltoysview.vectorview">
+            viewid="zephyr.rlpark.plugin.rltoysview.vectorview">
       </client>
    </extension>
    <extension
@@ -75,21 +75,23 @@
          <command
                commandId="zephyr.plugin.core.views.showView"
                icon="icons/vectorview.gif"
+               id="zephyr.plugin.core.views.showvectorview"
                label="New Vector View"
                style="push">
             <parameter
                   name="org.eclipse.ui.views.showView.viewId"
-                  value="rlpark.plugin.rltoysview.vectorview">
+                  value="zephyr.rlpark.plugin.rltoysview.vectorview">
             </parameter>
          </command>
          <command
                commandId="zephyr.plugin.core.views.showView"
                icon="icons/policiesview.png"
+               id="zephyr.plugin.core.views.showpolicyview"
                label="New Policy View"
                style="push">
             <parameter
                   name="org.eclipse.ui.views.showView.viewId"
-                  value="rlpark.plugin.rltoysview.policyview">
+                  value="zephyr.rlpark.plugin.rltoysview.policyview">
             </parameter>
          </command>
       </menuContribution>
