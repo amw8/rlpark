@@ -40,8 +40,7 @@ public class SweepTest {
 
   @Test(timeout = SchedulerTest.Timeout)
   public void testSweepNetworkScheduler() throws IOException {
-    ServerScheduler scheduler = new ServerScheduler(Port);
-    scheduler.stopLocalScheduler();
+    ServerScheduler scheduler = new ServerScheduler(Port, 0);
     new NetworkClientScheduler(2, "localhost", Port).start();
     testSweep(scheduler);
     scheduler.dispose();

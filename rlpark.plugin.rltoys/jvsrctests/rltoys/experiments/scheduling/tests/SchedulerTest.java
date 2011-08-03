@@ -34,15 +34,14 @@ public class SchedulerTest {
 
   @Test(timeout = Timeout)
   public void testServerScheduler() throws IOException {
-    ServerScheduler scheduler = new ServerScheduler(Port);
+    ServerScheduler scheduler = new ServerScheduler(Port, 10);
     testScheduler(scheduler);
     scheduler.dispose();
   }
 
   @Test(timeout = Timeout)
   public void testServerSchedulerWithUniqueClient() throws IOException {
-    ServerScheduler scheduler = new ServerScheduler(Port);
-    scheduler.stopLocalScheduler();
+    ServerScheduler scheduler = new ServerScheduler(Port, 0);
     NetworkClientScheduler client01 = new NetworkClientScheduler(1, Localhost, Port);
     client01.start();
     testScheduler(scheduler);
@@ -52,8 +51,7 @@ public class SchedulerTest {
 
   @Test(timeout = Timeout)
   public void testServerSchedulerWithUniqueClientMultipleThreads() throws IOException {
-    ServerScheduler scheduler = new ServerScheduler(Port);
-    scheduler.stopLocalScheduler();
+    ServerScheduler scheduler = new ServerScheduler(Port, 0);
     NetworkClientScheduler client01 = new NetworkClientScheduler(2, Localhost, Port);
     client01.start();
     testScheduler(scheduler);
@@ -63,8 +61,7 @@ public class SchedulerTest {
 
   @Test(timeout = Timeout)
   public void testServerSchedulerWithMultipleClients() throws IOException {
-    ServerScheduler scheduler = new ServerScheduler(Port);
-    scheduler.stopLocalScheduler();
+    ServerScheduler scheduler = new ServerScheduler(Port, 0);
     NetworkClientScheduler client01 = new NetworkClientScheduler(10, Localhost, Port);
     NetworkClientScheduler client02 = new NetworkClientScheduler(10, Localhost, Port);
     client01.start();

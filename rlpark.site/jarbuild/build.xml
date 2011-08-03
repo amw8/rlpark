@@ -43,7 +43,7 @@
 		    <zipfileset includes="**/*.class" src="${basedir.rlpark}/rlpark.plugin.irobot/rxtx/RXTXcomm.jar"/>
 		    <zipfileset includes="**/*.class" src="${basedir.rlpark}/rlpark.plugin.critterbot/libs/CritterbotSimulator.jar"/>
 			<zipfileset includes="**/*.class" src="libs/junit-4.8.2.jar"/>
-
+	
 		    <manifest>
 		      <attribute name="Implementation-Vendor" value="Thomas"/>
 		      <attribute name="Implementation-Title" value="RLPark"/>

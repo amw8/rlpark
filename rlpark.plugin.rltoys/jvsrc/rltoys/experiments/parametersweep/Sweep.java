@@ -114,6 +114,7 @@ public class Sweep {
       counter.nextExperiment();
       submitOneSweep();
     }
+    System.out.println(scheduler.queue().nbJobs() + " to run in total.");
     scheduler.runAll();
   }
 

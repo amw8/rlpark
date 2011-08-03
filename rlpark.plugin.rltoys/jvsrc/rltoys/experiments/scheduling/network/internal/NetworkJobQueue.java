@@ -8,7 +8,6 @@ import java.util.Map;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobQueue;
-
 import zephyr.plugin.core.api.signals.Signal;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
@@ -21,6 +20,7 @@ public class NetworkJobQueue implements JobQueue {
   private final Chrono chrono = new Chrono();
   private final Signal<JobDoneEvent> onJobDone = new Signal<JobDoneEvent>();
   private int nbJobsSinceLastMessage = 0;
+  private boolean denyNewJobRequest = false;
 
   public NetworkJobQueue(String serverHostName, int port) throws UnknownHostException, IOException {
     syncSocket = new SyncSocket(new Socket(serverHostName, port));
@@ -29,6 +29,8 @@ public class NetworkJobQueue implements JobQueue {
 
   @Override
   synchronized public Runnable request(boolean isLocal) {
+    if (denyNewJobRequest)
+      return null;
     Runnable job = null;
     MessageJob messageJobTodo = syncSocket.jobTransaction(classLoader, jobToId.isEmpty());
     if (messageJobTodo == null)
@@ -59,8 +61,8 @@ public class NetworkJobQueue implements JobQueue {
     syncSocket.close();
   }
 
-  public boolean isClosed() {
-    return syncSocket.isClosed();
+  public boolean canAnswerJobRequest() {
+    return !syncSocket.isClosed() && !denyNewJobRequest;
   }
 
   @Override
@@ -71,5 +73,9 @@ public class NetworkJobQueue implements JobQueue {
   @Override
   public int nbJobs() {
     return Integer.MAX_VALUE;
+  }
+
+  public void denyNewJobRequest() {
+    denyNewJobRequest = true;
   }
 }

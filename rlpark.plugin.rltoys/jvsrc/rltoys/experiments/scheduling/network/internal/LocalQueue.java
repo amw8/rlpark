@@ -11,7 +11,6 @@ import java.util.Set;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobQueue;
-
 import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.signals.Signal;
 
@@ -108,5 +107,9 @@ public class LocalQueue implements JobQueue {
   @Override
   public Signal<JobDoneEvent> onJobDone() {
     return onJobDone;
+  }
+
+  public int nbRemainingJobs() {
+    return waiting.size();
   }
 }

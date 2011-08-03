@@ -18,6 +18,7 @@ import zephyr.plugin.core.api.signals.Listener;
 
 public class ServerScheduler implements Scheduler {
   static final public int DefaultPort = 5000;
+  static public boolean clientVerbose = true;
   private final Runnable acceptClientsRunnable = new Runnable() {
     @Override
     public void run() {
@@ -35,28 +36,33 @@ public class ServerScheduler implements Scheduler {
   };
   protected final LocalQueue localQueue = new LocalQueue();
   final ServerSocket serverSocket;
-  private LocalScheduler localScheduler;
+  private final LocalScheduler localScheduler;
   private final Thread serverThread = new Thread(acceptClientsRunnable, "AcceptThread");
   private final Set<SocketClient> clients = new HashSet<SocketClient>();
 
   public ServerScheduler() throws IOException {
-    this(DefaultPort);
+    this(DefaultPort, LocalScheduler.getDefaultNbThreads());
   }
 
-  public ServerScheduler(int port) throws IOException {
+  public ServerScheduler(int port, int nbLocalThread) throws IOException {
     serverSocket = new ServerSocket(port);
     serverThread.setDaemon(true);
-    localScheduler = new LocalScheduler(LocalScheduler.getDefaultNbThreads(), localQueue);
-  }
-
-  public void stopLocalScheduler() {
-    assert localScheduler != null;
-    localScheduler.dispose();
-    localScheduler = null;
+    localScheduler = nbLocalThread > 0 ? new LocalScheduler(nbLocalThread, localQueue) : null;
   }
 
   protected void addClient(SocketClient clientScheduler) {
     clients.add(clientScheduler);
+    printClientStats();
+  }
+
+  private void printClientStats() {
+    printAboutClient(String.format("%d client(s) for %d remaining jobs", clients.size(), localQueue.nbRemainingJobs()));
+  }
+
+  static private void printAboutClient(String message) {
+    if (!clientVerbose)
+      return;
+    System.out.println(message);
   }
 
   @Override
@@ -89,6 +95,7 @@ public class ServerScheduler implements Scheduler {
 
   public void removeClient(SocketClient socketClient) {
     clients.remove(socketClient);
+    printClientStats();
   }
 
   public void dispose() {
