@@ -55,6 +55,10 @@ public class ObservationSynchronizer {
     thread.start();
   }
 
+  public void setPersistent(boolean persistent) {
+    this.persistent = true;
+  }
+
   synchronized private void setLastObs(ObservationVersatile obs) {
     lastObsBuffer.add(obs);
     if (lastObsBuffer.size() > BufferSize)
