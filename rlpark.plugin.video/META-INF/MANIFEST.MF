@@ -1,8 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: rlpark.plugin.video
-Bundle-SymbolicName: rlpark.plugin.video
+Bundle-SymbolicName: rlpark.plugin.video;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Thomas
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: rlpark.plugin.video
+Require-Bundle: zephyr.plugin.core;bundle-version="1.0.0"
