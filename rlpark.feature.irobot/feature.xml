@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="rlpark.feature.irobot"
-      label="Zephyr IRobot"
+      label="RLPark IRobot"
       version="1.0.0.qualifier"
       provider-name="Thomas">
 
