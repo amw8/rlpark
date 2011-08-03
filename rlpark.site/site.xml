@@ -12,5 +12,8 @@
    <feature url="features/rlpark.feature.irobot_1.0.0.qualifier.jar" id="rlpark.feature.irobot" version="1.0.0.qualifier">
       <category name="rlpark.site.rlai"/>
    </feature>
+   <feature url="features/rlpark.feature.video_1.0.0.qualifier.jar" id="rlpark.feature.video" version="1.0.0.qualifier">
+      <category name="rlpark.site.rlai"/>
+   </feature>
    <category-def name="rlpark.site.rlai" label="RLAI"/>
 </site>
