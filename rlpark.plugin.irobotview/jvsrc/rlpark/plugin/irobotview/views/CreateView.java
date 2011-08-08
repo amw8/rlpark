@@ -26,7 +26,7 @@ import static rlpark.plugin.irobot.data.IRobotDrops.WheelOverCurrent;
 import static rlpark.plugin.irobot.data.IRobotDrops.WheelRequested;
 import rlpark.plugin.irobot.data.IRobotDrops;
 import rlpark.plugin.irobot.robots.CreateRobot;
-import rlpark.plugin.irobot.robots.IRobotProblem;
+import rlpark.plugin.robot.RobotProblem;
 import rltoys.math.ranges.Range;
 import zephyr.plugin.core.api.codeparser.codetree.ClassNode;
 import zephyr.plugin.core.api.codeparser.interfaces.CodeNode;
@@ -45,7 +45,7 @@ public class CreateView extends IRobotView {
     public boolean canViewDraw(CodeNode codeNode) {
       if (!super.canViewDraw(codeNode))
         return false;
-      IRobotProblem problem = (IRobotProblem) ((ClassNode) codeNode).instance();
+      RobotProblem problem = (RobotProblem) ((ClassNode) codeNode).instance();
       return problem.legend().hasLabel(IRobotDrops.CargoBayAnalogSignal);
     }
   }

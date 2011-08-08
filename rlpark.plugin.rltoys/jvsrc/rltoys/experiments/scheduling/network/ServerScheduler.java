@@ -15,10 +15,31 @@ import rltoys.experiments.scheduling.network.internal.LocalQueue;
 import rltoys.experiments.scheduling.network.internal.Messages;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import zephyr.plugin.core.api.signals.Listener;
+import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class ServerScheduler implements Scheduler {
+  static final public double StatPeriod = 3600 * 2;
+
+  class JobStatListener implements Listener<JobDoneEvent> {
+    private final Chrono chrono = new Chrono();
+    private double lastChronoValue = 0.0;
+
+    @Override
+    public void listen(JobDoneEvent eventInfo) {
+      int nbRemainingJobs = localQueue.nbRemainingJobs();
+      if (chrono.getCurrentChrono() - lastChronoValue < StatPeriod && nbRemainingJobs > 0)
+        return;
+      lastChronoValue = chrono.getCurrentChrono();
+      double nbJobPerSecond = localQueue.nbJobsDone() / lastChronoValue;
+      System.out.printf("%f jobs/minutes. ", nbJobPerSecond * 60);
+      if (nbRemainingJobs > 0)
+        System.out.printf("%s remaining.\n", Chrono.toStringMillis((long) (nbRemainingJobs * nbJobPerSecond)));
+      System.out.println();
+    }
+  }
+
   static final public int DefaultPort = 5000;
-  static public boolean clientVerbose = true;
+  static public boolean serverVerbose = true;
   private final Runnable acceptClientsRunnable = new Runnable() {
     @Override
     public void run() {
@@ -60,13 +81,15 @@ public class ServerScheduler implements Scheduler {
   }
 
   static private void printAboutClient(String message) {
-    if (!clientVerbose)
+    if (!serverVerbose)
       return;
     System.out.println(message);
   }
 
   @Override
   public List<Runnable> runAll() {
+    JobStatListener listener = new JobStatListener();
+    localQueue.onJobDone().connect(listener);
     start();
     List<Runnable> result = LocalQueue.waitAllDone(localQueue);
     if (localScheduler != null) {
@@ -74,6 +97,7 @@ public class ServerScheduler implements Scheduler {
       if (exceptionOccured != null)
         throw new RuntimeException(exceptionOccured);
     }
+    localQueue.onJobDone().disconnect(listener);
     return result;
   }
 
@@ -95,6 +119,8 @@ public class ServerScheduler implements Scheduler {
 
   public void removeClient(SocketClient socketClient) {
     clients.remove(socketClient);
+    for (Runnable pendingJob : socketClient.pendingJobs())
+      localQueue.requestCancel(pendingJob);
     printClientStats();
   }
 

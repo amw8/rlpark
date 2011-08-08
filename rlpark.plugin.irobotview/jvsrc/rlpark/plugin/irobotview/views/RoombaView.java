@@ -36,8 +36,8 @@ import static rlpark.plugin.irobot.data.IRobotDrops.WheelEncoder;
 import static rlpark.plugin.irobot.data.IRobotDrops.WheelMotorCurrent;
 import static rlpark.plugin.irobot.data.IRobotDrops.WheelRequested;
 import rlpark.plugin.irobot.data.IRobotDrops;
-import rlpark.plugin.irobot.robots.IRobotProblem;
 import rlpark.plugin.irobot.robots.RoombaRobot;
+import rlpark.plugin.robot.RobotProblem;
 import rltoys.math.ranges.Range;
 import zephyr.plugin.core.api.codeparser.codetree.ClassNode;
 import zephyr.plugin.core.api.codeparser.interfaces.CodeNode;
@@ -56,7 +56,7 @@ public class RoombaView extends IRobotView {
     public boolean canViewDraw(CodeNode codeNode) {
       if (!super.canViewDraw(codeNode))
         return false;
-      IRobotProblem problem = (IRobotProblem) ((ClassNode) codeNode).instance();
+      RobotProblem problem = (RobotProblem) ((ClassNode) codeNode).instance();
       return problem.legend().hasLabel(IRobotDrops.LightBumpSensorCenterLeft);
     }
   }
@@ -69,9 +69,9 @@ public class RoombaView extends IRobotView {
                                                            createSensorGroup("Sensor", WallSensor),
                                                            createSensorGroup("Signal", WallSignal));
     SensorCollection odoCollection = new SensorCollection("Odometry",
-                                                           createSensorGroup("Distance", DriveDistance),
-                                                           createSensorGroup("Angle", DriveAngle),
-                                                           createSensorGroup("Requested", DriveRequested));
+                                                          createSensorGroup("Distance", DriveDistance),
+                                                          createSensorGroup("Angle", DriveAngle),
+                                                          createSensorGroup("Requested", DriveRequested));
     SensorCollection icCollection = new SensorCollection("Infrared Character",
                                                          createSensorGroup("Omni", ICOmni),
                                                          createSensorGroup("Left", ICLeft),
@@ -96,11 +96,11 @@ public class RoombaView extends IRobotView {
                                                                    createSensorGroup("Main", MotorCurrentMainBrush),
                                                                    createSensorGroup("Side", MotorCurrentSideBrush));
     return new ObsLayout(new ObsWidget[][] {
-                             { infoGroup, createSensorGroup("Bumper", Bump), wheelCollection,
-                                 odoCollection, createSensorGroup("Dirt", DirtDetect) },
-                             { icCollection, cliffCollection, createSensorGroup("Buttons", Button),
-                                 motorCurrentCollection, createSensorGroup("Statis", Stasis) },
-                             { wallCollection, lightBumperCollection, powerCollection } });
+        { infoGroup, createSensorGroup("Bumper", Bump), wheelCollection,
+            odoCollection, createSensorGroup("Dirt", DirtDetect) },
+        { icCollection, cliffCollection, createSensorGroup("Buttons", Button),
+            motorCurrentCollection, createSensorGroup("Statis", Stasis) },
+        { wallCollection, lightBumperCollection, powerCollection } });
   }
 
   private SensorTextGroup createInfoGroup() {

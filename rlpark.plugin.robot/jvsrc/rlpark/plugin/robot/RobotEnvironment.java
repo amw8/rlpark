@@ -5,12 +5,10 @@ import rlpark.plugin.robot.sync.ObservationSynchronizer;
 import rlpark.plugin.robot.sync.ObservationVersatile;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.Agent;
-import rltoys.environments.envio.observations.Legend;
 import zephyr.plugin.core.api.labels.Labeled;
 import zephyr.plugin.core.api.synchronization.Clock;
-import zephyr.plugin.core.api.synchronization.Closeable;
 
-public abstract class RobotEnvironment implements Closeable, Labeled {
+public abstract class RobotEnvironment implements RobotProblem, Labeled {
   protected final ObservationSynchronizer obsSync;
   protected ObservationVersatile[] lastReceivedObsBuffer;
 
@@ -51,6 +49,7 @@ public abstract class RobotEnvironment implements Closeable, Labeled {
     return rawobs != null ? rawobs.doubleValues() : null;
   }
 
+  @Override
   public ObservationVersatile[] waitNewRawObs() {
     lastReceivedObsBuffer = obsSync.waitNewObs();
     if (lastReceivedObsBuffer == null)
@@ -75,10 +74,12 @@ public abstract class RobotEnvironment implements Closeable, Labeled {
     return lastReceivedObs.doubleValues();
   }
 
+  @Override
   public ObservationVersatile[] lastReceivedRawObs() {
     return lastReceivedObsBuffer;
   }
 
+  @Override
   public int observationPacketSize() {
     return receiver().packetSize();
   }
@@ -96,8 +97,6 @@ public abstract class RobotEnvironment implements Closeable, Labeled {
    */
   @Deprecated
   public abstract void run(Clock clock, Agent agent);
-
-  abstract public Legend legend();
 
   abstract public void sendAction(Action a);
 }

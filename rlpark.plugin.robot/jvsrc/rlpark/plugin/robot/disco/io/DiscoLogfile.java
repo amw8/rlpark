@@ -4,16 +4,22 @@ import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.Iterator;
+import java.util.zip.GZIPInputStream;
 
 
 public class DiscoLogfile implements Iterator<DiscoPacket> {
   private ObjectInputStream objin;
   private DiscoPacket nextPacket;
+  public final String filepath;
 
   public DiscoLogfile(String name) throws IOException {
-    FileInputStream input = new FileInputStream(name);
+    this.filepath = name;
+    InputStream input = new FileInputStream(name);
+    if (name.endsWith(".gz"))
+      input = new GZIPInputStream(input);
     objin = new ObjectInputStream(new BufferedInputStream(input));
     nextPacket = readPacket();
   }

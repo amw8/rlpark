@@ -22,7 +22,7 @@ public class PredictionDemonVerifier implements Serializable {
   private int current;
   private boolean cacheFilled;
   @Monitor(wrappers = { Squared.ID, Abs.ID })
-  public double error;
+  private double error;
   @Monitor
   private double prediction, observed;
   private boolean errorComputed;
@@ -102,5 +102,9 @@ public class PredictionDemonVerifier implements Serializable {
 
   public double precision() {
     return precision;
+  }
+
+  public double returnValue() {
+    return observed;
   }
 }

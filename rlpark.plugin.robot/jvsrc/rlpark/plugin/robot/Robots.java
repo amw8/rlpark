@@ -6,6 +6,8 @@ import rlpark.plugin.robot.sync.ScalarInterpreter;
 import rltoys.math.GrayCode;
 import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
+import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
+import zephyr.plugin.core.api.monitoring.abstracts.Monitored;
 
 public class Robots {
 
@@ -41,5 +43,20 @@ public class Robots {
     double[] doubleValues = new double[interpreter.size()];
     interpreter.interpret(buffer, doubleValues);
     return new ObservationVersatile(buffer.array().clone(), doubleValues);
+  }
+
+  static public void addToMonitor(DataMonitor monitor, final RobotProblem problem) {
+    for (String label : problem.legend().getLabels()) {
+      final int obsIndex = problem.legend().indexOf(label);
+      monitor.add(label, 0, new Monitored() {
+        @Override
+        public double monitoredValue() {
+          double[] obs = toDoubles(problem.lastReceivedRawObs());
+          if (obs == null)
+            return -1;
+          return obs[obsIndex];
+        }
+      });
+    }
   }
 }

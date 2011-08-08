@@ -9,8 +9,9 @@ import java.util.Map;
 import org.eclipse.jface.action.IToolBarManager;
 
 import rlpark.plugin.irobot.logfiles.IRobotLogFile;
-import rlpark.plugin.irobot.robots.IRobotProblem;
 import rlpark.plugin.irobotview.FileHandler;
+import rlpark.plugin.robot.RobotProblem;
+import rlpark.plugin.robot.Robots;
 import rltoys.math.ranges.Range;
 import rltoys.utils.Utils;
 import zephyr.ZephyrCore;
@@ -23,10 +24,10 @@ import zephyr.plugin.core.observations.SensorGroup;
 import zephyr.plugin.core.observations.SensorTextGroup.TextClient;
 import zephyr.plugin.core.views.Restartable;
 
-public abstract class IRobotView extends EnvironmentView<IRobotProblem> implements Closeable, Restartable {
+public abstract class IRobotView extends EnvironmentView<RobotProblem> implements Closeable, Restartable {
   static abstract public class IRobotViewProvider extends ClassViewProvider {
     public IRobotViewProvider() {
-      super(IRobotProblem.class);
+      super(RobotProblem.class);
     }
   }
 
@@ -96,13 +97,13 @@ public abstract class IRobotView extends EnvironmentView<IRobotProblem> implemen
 
   @Override
   public boolean synchronize() {
-    currentObservation = environment.lastReceivedObs();
+    currentObservation = Robots.toDoubles(environment.lastReceivedRawObs());
     synchronize(currentObservation);
     return true;
   }
 
   @Override
-  protected void set(IRobotProblem current) {
+  protected void set(RobotProblem current) {
     super.set(current);
     restartAction.setEnabled(current instanceof IRobotLogFile);
     terminateAction.setEnabled(true);
@@ -114,7 +115,7 @@ public abstract class IRobotView extends EnvironmentView<IRobotProblem> implemen
       setViewName("Observation", "");
     IRobotLogFile logFile = environment instanceof IRobotLogFile ? (IRobotLogFile) environment : null;
     String viewTitle = logFile == null ? environment.getClass().getSimpleName() :
-                        new File(logFile.filepath()).getName();
+        new File(logFile.filepath()).getName();
     String tooltip = logFile == null ? "" : logFile.filepath();
     setViewName(viewTitle, tooltip);
   }

@@ -51,6 +51,12 @@ public class Utils {
     return value >= 0 && value <= 1;
   }
 
+  public static String[] asStringArray(Collection<String> collection) {
+    String[] result = new String[collection.size()];
+    collection.toArray(result);
+    return result;
+  }
+
   public static int[] asIntArray(Collection<Integer> collection) {
     int[] result = new int[collection.size()];
     int index = 0;

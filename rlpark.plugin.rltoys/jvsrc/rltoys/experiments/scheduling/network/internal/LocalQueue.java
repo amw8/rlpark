@@ -3,10 +3,10 @@ package rltoys.experiments.scheduling.network.internal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
@@ -17,12 +17,21 @@ import zephyr.plugin.core.api.signals.Signal;
 
 public class LocalQueue implements JobQueue {
   private final Map<Runnable, Listener<JobDoneEvent>> listeners = new HashMap<Runnable, Listener<JobDoneEvent>>();
-  private final Queue<Runnable> waiting = new LinkedList<Runnable>();
-  private final Queue<Runnable> pending = new LinkedList<Runnable>();
+  private final LinkedList<Runnable> waiting = new LinkedList<Runnable>();
+  private final Set<Runnable> pending = new LinkedHashSet<Runnable>();
   private final List<Runnable> done = new ArrayList<Runnable>();
   private final Set<Runnable> pendingLocally = new HashSet<Runnable>();
   private final Signal<JobDoneEvent> onJobDone = new Signal<JobDoneEvent>();
   private int nbJobs = 0;
+  private int nbJobsDone = 0;
+
+  synchronized public void requestCancel(Runnable pendingJob) {
+    if (!pending.contains(pendingJob))
+      return;
+    pending.remove(pendingJob);
+    pendingLocally.remove(pendingJob);
+    waiting.addFirst(pendingJob);
+  }
 
   @Override
   synchronized public Runnable request(boolean isLocal) {
@@ -54,6 +63,7 @@ public class LocalQueue implements JobQueue {
     this.done.add(done);
     pendingLocally.remove(todo);
     onJobDone(todo, done);
+    nbJobsDone++;
     notifyAll();
   }
 
@@ -110,6 +120,10 @@ public class LocalQueue implements JobQueue {
   }
 
   public int nbRemainingJobs() {
-    return waiting.size();
+    return waiting.size() + pending.size();
+  }
+
+  public int nbJobsDone() {
+    return nbJobsDone;
   }
 }

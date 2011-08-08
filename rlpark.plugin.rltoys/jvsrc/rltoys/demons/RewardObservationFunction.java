@@ -14,7 +14,8 @@ public class RewardObservationFunction implements RewardFunction, Labeled {
   public RewardObservationFunction(Legend legend, String label) {
     this.label = label;
     observationIndex = legend.indexOf(label);
-    assert observationIndex >= 0;
+    if (observationIndex < 0)
+      throw new RuntimeException(label + " not found in the legend");
   }
 
   public void update(double[] o) {

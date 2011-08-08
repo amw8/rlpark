@@ -1,6 +1,7 @@
 package rltoys.experiments.scheduling.network;
 
 import java.net.Socket;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,10 +42,8 @@ public class SocketClient {
   protected void clientReadMainLoop() {
     while (!clientSocket.isClosed()) {
       Message message = Messages.readNextMessage(clientSocket);
-      if (message == null) {
-        close();
-        return;
-      }
+      if (message == null)
+        break;
       switch (message.type()) {
       case RequestJob:
         requestJob(((MessageRequestJob) message).blocking());
@@ -56,6 +55,7 @@ public class SocketClient {
         requestClassData(((MessageRequestClass) message).className());
       }
     }
+    close();
   }
 
   private void requestClassData(String className) {
@@ -105,5 +105,9 @@ public class SocketClient {
   private void close() {
     clientSocket.close();
     serverScheduler.removeClient(this);
+  }
+
+  public Collection<Runnable> pendingJobs() {
+    return idtoJob.values();
   }
 }

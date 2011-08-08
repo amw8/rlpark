@@ -5,6 +5,7 @@ import rlpark.plugin.irobot.data.CreateLeds;
 import rlpark.plugin.irobot.data.IRobotDrops;
 import rlpark.plugin.irobot.data.IRobotObservationReceiver;
 import rlpark.plugin.robot.RobotEnvironment;
+import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.disco.datagroup.DropScalarGroup;
 import rlpark.plugin.robot.disco.drops.Drop;
 import rlpark.plugin.robot.sync.ObservationReceiver;
@@ -17,7 +18,7 @@ import zephyr.plugin.core.api.monitoring.abstracts.MonitorContainer;
 import zephyr.plugin.core.api.monitoring.abstracts.Monitored;
 import zephyr.plugin.core.api.synchronization.Clock;
 
-abstract public class IRobotEnvironment extends RobotEnvironment implements MonitorContainer, IRobotProblem {
+abstract public class IRobotEnvironment extends RobotEnvironment implements MonitorContainer {
   protected final CreateAction lastSent = new CreateAction(0, 0);
   private final IRobotObservationReceiver connection;
 
@@ -93,22 +94,7 @@ abstract public class IRobotEnvironment extends RobotEnvironment implements Moni
         return lastSent.right();
       }
     });
-    addToMonitor(monitor, this);
-  }
-
-  static public void addToMonitor(DataMonitor monitor, final IRobotProblem problem) {
-    for (String label : problem.legend().getLabels()) {
-      final int obsIndex = problem.legend().indexOf(label);
-      monitor.add(label, 0, new Monitored() {
-        @Override
-        public double monitoredValue() {
-          double[] obs = problem.lastReceivedObs();
-          if (obs == null)
-            return -1;
-          return obs[obsIndex];
-        }
-      });
-    }
+    Robots.addToMonitor(monitor, this);
   }
 
   public void sendAction(CreateAction agentAction) {

@@ -3,8 +3,7 @@ package rlpark.plugin.irobot.logfiles;
 import java.io.IOException;
 
 import rlpark.plugin.irobot.data.IRobotDrops;
-import rlpark.plugin.irobot.robots.IRobotEnvironment;
-import rlpark.plugin.irobot.robots.IRobotProblem;
+import rlpark.plugin.robot.RobotProblem;
 import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.disco.datagroup.DropScalarGroup;
 import rlpark.plugin.robot.disco.drops.Drop;
@@ -15,7 +14,7 @@ import rltoys.environments.envio.observations.Legend;
 import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
 import zephyr.plugin.core.api.monitoring.abstracts.MonitorContainer;
 
-public class CreateBinaryLogfile implements MonitorContainer, IRobotProblem {
+public class CreateBinaryLogfile implements MonitorContainer, RobotProblem {
   private final static Drop sensorDrop = IRobotDrops.newCreateSensorDrop();
   private final static DropScalarGroup sensorGroup = new DropScalarGroup(sensorDrop);
   private final DiscoLogfile discoLogFile;
@@ -51,12 +50,12 @@ public class CreateBinaryLogfile implements MonitorContainer, IRobotProblem {
   }
 
   @Override
-  public double[] lastReceivedObs() {
-    if (currentObservation == null)
-      return null;
-    return currentObservation.doubleValues();
+  public ObservationVersatile[] waitNewRawObs() {
+    step();
+    return lastReceivedRawObs();
   }
 
+  @Override
   public ObservationVersatile[] lastReceivedRawObs() {
     if (currentObservation == null)
       return null;
@@ -70,11 +69,15 @@ public class CreateBinaryLogfile implements MonitorContainer, IRobotProblem {
 
   @Override
   public void addToMonitor(DataMonitor monitor) {
-    IRobotEnvironment.addToMonitor(monitor, this);
+    Robots.addToMonitor(monitor, this);
   }
 
   @Override
   public int observationPacketSize() {
     return sensorDrop.dataSize();
+  }
+
+  public String filepath() {
+    return discoLogFile.filepath;
   }
 }
