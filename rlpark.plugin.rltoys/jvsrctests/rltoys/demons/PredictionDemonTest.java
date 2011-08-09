@@ -105,7 +105,7 @@ public class PredictionDemonTest {
     TimeToState timeToState = new TimeToState() {
       @Override
       public RealVector get(int time) {
-        return new BVector(bufferSize, new int[] { time % bufferSize });
+        return BVector.toBVector(bufferSize, new int[] { time % bufferSize });
       }
     };
     runExperiment(predictionDemon, verifier, timeToState, 1000 * bufferSize);

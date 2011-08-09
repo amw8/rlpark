@@ -40,11 +40,13 @@ public class TabularAction implements StateToStateAction {
 
   private RealVector stateAction(BinaryVector s, Action a) {
     BVector phi_sa = new BVector(actionStateFeatureSize(), s.nonZeroElements());
+    phi_sa.setOrderedIndexes(s.activeIndexes());
     for (int i = 0; i < actions.length; i++)
       if (actions[i].equals(a)) {
         int offset = stateFeatureSize * i;
-        for (int j : s.activeIndexes())
-          phi_sa.setOn(offset + j);
+        int[] indexes = phi_sa.activeIndexes();
+        for (int j = 0; j < indexes.length; j++)
+          indexes[j] += offset;
         return phi_sa;
       }
     return null;

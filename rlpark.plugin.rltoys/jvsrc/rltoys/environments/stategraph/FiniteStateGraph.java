@@ -68,7 +68,7 @@ public abstract class FiniteStateGraph implements Serializable {
     this.states = states;
     acting = policy;
     for (int i = 0; i < states.length; i++)
-      states[i].setVectorRepresentation(new BVector(states.length, new int[] { i }));
+      states[i].setVectorRepresentation(BVector.toBVector(states.length, new int[] { i }));
   }
 
   protected void setInitialState(GraphState s_0) {

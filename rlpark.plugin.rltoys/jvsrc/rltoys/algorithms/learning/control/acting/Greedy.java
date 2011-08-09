@@ -69,8 +69,9 @@ public class Greedy implements Policy, MonitorContainer {
           break;
       }
     assert bestActions.size() > 0;
-    int actionChoosen = random != null ? random.nextInt(bestActions.size()) : 0;
-    return bestActions.get(actionChoosen);
+    if (random == null || bestActions.size() == 1)
+      return bestActions.get(0);
+    return bestActions.get(random.nextInt(bestActions.size()));
   }
 
   @Override

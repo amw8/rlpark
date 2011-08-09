@@ -51,6 +51,6 @@ public class BinaryTargetProblem {
     for (int i = 0; i < inputSize; i++)
       if (random.nextBoolean())
         input.add(i);
-    return new BVector(inputSize, Utils.asIntArray(input));
+    return BVector.toBVector(inputSize, Utils.asIntArray(input));
   }
 }

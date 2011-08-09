@@ -15,7 +15,7 @@ import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
 import rltoys.algorithms.representations.ltu.units.LTUThreshold;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.RealVector;
-import rltoys.math.vector.implementations.BVector;
+import static rltoys.math.vector.implementations.BVector.toBVector;
 
 
 @SuppressWarnings("serial")
@@ -26,11 +26,11 @@ public class RandomNetworkTest {
     RandomNetwork randomNetwork = new RandomNetwork(inputSize, 16);
     LTUThreshold ltu = new LTUThreshold(15, new int[] { 0, 2, 4 }, new byte[] { 1, -1, 1 });
     randomNetwork.addLTU(ltu);
-    BinaryVector projected = randomNetwork.project(new BVector(inputSize, new int[] {}));
+    BinaryVector projected = randomNetwork.project(toBVector(inputSize, new int[] {}));
     Assert.assertEquals(0, (int) projected.getEntry(15));
-    projected = randomNetwork.project(new BVector(inputSize, new int[] { 0 }));
+    projected = randomNetwork.project(toBVector(inputSize, new int[] { 0 }));
     Assert.assertEquals(1, (int) projected.getEntry(15));
-    projected = randomNetwork.project(new BVector(inputSize, new int[] { 0, 2 }));
+    projected = randomNetwork.project(toBVector(inputSize, new int[] { 0, 2 }));
     Assert.assertEquals(0, (int) projected.getEntry(15));
   }
 

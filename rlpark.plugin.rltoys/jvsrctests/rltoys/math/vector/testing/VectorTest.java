@@ -18,7 +18,7 @@ public abstract class VectorTest {
 
   protected final RealVector a = newVector(1.0, 2.0);
   protected final RealVector b = newVector(3.0, 4.0);
-  protected final RealVector c = new BVector(2, new int[] { 1 });
+  protected final RealVector c = BVector.toBVector(2, new int[] { 1 });
 
   @After
   public void after() {

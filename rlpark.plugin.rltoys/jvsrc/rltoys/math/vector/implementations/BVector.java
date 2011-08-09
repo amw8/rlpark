@@ -83,12 +83,6 @@ public class BVector extends AbstractVector implements BinaryVector {
     indexes = new int[allocated];
   }
 
-  public BVector(int size, int[] indexes) {
-    this(size, indexes.length);
-    for (int i = 0; i < indexes.length; i++)
-      setOn(indexes[i]);
-  }
-
   public BVector(BVector v) {
     this(v.size, v.nbActive);
     System.arraycopy(v.indexes, 0, indexes, 0, v.nbActive);
@@ -192,35 +186,6 @@ public class BVector extends AbstractVector implements BinaryVector {
     return nbActive;
   }
 
-  public static BVector toBinary(double[] ds) {
-    int[] is = new int[ds.length];
-    for (int i = 0; i < is.length; i++)
-      is[i] = (int) ds[i];
-    return toBinary(is);
-  }
-
-  public static BVector toBinary(byte[] is) {
-    BVector bobs = new BVector(is.length * Byte.SIZE);
-    for (int i = 0; i < is.length; i++)
-      for (int bi = 0; bi < Byte.SIZE; bi++) {
-        int mask = 1 << bi;
-        if ((is[i] & mask) != 0)
-          bobs.setOn(i * Byte.SIZE + bi);
-      }
-    return bobs;
-  }
-
-  public static BVector toBinary(int[] is) {
-    BVector bobs = new BVector(is.length * Integer.SIZE);
-    for (int i = 0; i < is.length; i++)
-      for (int bi = 0; bi < Integer.SIZE; bi++) {
-        int mask = 1 << bi;
-        if ((is[i] & mask) != 0)
-          bobs.setOn(i * Integer.SIZE + bi);
-      }
-    return bobs;
-  }
-
   @Override
   final public int[] activeIndexes() {
     if (indexes.length > nbActive)
@@ -256,5 +221,45 @@ public class BVector extends AbstractVector implements BinaryVector {
   @Override
   public Iterator<VectorEntry> iterator() {
     return new BVectorIterator();
+  }
+
+  public void setOrderedIndexes(int[] orderedIndexes) {
+    indexes = orderedIndexes.clone();
+    nbActive = indexes.length;
+  }
+
+  public static BVector toBinary(double[] ds) {
+    int[] is = new int[ds.length];
+    for (int i = 0; i < is.length; i++)
+      is[i] = (int) ds[i];
+    return toBinary(is);
+  }
+
+  public static BVector toBinary(byte[] is) {
+    BVector bobs = new BVector(is.length * Byte.SIZE);
+    for (int i = 0; i < is.length; i++)
+      for (int bi = 0; bi < Byte.SIZE; bi++) {
+        int mask = 1 << bi;
+        if ((is[i] & mask) != 0)
+          bobs.setOn(i * Byte.SIZE + bi);
+      }
+    return bobs;
+  }
+
+  public static BVector toBinary(int[] is) {
+    BVector bobs = new BVector(is.length * Integer.SIZE);
+    for (int i = 0; i < is.length; i++)
+      for (int bi = 0; bi < Integer.SIZE; bi++) {
+        int mask = 1 << bi;
+        if ((is[i] & mask) != 0)
+          bobs.setOn(i * Integer.SIZE + bi);
+      }
+    return bobs;
+  }
+
+  public static BVector toBVector(int size, int[] orderedIndexes) {
+    BVector result = new BVector(size);
+    result.setOrderedIndexes(orderedIndexes);
+    return result;
   }
 }
