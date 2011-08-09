@@ -10,7 +10,6 @@ import rltoys.algorithms.representations.acting.ConstantPolicy;
 import rltoys.environments.stategraph.FSGAgentState;
 import rltoys.environments.stategraph.FiniteStateGraph.StepData;
 import rltoys.environments.stategraph.RandomWalk;
-import rltoys.math.vector.CachedVector;
 import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
 
@@ -61,7 +60,7 @@ public class GTDLambdaBetaTest {
     private final GTDBetaLambda gtdlambda;
     private final double beta;
     private double rho_tm1;
-    private final CachedVector phi_t = new CachedVector();
+    private PVector phi_t;
 
     public OffPolicyGTD(double beta, double alpha_theta, double alpha_w, double lambda, int nbFeatures) {
       this.beta = beta;
@@ -69,9 +68,9 @@ public class GTDLambdaBetaTest {
     }
 
     public void update(double rho_t, PVector phi_tp1, double r_tp1) {
-      gtdlambda.update(rho_tm1, beta, rho_t, phi_t.values(), beta, phi_tp1, 0, r_tp1);
+      gtdlambda.update(rho_tm1, beta, rho_t, phi_t, beta, phi_tp1, 0, r_tp1);
       rho_tm1 = rho_t;
-      phi_t.set(phi_tp1);
+      phi_t = phi_tp1 != null ? phi_tp1.copy() : null;
     }
 
     public PVector theta() {

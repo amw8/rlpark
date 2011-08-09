@@ -57,7 +57,7 @@ public class RandomNetworkAdaptive extends RandomNetwork {
 
   private Set<LTUAdaptiveDensity> buildCouldHaveAgreeUnits(BinaryVector obs) {
     Set<LTUAdaptiveDensity> couldHaveAgree = new LinkedHashSet<LTUAdaptiveDensity>();
-    for (Integer activeInput : obs) {
+    for (int activeInput : obs.activeIndexes()) {
       for (LTU ltu : parents(activeInput)) {
         if (ltu == null || ltu.isActive())
           continue;
@@ -73,7 +73,7 @@ public class RandomNetworkAdaptive extends RandomNetwork {
     overUnit = output.nonZeroElements() - maxUnitActive;
     assert overUnit > 0;
     double selectionProbability = overUnit / (double) output.nonZeroElements();
-    for (Integer activeLTUIndex : output) {
+    for (int activeLTUIndex : output.activeIndexes()) {
       if (random.nextFloat() > selectionProbability)
         continue;
       LTU ltu = ltus[activeLTUIndex];

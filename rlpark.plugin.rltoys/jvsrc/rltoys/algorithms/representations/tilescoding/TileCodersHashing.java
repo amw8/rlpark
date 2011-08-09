@@ -33,6 +33,6 @@ public class TileCodersHashing extends TileCoders {
   @Override
   protected void activateIndexes(double[] inputs, BinaryVector vector) {
     for (TileCoder tileCoder : tileCoders)
-      vector.setOn(tileCoder.updateActiveTiles(hashing, inputs));
+      setFeatureOn(vector, tileCoder.updateActiveTiles(hashing, inputs));
   }
 }

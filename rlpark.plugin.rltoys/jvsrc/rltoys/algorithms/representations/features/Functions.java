@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rltoys.math.representations.Function;
+import rltoys.math.vector.PVector;
 import zephyr.plugin.core.api.labels.Labeled;
 import zephyr.plugin.core.api.labels.Labels;
 import zephyr.plugin.core.api.monitoring.abstracts.Monitored;
@@ -35,5 +36,10 @@ public class Functions {
     for (Function function : functions)
       labels.add(Labels.label(function));
     return labels;
+  }
+
+  static public void set(List<? extends Function> functions, PVector vector) {
+    for (int i = 0; i < vector.size; i++)
+      vector.data[i] = functions.get(i).value();
   }
 }

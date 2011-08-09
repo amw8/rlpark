@@ -1,85 +1,74 @@
 package rltoys.math.vector;
 
 import static rltoys.utils.Utils.notImplemented;
-import static rltoys.utils.Utils.notSupported;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import rltoys.utils.NotImplemented;
-import rltoys.utils.Utils;
 
 
-public class BVector implements BinaryVector {
-
-  private static final long serialVersionUID = -1323411391405098702L;
+public class BVector extends AbstractVector implements BinaryVector {
+  private static final long serialVersionUID = 5688026326299722364L;
   public final int size;
-  public final Set<Integer> indexes = new LinkedHashSet<Integer>();
+  private int[] activeIndexes;
+  private int nbActive = 0;
 
   public BVector(int size) {
+    this(size, 0);
+  }
+
+  public BVector(int size, int allocated) {
     this.size = size;
+    activeIndexes = new int[allocated];
   }
 
   public BVector(int size, int[] indexes) {
-    this(size);
-    set(indexes);
+    this(size, indexes.length);
+    for (int i = 0; i < indexes.length; i++)
+      setOn(indexes[i]);
   }
 
   public BVector(BVector v) {
-    this(v.size);
-    indexes.addAll(v.indexes);
+    this(v.size, v.nbActive);
+    System.arraycopy(v.activeIndexes, 0, activeIndexes, 0, v.nbActive);
+    nbActive = v.nbActive;
   }
 
   @Override
   public void addSelfTo(double[] data) {
-    for (Integer i : indexes)
+    for (int i : activeIndexes())
       data[i] += 1;
   }
 
   @Override
   public double dotProduct(double[] data) {
     double result = 0.0;
-    for (Integer i : indexes)
+    for (int i : activeIndexes())
       result += data[i];
     return result;
   }
 
   @Override
   public void subtractSelfTo(double[] data) {
-    for (Integer i : indexes)
+    for (int i : activeIndexes())
       data[i] -= 1;
   }
 
   @Override
-  public void subtractSelfTo(SparseVector other) {
-    for (Integer i : indexes)
+  public void subtractSelfTo(SparseRealVector other) {
+    for (int i : activeIndexes())
       other.setEntry(i, other.getEntry(i) - 1);
   }
 
   @Override
   public double[] accessData() {
     double[] result = new double[size];
-    for (Integer i : indexes)
+    for (int i : activeIndexes())
       result[i] = 1;
     return result;
   }
 
-  protected SVector copyAsSVector() {
+  @Override
+  public SVector copyAsMutable() {
     return new SVector(this);
-  }
-
-  @Override
-  public RealVector add(RealVector other) {
-    return other.copy().addToSelf(this);
-  }
-
-  @Override
-  public RealVector addToSelf(RealVector other) {
-    notSupported();
-    return null;
   }
 
   @Override
@@ -89,15 +78,13 @@ public class BVector implements BinaryVector {
 
   @Override
   public BVector copy() {
-    BVector result = newInstance(size);
-    result.indexes.addAll(indexes);
-    return result;
+    return new BVector(this);
   }
 
   @Override
   public double dotProduct(RealVector other) {
     double result = 0;
-    for (Integer i : indexes)
+    for (int i : activeIndexes())
       result += other.getEntry(i);
     return result;
   }
@@ -109,121 +96,73 @@ public class BVector implements BinaryVector {
 
   @Override
   public double getEntry(int i) {
-    return indexes.contains(i) ? 1 : 0;
+    return search(i) >= 0 ? 1 : 0;
+  }
+
+  private int search(int i) {
+    return Arrays.binarySearch(activeIndexes, 0, nbActive, i);
   }
 
   @Override
-  public RealVector mapMultiply(double d) {
-    return new BConstantVector(this, d);
-  }
-
-  @Override
-  public RealVector mapMultiplyToSelf(double d) {
-    notSupported();
-    return null;
-  }
-
-  @Override
-  public BVector newInstance(int size) {
-    return new BVector(size);
-  }
-
-  @Override
-  public void set(double d) {
-    notSupported();
-  }
-
-  @Override
-  public void setEntry(int i, double d) {
-    notSupported();
-  }
-
-  @Override
-  public void setSubVector(int i, RealVector other) {
-    if (!(other instanceof BVector))
-      notSupported();
-    BVector bother = (BVector) other;
-    for (Integer j : new HashSet<Integer>(indexes))
-      if (j >= i && j < i + bother.size)
-        indexes.remove(j);
-    mergeSubVector(i, bother);
-  }
-
-  public void mergeSubVector(int i, BinaryVector other) {
-    assert i + other.getDimension() <= size;
-    for (Integer j : other) {
-      assert j + i < size;
-      indexes.add(j + i);
-    }
-  }
-
-  @Override
-  public RealVector subtract(RealVector other) {
-    return copyAsSVector().subtractToSelf(other);
-  }
-
-  @Override
-  public RealVector subtractToSelf(RealVector other) {
-    notSupported();
-    return null;
-  }
-
-  @Override
-  public void clear() {
-    indexes.clear();
-  }
-
-  public void set(int... indexes) {
-    clear();
-    for (int i : indexes)
-      this.indexes.add(i);
-  }
-
-  @Override
-  public void setOn(int i) {
-    assert i < size;
-    indexes.add(i);
-  }
-
-  @Override
-  public void setOn(int[] other) {
-    for (int j : other)
-      indexes.add(j);
-  }
-
-  public int[] toIndexesArray() {
-    int[] result = new int[indexes.size()];
-    int j = 0;
-    for (Integer i : indexes) {
-      result[j] = i;
-      j++;
-    }
+  public ModifiableVector mapMultiply(double d) {
+    SVector result = copyAsMutable();
+    result.mapMultiplyToSelf(d);
     return result;
   }
 
   @Override
+  public ModifiableVector newInstance(int size) {
+    SVector result = copyAsMutable();
+    result.clear();
+    return result;
+  }
+
+  @Override
+  public void clear() {
+    nbActive = 0;
+  }
+
+  @Override
+  public void setOn(int index) {
+    assert index < size;
+    int searchResult = (canAppend(index) ? -nbActive - 1 : search(index));
+    if (searchResult >= 0)
+      return;
+    int insertion = -searchResult - 1;
+    nbActive++;
+    int[] newActiveIndex = activeIndexes;
+    if (nbActive >= activeIndexes.length) {
+      int newLength = activeIndexes.length > 0 ? activeIndexes.length * 2 : 1;
+      newActiveIndex = new int[newLength];
+      System.arraycopy(activeIndexes, 0, newActiveIndex, 0, insertion);
+    }
+    System.arraycopy(activeIndexes, insertion, newActiveIndex, insertion + 1, nbActive - insertion - 1);
+    newActiveIndex[insertion] = index;
+    activeIndexes = newActiveIndex;
+  }
+
+  private boolean canAppend(int index) {
+    return nbActive == 0 || index > activeIndexes[nbActive - 1];
+  }
+
+  @Override
   public String toString() {
-    return Arrays.toString(toIndexesArray());
+    return Arrays.toString(activeIndexes());
   }
 
   @Override
   public int nonZeroElements() {
-    return indexes.size();
+    return nbActive;
   }
 
   @Override
   public void forEach(ElementIterator elementIterator) {
-    for (int index : indexes)
+    for (int index : activeIndexes())
       elementIterator.element(index, 1.0);
   }
 
   @Override
-  public Iterator<Integer> iterator() {
-    return indexes.iterator();
-  }
-
-  @Override
-  public RealVector getSubVector(int index, int n) {
+  public ModifiableVector getSubVector(int index, int n) {
     notImplemented();
     return null;
   }
@@ -258,22 +197,26 @@ public class BVector implements BinaryVector {
   }
 
   @Override
-  public int[] activeIndexes() {
-    return Utils.asIntArray(indexes);
+  final public int[] activeIndexes() {
+    if (activeIndexes.length > nbActive)
+      activeIndexes = Arrays.copyOf(activeIndexes, nbActive);
+    return activeIndexes;
   }
 
-  @Override
-  public RealVector ebeMultiply(RealVector other) {
-    return copyAsSVector().ebeMultiplyToSelf(other);
+  public void mergeSubVector(int start, BinaryVector other) {
+    if (!canAppend(start))
+      throw new RuntimeException("cannot append when other indexes are less than already active indexes");
+    int[] otherIndexes = other.activeIndexes();
+    allocate(nbActive + otherIndexes.length);
+    for (int otherIndex : otherIndexes) {
+      activeIndexes[nbActive] = otherIndex + start;
+      nbActive++;
+    }
   }
 
-  @Override
-  public RealVector mapAbsToSelf() {
-    throw new NotImplemented();
-  }
-
-  @Override
-  public RealVector ebeMultiplyToSelf(RealVector v) {
-    throw new NotImplemented();
+  public void allocate(int allocation) {
+    if (allocation <= activeIndexes.length)
+      return;
+    activeIndexes = Arrays.copyOf(activeIndexes, allocation);
   }
 }

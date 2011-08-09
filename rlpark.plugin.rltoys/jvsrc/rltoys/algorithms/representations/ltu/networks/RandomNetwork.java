@@ -74,7 +74,7 @@ public class RandomNetwork implements Serializable {
 
   protected Set<LTU> computeLTUSum(BinaryVector obs) {
     Set<LTU> updated = new HashSet<LTU>();
-    for (int activeInput : obs) {
+    for (int activeInput : obs.activeIndexes()) {
       List<LTU> connected = connectedLTUs[activeInput];
       if (connected == null)
         continue;

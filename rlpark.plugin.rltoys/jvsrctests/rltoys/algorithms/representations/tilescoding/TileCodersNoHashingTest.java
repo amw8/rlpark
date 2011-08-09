@@ -109,7 +109,7 @@ public class TileCodersNoHashingTest {
         inputs[0] = (float) i / step;
         inputs[1] = (float) j / step;
         BinaryVector vector = coders.project(inputs);
-        for (int activeIndex : vector)
+        for (int activeIndex : vector.activeIndexes())
           frequencies[activeIndex]++;
       }
     int sum = 0;

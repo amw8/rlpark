@@ -3,15 +3,13 @@ package rltoys.math.vector;
 import java.io.Serializable;
 
 public interface RealVector extends Serializable {
+  double[] accessData();
+
+  RealVector getSubVector(int index, int n);
+
   RealVector copy();
 
-  RealVector addToSelf(RealVector other);
-
-  RealVector subtractToSelf(RealVector other);
-
-  RealVector mapMultiply(double d);
-
-  RealVector mapMultiplyToSelf(double d);
+  ModifiableVector mapMultiply(double d);
 
   int getDimension();
 
@@ -19,27 +17,15 @@ public interface RealVector extends Serializable {
 
   double dotProduct(RealVector other);
 
-  void setSubVector(int i, RealVector other);
+  ModifiableVector subtract(RealVector other);
 
-  void set(double d);
+  ModifiableVector add(RealVector other);
 
-  RealVector subtract(RealVector other);
-
-  void setEntry(int i, double d);
-
-  RealVector add(RealVector other);
-
-  RealVector newInstance(int size);
+  ModifiableVector newInstance(int size);
 
   boolean checkValues();
 
-  double[] accessData();
+  ModifiableVector ebeMultiply(RealVector v);
 
-  RealVector getSubVector(int index, int n);
-
-  RealVector mapAbsToSelf();
-
-  RealVector ebeMultiply(RealVector v);
-
-  RealVector ebeMultiplyToSelf(RealVector phi_t);
+  ModifiableVector copyAsMutable();
 }

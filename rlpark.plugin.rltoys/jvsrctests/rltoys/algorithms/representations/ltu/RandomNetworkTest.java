@@ -13,7 +13,6 @@ import rltoys.algorithms.representations.ltu.networks.RandomNetworkAdaptive;
 import rltoys.algorithms.representations.ltu.networks.RandomNetworks;
 import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
 import rltoys.algorithms.representations.ltu.units.LTUThreshold;
-import rltoys.math.vector.BUncheckedVector;
 import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.RealVector;
@@ -71,7 +70,7 @@ public class RandomNetworkTest {
       private RealVector extend(RealVector x) {
         if (x != x_tm1) {
           x_tm1 = x;
-          ex_tm1 = representation.project((BUncheckedVector) x);
+          ex_tm1 = representation.project((BinaryVector) x);
         }
         return ex_tm1;
       }

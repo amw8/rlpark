@@ -13,7 +13,6 @@ import rltoys.environments.stategraph.FiniteStateGraph;
 import rltoys.environments.stategraph.FiniteStateGraph.StepData;
 import rltoys.environments.stategraph.LineProblem;
 import rltoys.environments.stategraph.RandomWalk;
-import rltoys.math.vector.CachedVector;
 import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
 
@@ -21,18 +20,17 @@ import rltoys.math.vector.RealVector;
 public class TDTest {
   public static class TDHelper implements Predictor {
     private static final long serialVersionUID = 1769015377601578674L;
-    private final CachedVector phi_t;
+    private RealVector phi_t;
     public final OnPolicyTD td;
 
     public TDHelper(OnPolicyTD td) {
       this.td = td;
-      phi_t = new CachedVector();
     }
 
     public double learn(double r_tp1, RealVector phi_tp1) {
       double delta_t = 0.0;
-      delta_t = td.update(phi_t.values(), phi_tp1, r_tp1);
-      phi_t.set(phi_tp1);
+      delta_t = td.update(phi_t, phi_tp1, r_tp1);
+      phi_t = phi_tp1 != null ? phi_tp1.copy() : null;
       return delta_t;
     }
 

@@ -42,34 +42,4 @@ public class BVectorTest {
     VectorsTestsUtils.assertEquals(a.mapMultiply(2.0).mapMultiply(2.0), e);
     VectorsTestsUtils.assertEquals(a.mapMultiply(2.0).mapMultiplyToSelf(2.0), e);
   }
-
-  @Test
-  public void testSetSubVector() {
-    BVector v = new BVector(3, new int[] { 0 });
-    RealVector aPrime = a.copy();
-    aPrime.setSubVector(0, v);
-    VectorsTestsUtils.assertEquals(new BVector(10, new int[] { 0, 4, 5 }), aPrime);
-  }
-
-  @Test
-  public void testAddBConstantVector() {
-    BConstantVector bv = new BConstantVector(new BVector(5, new int[] { 1, 2 }), 3);
-    PVector e = new PVector(1.0, 4.0, 4.0, 1.0, 1.0);
-    VectorsTestsUtils.assertEquals(e, bv.add(new PVector(1.0, 1.0, 1.0, 1.0, 1.0)));
-  }
-
-  @Test
-  public void testAddBConstantVectorToBConstantVector() {
-    BConstantVector bv01 = new BConstantVector(new BVector(5, new int[] { 1, 2 }), 3);
-    BConstantVector bv02 = new BConstantVector(new BVector(5, new int[] { 0, 2 }), 2);
-    PVector e = new PVector(2.0, 3.0, 5.0, 0.0, 0.0);
-    VectorsTestsUtils.assertEquals(e, bv01.add(bv02));
-  }
-
-  @Test
-  public void testSubtractBConstantVector() {
-    BConstantVector bv = new BConstantVector(new BVector(5, new int[] { 1, 2 }), 3);
-    PVector e = new PVector(-1.0, 2.0, 2.0, -1.0, -1.0);
-    VectorsTestsUtils.assertEquals(e, bv.subtract(new PVector(1.0, 1.0, 1.0, 1.0, 1.0)));
-  }
 }

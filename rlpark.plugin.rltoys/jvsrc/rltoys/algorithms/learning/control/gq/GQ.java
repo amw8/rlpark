@@ -4,6 +4,7 @@ import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.traces.PATraces;
 import rltoys.algorithms.representations.traces.Traces;
+import rltoys.math.vector.ModifiableVector;
 import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.SVector;
@@ -48,7 +49,7 @@ public class GQ implements Predictor, LinearLearner {
     double v_tp1 = x_bar_tp1 != null ? theta.dotProduct(x_bar_tp1) : 0;
     delta_t = r_tp1 + beta_tp1 * z_tp1 + (1 - beta_tp1) * v_tp1 - theta.dotProduct(x_t);
     e.update((1 - beta_tp1) * lambda_t * rho_t, x_t);
-    RealVector delta_e = e.vect().mapMultiply(delta_t);
+    ModifiableVector delta_e = e.vect().mapMultiply(delta_t);
     RealVector tdCorrection = x_bar_tp1 != null ?
         x_bar_tp1.mapMultiply((1 - beta_tp1) * (1 - lambda_t) * e.vect().dotProduct(w)) :
         new SVector(theta.size);

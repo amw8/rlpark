@@ -53,7 +53,7 @@ public class ObservationAgentState extends AbstractAgentState {
 
   public void update(TStep step) {
     if (step.o_tp1 == null) {
-      stateVector.reset();
+      stateVector().set(0.0);
       return;
     }
     for (StepFeature function : observationFunctions)

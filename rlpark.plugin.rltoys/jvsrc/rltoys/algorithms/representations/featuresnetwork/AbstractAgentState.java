@@ -10,14 +10,13 @@ import rltoys.algorithms.representations.features.Functions;
 import rltoys.algorithms.representations.features.Normalize;
 import rltoys.math.normalization.Normalizer;
 import rltoys.math.representations.Function;
-import rltoys.math.vector.CachedVector;
 import rltoys.math.vector.PVector;
 import zephyr.plugin.core.api.labels.Labels;
 
 
 public abstract class AbstractAgentState extends AbstractFeatureNetwork {
   private static final long serialVersionUID = 5500998189323677374L;
-  protected transient final CachedVector stateVector = new CachedVector();
+  protected transient PVector stateVectorPrivate;
   private final List<Feature> state = new ArrayList<Feature>();
   private List<Feature> normalizers = null;
   private Constant bias = null;
@@ -67,11 +66,17 @@ public abstract class AbstractAgentState extends AbstractFeatureNetwork {
   @Override
   protected void featuresUpdated() {
     if (!isStateNormalized())
-      stateVector.set(state);
+      Functions.set(state, stateVector());
     else {
       updateNormalizers();
-      stateVector.set(normalizers);
+      Functions.set(normalizers, stateVector());
     }
+  }
+
+  protected PVector stateVector() {
+    if (stateVectorPrivate == null)
+      stateVectorPrivate = new PVector(stateSize());
+    return stateVectorPrivate;
   }
 
   private void updateNormalizers() {
@@ -94,7 +99,7 @@ public abstract class AbstractAgentState extends AbstractFeatureNetwork {
 
   public PVector currentState() {
     assert state.size() > 0;
-    return stateVector.values();
+    return stateVector();
   }
 
   @Override

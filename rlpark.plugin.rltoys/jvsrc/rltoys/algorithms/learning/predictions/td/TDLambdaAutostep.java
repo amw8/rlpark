@@ -2,6 +2,7 @@ package rltoys.algorithms.learning.predictions.td;
 
 import rltoys.algorithms.representations.traces.PATraces;
 import rltoys.algorithms.representations.traces.Traces;
+import rltoys.math.vector.ModifiableVector;
 import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.SparseVector;
@@ -85,7 +86,7 @@ public class TDLambdaAutostep implements OnPolicyTD {
       updateNormalizationAndStepSizeSparse(delta_t, phi_t);
     else
       updateNormalizationAndStepSizeNonSparse(delta_t, phi_t);
-    RealVector alphaDeltaE = e.vect().ebeMultiply(alpha).mapMultiplyToSelf(delta_t);
+    ModifiableVector alphaDeltaE = e.vect().ebeMultiply(alpha).mapMultiplyToSelf(delta_t);
     v.addToSelf(alphaDeltaE);
     h.addToSelf(alphaDeltaE.subtractToSelf(phi_t.ebeMultiply(alpha).ebeMultiplyToSelf(e.vect()).mapAbsToSelf()
         .ebeMultiplyToSelf(h)));

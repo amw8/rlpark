@@ -11,7 +11,7 @@ public interface SparseVector extends RealVector {
 
   void subtractSelfTo(double[] data);
 
-  void subtractSelfTo(SparseVector other);
+  void subtractSelfTo(SparseRealVector other);
 
   int nonZeroElements();
 

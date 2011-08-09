@@ -9,9 +9,8 @@ import rltoys.utils.NotImplemented;
 import rltoys.utils.Utils;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-
 @Monitor
-public class PVector implements RealVector {
+public class PVector extends AbstractVector implements ModifiableVector {
   private static final long serialVersionUID = -3114589590234820246L;
 
   final public int size;
@@ -72,11 +71,6 @@ public class PVector implements RealVector {
   }
 
   @Override
-  public RealVector add(RealVector other) {
-    return copy().addToSelf(other);
-  }
-
-  @Override
   public PVector subtractToSelf(RealVector other) {
     if (other instanceof SparseVector) {
       ((SparseVector) other).subtractSelfTo(data);
@@ -89,13 +83,9 @@ public class PVector implements RealVector {
   }
 
   @Override
-  public RealVector addToSelf(RealVector other) {
+  public ModifiableVector addToSelf(RealVector other) {
     if (other instanceof SparseVector) {
       ((SparseVector) other).addSelfTo(data);
-      return this;
-    }
-    if (other instanceof PMultipliedVector) {
-      ((PMultipliedVector) other).addSelfTo(this);
       return this;
     }
     double[] o = other.accessData();
@@ -126,7 +116,7 @@ public class PVector implements RealVector {
   }
 
   @Override
-  public RealVector newInstance(int size) {
+  public ModifiableVector newInstance(int size) {
     return new PVector(size);
   }
 
@@ -141,12 +131,7 @@ public class PVector implements RealVector {
   }
 
   @Override
-  public RealVector mapMultiply(double d) {
-    return new PMultipliedVector(this, d);
-  }
-
-  @Override
-  public RealVector mapMultiplyToSelf(double d) {
+  public ModifiableVector mapMultiplyToSelf(double d) {
     for (int i = 0; i < data.length; i++)
       data[i] *= d;
     return this;
@@ -159,11 +144,6 @@ public class PVector implements RealVector {
 
   public void setSubVector(int i, double[] other) {
     System.arraycopy(other, 0, data, i, other.length);
-  }
-
-  @Override
-  public PVector subtract(RealVector other) {
-    return copy().subtractToSelf(other);
   }
 
   @Override
@@ -180,7 +160,7 @@ public class PVector implements RealVector {
   }
 
   @Override
-  public RealVector getSubVector(int index, int n) {
+  public ModifiableVector getSubVector(int index, int n) {
     notImplemented();
     return null;
   }
@@ -192,19 +172,14 @@ public class PVector implements RealVector {
   }
 
   @Override
-  public RealVector ebeMultiply(RealVector v) {
-    return copy().ebeMultiplyToSelf(v);
-  }
-
-  @Override
-  public RealVector mapAbsToSelf() {
+  public ModifiableVector mapAbsToSelf() {
     for (int i = 0; i < data.length; i++)
       data[i] = Math.abs(data[i]);
     return this;
   }
 
   @Override
-  public RealVector ebeMultiplyToSelf(RealVector v) {
+  public ModifiableVector ebeMultiplyToSelf(RealVector v) {
     if (v instanceof PVector)
       return ebeMultiplyToSelf(((PVector) v).data);
     for (int i = 0; i < data.length; i++)
@@ -212,9 +187,14 @@ public class PVector implements RealVector {
     return this;
   }
 
-  private RealVector ebeMultiplyToSelf(double[] other) {
+  private ModifiableVector ebeMultiplyToSelf(double[] other) {
     for (int i = 0; i < other.length; i++)
       data[i] *= other[i];
     return this;
+  }
+
+  @Override
+  public ModifiableVector copyAsMutable() {
+    return copy();
   }
 }

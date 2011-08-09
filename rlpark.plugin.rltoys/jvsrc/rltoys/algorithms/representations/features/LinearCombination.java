@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import rltoys.math.representations.Function;
-import rltoys.math.vector.CachedVector;
 import rltoys.math.vector.PVector;
 
 public class LinearCombination implements Feature {
@@ -14,7 +13,7 @@ public class LinearCombination implements Feature {
   public final int size;
   private final PVector weights;
   private final List<Function> functions;
-  private CachedVector values = null;
+  private final PVector functionValues;
   private double value;
 
   public LinearCombination(Function... functions) {
@@ -34,7 +33,7 @@ public class LinearCombination implements Feature {
     assert functions.isEmpty() || weights.size == functions.size();
     this.weights = weights;
     this.functions = new ArrayList<Function>(functions);
-    values = new CachedVector();
+    functionValues = new PVector(weights.size);
     size = this.weights.size;
   }
 
@@ -56,16 +55,10 @@ public class LinearCombination implements Feature {
     return sum;
   }
 
-  public PVector values() {
-    return values.values();
-  }
-
   @Override
   public void update() {
-    values.set(functions());
-    Double newValue = value(values.values());
-    if (newValue != null)
-      value = newValue;
+    rltoys.algorithms.representations.features.Functions.set(functions, functionValues);
+    value = weights.dotProduct(functionValues);
   }
 
   public void setFeature(int index, double weight, Function function) {

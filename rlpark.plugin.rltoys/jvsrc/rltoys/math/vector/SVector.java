@@ -10,7 +10,7 @@ import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
 import zephyr.plugin.core.api.monitoring.abstracts.MonitorContainer;
 import zephyr.plugin.core.api.monitoring.abstracts.Monitored;
 
-public class SVector implements SparseVector, MonitorContainer {
+public class SVector extends AbstractVector implements SparseRealVector, MonitorContainer {
   private static final long serialVersionUID = -9095949488538243211L;
   public final Map<Integer, Double> values = new HashMap<Integer, Double>();
   public final int size;
@@ -25,15 +25,12 @@ public class SVector implements SparseVector, MonitorContainer {
       set((SVector) orig);
     else if (orig instanceof BinaryVector)
       initWithConstantValue((BinaryVector) orig, 1.0);
-    else if (orig instanceof BConstantVector) {
-      BConstantVector castedOrig = (BConstantVector) orig;
-      initWithConstantValue(castedOrig.bvector, castedOrig.constant);
-    } else
+    else
       set(orig.accessData());
   }
 
   private void initWithConstantValue(BinaryVector binaryVector, double value) {
-    for (Integer index : binaryVector)
+    for (int index : binaryVector.activeIndexes())
       setEntry(index, value);
   }
 
@@ -57,22 +54,10 @@ public class SVector implements SparseVector, MonitorContainer {
   }
 
   @Override
-  public RealVector add(RealVector other) {
-    return copy().addToSelf(other);
-  }
-
-  @Override
-  public RealVector addToSelf(RealVector other) {
-    if (other instanceof BConstantVector) {
-      BConstantVector bother = (BConstantVector) other;
-      final double otherValue = bother.constant;
-      for (Integer index : bother.bvector)
-        setEntry(index, getEntry(index) + otherValue);
-      return this;
-    }
+  public ModifiableVector addToSelf(RealVector other) {
     if (other instanceof BVector) {
       BVector bother = (BVector) other;
-      for (Integer index : bother.indexes)
+      for (int index : bother.activeIndexes())
         setEntry(index, getEntry(index) + 1);
       return this;
     }
@@ -110,12 +95,7 @@ public class SVector implements SparseVector, MonitorContainer {
   }
 
   @Override
-  public RealVector mapMultiply(double d) {
-    return new SMultipliedVector(this, d);
-  }
-
-  @Override
-  public RealVector mapMultiplyToSelf(double d) {
+  public ModifiableVector mapMultiplyToSelf(double d) {
     if (d == 0.0) {
       set(0.0);
       return this;
@@ -133,7 +113,7 @@ public class SVector implements SparseVector, MonitorContainer {
   @Override
   public void set(double d) {
     if (d == 0.0) {
-      values.clear();
+      clear();
       return;
     }
     for (int i = 0; i < size; i++)
@@ -165,12 +145,7 @@ public class SVector implements SparseVector, MonitorContainer {
   }
 
   @Override
-  public RealVector subtract(RealVector other) {
-    return copy().subtractToSelf(other);
-  }
-
-  @Override
-  public RealVector subtractToSelf(RealVector other) {
+  public ModifiableVector subtractToSelf(RealVector other) {
     if (other instanceof SVector) {
       ((SVector) other).subtractSelfTo(this);
       return this;
@@ -223,7 +198,7 @@ public class SVector implements SparseVector, MonitorContainer {
   }
 
   @Override
-  public void subtractSelfTo(SparseVector other) {
+  public void subtractSelfTo(SparseRealVector other) {
     for (Map.Entry<Integer, Double> entry : values.entrySet()) {
       Integer i = entry.getKey();
       other.setEntry(i, other.getEntry(i) - entry.getValue());
@@ -271,27 +246,31 @@ public class SVector implements SparseVector, MonitorContainer {
   }
 
   @Override
-  public RealVector getSubVector(int index, int n) {
+  public ModifiableVector getSubVector(int index, int n) {
     notImplemented();
     return null;
   }
 
   @Override
-  public RealVector ebeMultiply(RealVector v) {
-    return copy().ebeMultiplyToSelf(v);
-  }
-
-  @Override
-  public RealVector mapAbsToSelf() {
+  public ModifiableVector mapAbsToSelf() {
     for (Map.Entry<Integer, Double> entry : values.entrySet())
       entry.setValue(Math.abs(entry.getValue()));
     return this;
   }
 
   @Override
-  public RealVector ebeMultiplyToSelf(RealVector other) {
+  public ModifiableVector ebeMultiplyToSelf(RealVector other) {
     for (Map.Entry<Integer, Double> entry : values.entrySet())
       entry.setValue(other.getEntry(entry.getKey()) * entry.getValue());
     return this;
+  }
+
+  @Override
+  public ModifiableVector copyAsMutable() {
+    return copy();
+  }
+
+  public void clear() {
+    values.clear();
   }
 }

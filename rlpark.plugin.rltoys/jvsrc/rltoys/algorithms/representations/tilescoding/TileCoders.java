@@ -33,6 +33,10 @@ public abstract class TileCoders implements Projector {
     vector = newVectorInstance();
   }
 
+  private BinaryVector newVectorInstance() {
+    return new BVector(vectorSize(), nbActive());
+  }
+
   public void addIndependentTilings(int gridResolution, int nbTilings) {
     for (int i = 0; i < nbInputs; i++)
       addTileCoder(new int[] { i }, gridResolution, nbTilings);
@@ -57,10 +61,6 @@ public abstract class TileCoders implements Projector {
     }
     addTileCoder(new TileCoder(tilings, resolution));
     vector = newVectorInstance();
-  }
-
-  protected BinaryVector newVectorInstance() {
-    return new BVector(vectorSize());
   }
 
   public BinaryVector getCurrentState() {
@@ -104,5 +104,10 @@ public abstract class TileCoders implements Projector {
 
   public RealVector vector() {
     return vector;
+  }
+
+  protected void setFeatureOn(BinaryVector vector, int[] indexes) {
+    for (int i : indexes)
+      vector.setOn(i);
   }
 }

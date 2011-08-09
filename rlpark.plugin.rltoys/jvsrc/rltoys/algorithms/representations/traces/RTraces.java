@@ -56,7 +56,7 @@ public class RTraces implements Traces {
     BinaryVector bphi = (BinaryVector) phi;
     vector.mapMultiplyToSelf(lambda);
     clearBelowThreshold();
-    for (Integer i : bphi)
+    for (int i : bphi.activeIndexes())
       vector.setEntry(i, 1.0);
     if (rho != 1.0)
       vector.mapMultiplyToSelf(rho);

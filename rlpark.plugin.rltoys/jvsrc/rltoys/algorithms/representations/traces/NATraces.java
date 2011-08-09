@@ -67,11 +67,6 @@ public class NATraces extends SVector implements Traces {
   }
 
   @Override
-  public void clear() {
-    set(0);
-  }
-
-  @Override
   public int hashCode() {
     return super.hashCode();
   }

@@ -7,7 +7,6 @@ import rltoys.algorithms.representations.tilescoding.discretizer.DiscretizerFact
 import rltoys.algorithms.representations.tilescoding.discretizer.PartitionFactory;
 import rltoys.algorithms.representations.tilescoding.hashing.Identity;
 import rltoys.math.ranges.Range;
-import rltoys.math.vector.BUncheckedVector;
 import rltoys.math.vector.BinaryVector;
 
 public class TileCodersNoHashing extends TileCoders {
@@ -48,13 +47,8 @@ public class TileCodersNoHashing extends TileCoders {
         activeTiles[j] += indexOffset;
         indexOffset += identity.memorySize();
       }
-      vector.setOn(activeTiles);
+      setFeatureOn(vector, activeTiles);
     }
-  }
-
-  @Override
-  protected BinaryVector newVectorInstance() {
-    return new BUncheckedVector(nbActive(), vectorSize());
   }
 
   @Override

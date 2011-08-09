@@ -41,26 +41,18 @@ public abstract class VectorTest {
 
   @Test
   public void testSetEntry() {
-    RealVector v = a.copy();
+    ModifiableVector v = a.copyAsMutable();
     v.setEntry(1, 3);
     VectorsTestsUtils.assertEquals(newVector(1.0, 3.0), v);
   }
 
   @Test
   public void testSetDouble() {
-    RealVector v = newVector(2);
+    ModifiableVector v = newVector(2).copyAsMutable();
     v.set(84.0);
     VectorsTestsUtils.assertEquals(v, newVector(84.0, 84.0));
     v.set(0.0);
     VectorsTestsUtils.assertEquals(v, newVector(0.0, 0.0));
-  }
-
-  @Test
-  public void testSetSubVector() {
-    RealVector v = newVector(4);
-    v.setSubVector(0, a);
-    v.setSubVector(a.getDimension(), b);
-    VectorsTestsUtils.assertEquals(newVector(1.0, 2.0, 3.0, 4.0), v);
   }
 
   @Test
@@ -72,13 +64,6 @@ public abstract class VectorTest {
   public void testDotProductSVector() {
     Assert.assertEquals(11.0, a.dotProduct(new SVector(b)), 0.0);
     Assert.assertEquals(2.0, a.dotProduct(c), 0.0);
-  }
-
-  @Test
-  public void testDotProductCachedVector() {
-    CachedGenericVector<PVector> cached = new CachedVector();
-    cached.set(b);
-    Assert.assertEquals(11.0, a.dotProduct(cached.values()), 0.0);
   }
 
   @Test
@@ -119,18 +104,18 @@ public abstract class VectorTest {
 
   @Test
   public void testSubtractToSelf() {
-    VectorsTestsUtils.assertEquals(newVector(1.0, 1.0), a.copy().subtractToSelf(new PVector(0.0, 1.0)));
-    VectorsTestsUtils.assertEquals(newVector(1.0, 1.0), a.copy().subtractToSelf(new SVector(0.0, 1.0)));
-    VectorsTestsUtils.assertEquals(newVector(0.0, 0.0), a.copy().subtractToSelf(a));
-    VectorsTestsUtils.assertEquals(newVector(1.0, 1.0), a.copy().subtractToSelf(c));
+    VectorsTestsUtils.assertEquals(newVector(1.0, 1.0), a.copyAsMutable().subtractToSelf(new PVector(0.0, 1.0)));
+    VectorsTestsUtils.assertEquals(newVector(1.0, 1.0), a.copyAsMutable().subtractToSelf(new SVector(0.0, 1.0)));
+    VectorsTestsUtils.assertEquals(newVector(0.0, 0.0), a.copyAsMutable().subtractToSelf(a));
+    VectorsTestsUtils.assertEquals(newVector(1.0, 1.0), a.copyAsMutable().subtractToSelf(c));
   }
 
   @Test
   public void testAddToSelf() {
-    VectorsTestsUtils.assertEquals(newVector(1.0, 1.0), a.copy().addToSelf(new PVector(0.0, -1.0)));
-    VectorsTestsUtils.assertEquals(newVector(1.0, 1.0), a.copy().addToSelf(new SVector(0.0, -1.0)));
-    VectorsTestsUtils.assertEquals(newVector(0.0, 0.0), a.copy().addToSelf(a.mapMultiply(-1)));
-    VectorsTestsUtils.assertEquals(newVector(1.0, 3.0), a.copy().addToSelf(c));
+    VectorsTestsUtils.assertEquals(newVector(1.0, 1.0), a.copyAsMutable().addToSelf(new PVector(0.0, -1.0)));
+    VectorsTestsUtils.assertEquals(newVector(1.0, 1.0), a.copyAsMutable().addToSelf(new SVector(0.0, -1.0)));
+    VectorsTestsUtils.assertEquals(newVector(0.0, 0.0), a.copyAsMutable().addToSelf(a.mapMultiply(-1)));
+    VectorsTestsUtils.assertEquals(newVector(1.0, 3.0), a.copyAsMutable().addToSelf(c));
   }
 
   @Test
@@ -144,7 +129,7 @@ public abstract class VectorTest {
   public void testEbeMultiplySelf() {
     RealVector a2 = newVector(3, 4, 5);
     RealVector a1 = newVector(-1, 1, 2);
-    VectorsTestsUtils.assertEquals(new PVector(-3, 4, 10), a1.ebeMultiplyToSelf(a2));
+    VectorsTestsUtils.assertEquals(new PVector(-3, 4, 10), a1.copyAsMutable().ebeMultiplyToSelf(a2));
   }
 
   @Test

@@ -3,10 +3,8 @@ package rltoys.math.vector;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,7 +17,7 @@ public class ArrayToBinaryVectorTest {
     double[] o = new double[] { 0.0, 1.0, 2.0, 4.0, 8.0 };
     BVector bob = BVector.toBinary(o);
     int[] expecteds = new int[] { 32, 65, 98, 131 };
-    Assert.assertArrayEquals(expecteds, toIntArray(bob.indexes));
+    Assert.assertArrayEquals(expecteds, bob.activeIndexes());
   }
 
   @Test
@@ -33,11 +31,9 @@ public class ArrayToBinaryVectorTest {
   }
 
   private int[] binaryToInts(BVector bob) {
-    List<Integer> sorted = new ArrayList<Integer>(bob.indexes);
-    Collections.sort(sorted);
     List<Integer> intNumbers = new ArrayList<Integer>();
     BigInteger value = BigInteger.ZERO;
-    for (Integer i : sorted) {
+    for (int i : bob.activeIndexes()) {
       int nextIntegerBit = (intNumbers.size() + 1) * Integer.SIZE;
       while (i >= nextIntegerBit) {
         intNumbers.add(value.intValue());
@@ -58,12 +54,6 @@ public class ArrayToBinaryVectorTest {
         value = value.setBit(j);
     }
     return value.intValue();
-  }
-
-  private int[] toIntArray(Set<Integer> indexes) {
-    List<Integer> sorted = new ArrayList<Integer>(indexes);
-    Collections.sort(sorted);
-    return Utils.asIntArray(sorted);
   }
 
   @Test
