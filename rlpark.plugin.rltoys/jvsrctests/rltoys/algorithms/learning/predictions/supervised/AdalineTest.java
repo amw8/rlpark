@@ -12,7 +12,7 @@ import rltoys.algorithms.representations.features.UniformRandom;
 import rltoys.algorithms.representations.featuresnetwork.AgentStateNetwork;
 import rltoys.math.History;
 import rltoys.math.representations.Function;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 import rltoys.utils.Utils;
 
 

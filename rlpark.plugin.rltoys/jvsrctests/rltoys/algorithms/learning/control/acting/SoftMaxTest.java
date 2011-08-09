@@ -8,8 +8,8 @@ import org.junit.Test;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.TabularAction;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
 
 @SuppressWarnings("serial")
 public class SoftMaxTest {

@@ -6,8 +6,8 @@ import rltoys.algorithms.representations.acting.PolicyDistribution;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.actions.ActionArray;
 import rltoys.math.ranges.Range;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
 
 public class UniformDistribution implements PolicyDistribution {
   private static final long serialVersionUID = 7284864369595009279L;

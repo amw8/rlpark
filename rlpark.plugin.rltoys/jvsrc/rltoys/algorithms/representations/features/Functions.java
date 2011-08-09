@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rltoys.math.representations.Function;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.labels.Labeled;
 import zephyr.plugin.core.api.labels.Labels;
 import zephyr.plugin.core.api.monitoring.abstracts.Monitored;

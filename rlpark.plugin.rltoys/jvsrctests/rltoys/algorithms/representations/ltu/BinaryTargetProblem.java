@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Random;
 
 import rltoys.algorithms.learning.predictions.LearningAlgorithm;
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
+import rltoys.math.vector.implementations.BVector;
 import rltoys.utils.Utils;
 
 public class BinaryTargetProblem {

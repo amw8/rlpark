@@ -5,8 +5,8 @@ import org.junit.Test;
 
 import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.BVector;
 
 @SuppressWarnings("serial")
 public class DemonSchedulerTest {

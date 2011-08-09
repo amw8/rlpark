@@ -1,8 +1,8 @@
 package rltoys.algorithms.representations.ltu;
 
 import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
+import rltoys.math.vector.implementations.BVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 public class StateUpdate {

@@ -1,8 +1,8 @@
 package rltoys.algorithms.learning.predictions.supervised;
 
 import rltoys.algorithms.learning.predictions.LearningAlgorithm;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor

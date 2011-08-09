@@ -19,7 +19,6 @@ public class GTD extends TDC {
     RealVector tdCorrection = tdCorrection(phi_t, phi_tp1).mapMultiply(rho);
     v.addToSelf(phi_t.mapMultiply(alpha_v * delta_t).subtract(tdCorrection));
     w.addToSelf(phi_t.mapMultiply(alpha_w * (delta_t - phi_t.dotProduct(w))));
-    assert v.checkValues();
     return delta_t;
   }
 

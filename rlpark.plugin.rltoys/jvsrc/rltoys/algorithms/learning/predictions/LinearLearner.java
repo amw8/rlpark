@@ -1,6 +1,6 @@
 package rltoys.algorithms.learning.predictions;
 
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 
 public interface LinearLearner {
   void resetWeight(int index);

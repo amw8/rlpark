@@ -1,6 +1,10 @@
-package rltoys.math.vector;
+package rltoys.math.vector.testing;
 
 import org.junit.Assert;
+
+import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.Vectors;
+
 
 public class VectorsTestsUtils {
 

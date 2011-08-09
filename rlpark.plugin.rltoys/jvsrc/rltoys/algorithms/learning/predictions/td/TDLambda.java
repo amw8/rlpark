@@ -1,7 +1,7 @@
 package rltoys.algorithms.learning.predictions.td;
 
 
-import rltoys.algorithms.representations.traces.PATraces;
+import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
@@ -13,7 +13,7 @@ public class TDLambda extends TD {
   public final Traces e;
 
   public TDLambda(double lambda, double gamma, double alpha, int nbFeatures) {
-    this(lambda, gamma, alpha, nbFeatures, new PATraces());
+    this(lambda, gamma, alpha, nbFeatures, new ATraces());
   }
 
   public TDLambda(double lambda, double gamma, double alpha, int nbFeatures, Traces prototype) {

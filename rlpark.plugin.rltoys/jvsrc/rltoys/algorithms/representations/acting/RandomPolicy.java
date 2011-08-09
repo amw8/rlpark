@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Random;
 
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
 import rltoys.utils.Utils;
 
 public class RandomPolicy implements PolicyDistribution {

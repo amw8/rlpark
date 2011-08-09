@@ -1,9 +1,10 @@
 package rltoys.algorithms.representations.actions;
 
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
-import rltoys.math.vector.ModifiableVector;
+import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.VectorEntry;
+import rltoys.math.vector.implementations.BVector;
 
 public class TabularAction implements StateToStateAction {
   private static final long serialVersionUID = 1705117400022134128L;
@@ -26,10 +27,12 @@ public class TabularAction implements StateToStateAction {
       return null;
     if (s instanceof BinaryVector)
       return stateAction((BinaryVector) s, a);
-    ModifiableVector phi_sa = s.newInstance(actionStateFeatureSize());
+    MutableVector phi_sa = s.newInstance(actionStateFeatureSize());
     for (int i = 0; i < actions.length; i++)
       if (actions[i].equals(a)) {
-        phi_sa.setSubVector(stateFeatureSize * i, s);
+        int offset = stateFeatureSize * i;
+        for (VectorEntry entry : s)
+          phi_sa.setEntry(entry.index() + offset, entry.value());
         return phi_sa;
       }
     return null;
@@ -39,8 +42,9 @@ public class TabularAction implements StateToStateAction {
     BVector phi_sa = new BVector(actionStateFeatureSize(), s.nonZeroElements());
     for (int i = 0; i < actions.length; i++)
       if (actions[i].equals(a)) {
+        int offset = stateFeatureSize * i;
         for (int j : s.activeIndexes())
-          phi_sa.setOn(stateFeatureSize * i + j);
+          phi_sa.setOn(offset + j);
         return phi_sa;
       }
     return null;

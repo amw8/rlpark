@@ -10,7 +10,7 @@ import rltoys.algorithms.representations.features.LinearCombination;
 import rltoys.algorithms.representations.features.Positive;
 import rltoys.algorithms.representations.featuresnetwork.InputFeatureNetwork;
 import rltoys.math.representations.Function;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 
 
 public class LinearCombinationTest {

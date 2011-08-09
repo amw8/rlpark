@@ -1,12 +1,11 @@
 package rltoys.algorithms.representations.traces;
 
-import java.util.Map;
-
+import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
-
+import rltoys.math.vector.VectorEntry;
 
 /**
- * Replacing traces
+ * Accumulating traces with an absolute value on each element
  */
 public class AMaxTraces extends ATraces {
   private static final long serialVersionUID = 8063854269195146376L;
@@ -14,55 +13,39 @@ public class AMaxTraces extends ATraces {
   final private double maximumValue;
 
   public AMaxTraces() {
-    this(0, ATraces.DefaultZeroValue, DefaultMaxValue);
+    this(0, DefaultZeroValue, DefaultMaxValue, DefaultPrototype);
   }
 
   public AMaxTraces(int size) {
-    this(size, DefaultZeroValue, DefaultMaxValue);
+    this(size, DefaultZeroValue, DefaultMaxValue, DefaultPrototype);
   }
 
 
   public AMaxTraces(double epsilon, double maximumValue) {
-    this(0, epsilon, maximumValue);
+    this(0, epsilon, maximumValue, DefaultPrototype);
   }
 
-  public AMaxTraces(int size, double epsilon, double maximumValue) {
-    super(size, epsilon);
+  public AMaxTraces(int size, double epsilon, double maximumValue, MutableVector prototype) {
+    super(size, epsilon, prototype);
     this.maximumValue = maximumValue;
+  }
+
+  public AMaxTraces(MutableVector prototype) {
+    this(0, DefaultZeroValue, DefaultMaxValue, prototype);
   }
 
   @Override
   public AMaxTraces newTraces(int size) {
-    return new AMaxTraces(size, epsilon, maximumValue);
+    return new AMaxTraces(size, epsilon, maximumValue, prototype);
   }
 
   @Override
-  public Traces update(double lambda, RealVector phi) {
-    return update(lambda, phi, 1.0);
-  }
-
-  @Override
-  public Traces update(double lambda, RealVector phi, double rho) {
-    mapMultiplyToSelf(lambda);
-    addToSelf(phi);
-    clearBelowThreshold();
-    for (Map.Entry<Integer, Double> entry : values.entrySet()) {
-      double value = entry.getValue();
+  protected void addToSelf(RealVector phi) {
+    vector.addToSelf(phi);
+    for (VectorEntry entry : vector) {
+      final double value = entry.value();
       if (Math.abs(value) > maximumValue)
-        entry.setValue(maximumValue * Math.signum(value));
+        vector.setEntry(entry.index(), Math.signum(value) * maximumValue);
     }
-    if (rho != 1.0)
-      mapMultiplyToSelf(rho);
-    return this;
-  }
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    return super.equals(object);
   }
 }

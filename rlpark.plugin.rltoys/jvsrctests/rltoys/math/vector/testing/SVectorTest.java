@@ -1,16 +1,19 @@
-package rltoys.math.vector;
+package rltoys.math.vector.testing;
+
+import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.SVector;
 
 
 public class SVectorTest extends VectorTest {
 
   @Override
   protected RealVector newVector(RealVector v) {
-    return new SVector(v);
+    return newSVector(v);
   }
 
   @Override
   protected RealVector newVector(double... d) {
-    return new SVector(d);
+    return newSVector(d);
   }
 
   @Override

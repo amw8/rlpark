@@ -1,14 +1,77 @@
-package rltoys.math.vector;
-
-import static rltoys.utils.Utils.notImplemented;
+package rltoys.math.vector.implementations;
 
 import java.util.Arrays;
+import java.util.Iterator;
+
+import rltoys.math.vector.BinaryVector;
+import rltoys.math.vector.MutableVector;
+import rltoys.math.vector.RealVector;
+import rltoys.math.vector.VectorEntry;
+import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 
 public class BVector extends AbstractVector implements BinaryVector {
   private static final long serialVersionUID = 5688026326299722364L;
-  public final int size;
-  private int[] activeIndexes;
+
+  private static class BVectorEntry implements VectorEntry {
+    private final int[] indexes;
+    private int current;
+
+    public BVectorEntry(int[] indexes) {
+      this.indexes = indexes;
+    }
+
+    @Override
+    public int index() {
+      return indexes[current];
+    }
+
+    @Override
+    public double value() {
+      return 1.0;
+    }
+
+    public void update(int current) {
+      this.current = current;
+    }
+  }
+
+  private class BVectorIterator implements Iterator<VectorEntry> {
+    private int current;
+    private final int nbActive;
+    private final BVectorEntry entry;
+    private boolean removed;
+
+    @SuppressWarnings("synthetic-access")
+    protected BVectorIterator() {
+      current = 0;
+      nbActive = BVector.this.nbActive;
+      entry = new BVectorEntry(indexes);
+    }
+
+    @Override
+    public boolean hasNext() {
+      return current < nbActive;
+    }
+
+    @Override
+    public VectorEntry next() {
+      if (!removed)
+        entry.update(current++);
+      else
+        removed = false;
+      return entry;
+    }
+
+    @Override
+    public void remove() {
+      removeEntry(entry.index());
+      removed = true;
+    }
+  }
+
+  private int[] indexes;
+  @Monitor
   private int nbActive = 0;
 
   public BVector(int size) {
@@ -16,8 +79,8 @@ public class BVector extends AbstractVector implements BinaryVector {
   }
 
   public BVector(int size, int allocated) {
-    this.size = size;
-    activeIndexes = new int[allocated];
+    super(size);
+    indexes = new int[allocated];
   }
 
   public BVector(int size, int[] indexes) {
@@ -28,7 +91,7 @@ public class BVector extends AbstractVector implements BinaryVector {
 
   public BVector(BVector v) {
     this(v.size, v.nbActive);
-    System.arraycopy(v.activeIndexes, 0, activeIndexes, 0, v.nbActive);
+    System.arraycopy(v.indexes, 0, indexes, 0, v.nbActive);
     nbActive = v.nbActive;
   }
 
@@ -53,27 +116,8 @@ public class BVector extends AbstractVector implements BinaryVector {
   }
 
   @Override
-  public void subtractSelfTo(SparseRealVector other) {
-    for (int i : activeIndexes())
-      other.setEntry(i, other.getEntry(i) - 1);
-  }
-
-  @Override
-  public double[] accessData() {
-    double[] result = new double[size];
-    for (int i : activeIndexes())
-      result[i] = 1;
-    return result;
-  }
-
-  @Override
   public SVector copyAsMutable() {
-    return new SVector(this);
-  }
-
-  @Override
-  public boolean checkValues() {
-    return true;
+    return new SVector(this, 1);
   }
 
   @Override
@@ -90,31 +134,24 @@ public class BVector extends AbstractVector implements BinaryVector {
   }
 
   @Override
-  public int getDimension() {
-    return size;
-  }
-
-  @Override
   public double getEntry(int i) {
     return search(i) >= 0 ? 1 : 0;
   }
 
   private int search(int i) {
-    return Arrays.binarySearch(activeIndexes, 0, nbActive, i);
+    return Arrays.binarySearch(indexes, 0, nbActive, i);
   }
 
   @Override
-  public ModifiableVector mapMultiply(double d) {
+  public MutableVector mapMultiply(double d) {
     SVector result = copyAsMutable();
     result.mapMultiplyToSelf(d);
     return result;
   }
 
   @Override
-  public ModifiableVector newInstance(int size) {
-    SVector result = copyAsMutable();
-    result.clear();
-    return result;
+  public MutableVector newInstance(int size) {
+    return new SVector(size);
   }
 
   @Override
@@ -125,24 +162,24 @@ public class BVector extends AbstractVector implements BinaryVector {
   @Override
   public void setOn(int index) {
     assert index < size;
-    int searchResult = (canAppend(index) ? -nbActive - 1 : search(index));
+    int searchResult = search(index);
     if (searchResult >= 0)
       return;
     int insertion = -searchResult - 1;
     nbActive++;
-    int[] newActiveIndex = activeIndexes;
-    if (nbActive >= activeIndexes.length) {
-      int newLength = activeIndexes.length > 0 ? activeIndexes.length * 2 : 1;
+    int[] newActiveIndex = indexes;
+    if (nbActive >= indexes.length) {
+      int newLength = indexes.length > 0 ? indexes.length * 2 : 1;
       newActiveIndex = new int[newLength];
-      System.arraycopy(activeIndexes, 0, newActiveIndex, 0, insertion);
+      System.arraycopy(indexes, 0, newActiveIndex, 0, insertion);
     }
-    System.arraycopy(activeIndexes, insertion, newActiveIndex, insertion + 1, nbActive - insertion - 1);
+    System.arraycopy(indexes, insertion, newActiveIndex, insertion + 1, nbActive - insertion - 1);
     newActiveIndex[insertion] = index;
-    activeIndexes = newActiveIndex;
+    indexes = newActiveIndex;
   }
 
   private boolean canAppend(int index) {
-    return nbActive == 0 || index > activeIndexes[nbActive - 1];
+    return nbActive == 0 || index > indexes[nbActive - 1];
   }
 
   @Override
@@ -153,18 +190,6 @@ public class BVector extends AbstractVector implements BinaryVector {
   @Override
   public int nonZeroElements() {
     return nbActive;
-  }
-
-  @Override
-  public void forEach(ElementIterator elementIterator) {
-    for (int index : activeIndexes())
-      elementIterator.element(index, 1.0);
-  }
-
-  @Override
-  public ModifiableVector getSubVector(int index, int n) {
-    notImplemented();
-    return null;
   }
 
   public static BVector toBinary(double[] ds) {
@@ -198,9 +223,9 @@ public class BVector extends AbstractVector implements BinaryVector {
 
   @Override
   final public int[] activeIndexes() {
-    if (activeIndexes.length > nbActive)
-      activeIndexes = Arrays.copyOf(activeIndexes, nbActive);
-    return activeIndexes;
+    if (indexes.length > nbActive)
+      indexes = Arrays.copyOf(indexes, nbActive);
+    return indexes;
   }
 
   public void mergeSubVector(int start, BinaryVector other) {
@@ -209,14 +234,27 @@ public class BVector extends AbstractVector implements BinaryVector {
     int[] otherIndexes = other.activeIndexes();
     allocate(nbActive + otherIndexes.length);
     for (int otherIndex : otherIndexes) {
-      activeIndexes[nbActive] = otherIndex + start;
+      indexes[nbActive] = otherIndex + start;
       nbActive++;
     }
   }
 
-  public void allocate(int allocation) {
-    if (allocation <= activeIndexes.length)
+  public void removeEntry(int index) {
+    int searchResult = search(index);
+    if (searchResult < 0)
       return;
-    activeIndexes = Arrays.copyOf(activeIndexes, allocation);
+    System.arraycopy(indexes, searchResult + 1, indexes, searchResult, nbActive - searchResult - 1);
+    nbActive--;
+  }
+
+  public void allocate(int allocation) {
+    if (allocation <= indexes.length)
+      return;
+    indexes = Arrays.copyOf(indexes, allocation);
+  }
+
+  @Override
+  public Iterator<VectorEntry> iterator() {
+    return new BVectorIterator();
   }
 }

@@ -2,11 +2,11 @@ package rltoys.algorithms.learning.predictions.td;
 
 import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
-import rltoys.algorithms.representations.traces.PATraces;
+import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
-import rltoys.math.vector.SVector;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.implementations.SVector;
 
 public class GTDBetaLambda implements Predictor, LinearLearner {
   private static final long serialVersionUID = 8687476023177671278L;
@@ -21,7 +21,7 @@ public class GTDBetaLambda implements Predictor, LinearLearner {
   private double v_t;
 
   public GTDBetaLambda(double alpha_v, double alpha_w, double lambda, int nbFeatures) {
-    this(alpha_v, alpha_w, lambda, nbFeatures, new PATraces());
+    this(alpha_v, alpha_w, lambda, nbFeatures, new ATraces());
   }
 
   public GTDBetaLambda(double alpha_v, double alpha_w, double lambda, int nbFeatures, Traces prototype) {
@@ -49,7 +49,6 @@ public class GTDBetaLambda implements Predictor, LinearLearner {
       tdCorrection = new SVector(v.size);
     v.addToSelf(e_delta_t.subtract(tdCorrection).mapMultiplyToSelf(alpha_v));
     w.addToSelf(e_delta_t.subtract(phi_t.mapMultiply(w.dotProduct(phi_t))).mapMultiplyToSelf(alpha_w));
-    assert v.checkValues();
     return delta_t;
   }
 

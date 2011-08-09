@@ -1,7 +1,7 @@
 package rltoys.algorithms.learning.predictions.td;
 
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.monitoring.wrappers.Abs;
 import zephyr.plugin.core.api.monitoring.wrappers.Squared;

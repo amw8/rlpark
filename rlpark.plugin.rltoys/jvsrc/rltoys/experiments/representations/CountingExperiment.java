@@ -13,7 +13,7 @@ import rltoys.algorithms.representations.ltu.networks.RandomNetworkAdaptive;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.algorithms.representations.ltu.units.LTUThreshold;
 import rltoys.environments.counting.CountingProblem;
-import rltoys.math.vector.BVector;
+import rltoys.math.vector.implementations.BVector;
 import zephyr.plugin.core.api.Zephyr;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.synchronization.Clock;

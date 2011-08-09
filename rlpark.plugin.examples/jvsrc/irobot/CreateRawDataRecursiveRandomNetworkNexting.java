@@ -19,7 +19,7 @@ import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
 import rltoys.algorithms.representations.ltu.networks.RandomNetworkAdaptive;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
-import rltoys.algorithms.representations.traces.NRTraces;
+import rltoys.algorithms.representations.traces.RTraces;
 import rltoys.demons.DemonScheduler;
 import rltoys.demons.PredictionDemon;
 import rltoys.demons.PredictionDemonVerifier;
@@ -27,8 +27,8 @@ import rltoys.demons.RewardFunction;
 import rltoys.demons.RewardObservationFunction;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.math.GrayCode;
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.BVector;
 import zephyr.plugin.core.api.Zephyr;
 import zephyr.plugin.core.api.labels.Labels;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
@@ -110,7 +110,7 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
       for (double gamma : gammas) {
         double alpha = .1 / stateFeatureNorm;
         int nbFeatures = vectorSize;
-        TDLambda td = new TDLambda(.7, gamma, alpha, nbFeatures, new NRTraces((int) (stateFeatureNorm * 10)));
+        TDLambda td = new TDLambda(.7, gamma, alpha, nbFeatures, new RTraces((int) (stateFeatureNorm * 10)));
         demonScheduler.add(new PredictionDemon(rewardFunction, td));
       }
     }

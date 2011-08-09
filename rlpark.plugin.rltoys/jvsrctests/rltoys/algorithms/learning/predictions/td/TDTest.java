@@ -13,8 +13,9 @@ import rltoys.environments.stategraph.FiniteStateGraph;
 import rltoys.environments.stategraph.FiniteStateGraph.StepData;
 import rltoys.environments.stategraph.LineProblem;
 import rltoys.environments.stategraph.RandomWalk;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.implementations.Vectors;
 
 
 public class TDTest {
@@ -162,7 +163,7 @@ public class TDTest {
       }
     }
     Assert.assertTrue(nbEpisode > 2);
-    Assert.assertTrue(td.td.weights().checkValues());
+    Assert.assertTrue(Vectors.checkValues(td.td.weights()));
   }
 
   static public double distanceToSolution(double[] solution, PVector theta) {

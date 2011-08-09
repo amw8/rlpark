@@ -1,10 +1,10 @@
 package rltoys.algorithms.learning.control.sarsa;
 
 import rltoys.algorithms.learning.predictions.Predictor;
-import rltoys.algorithms.representations.traces.PATraces;
+import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
@@ -22,7 +22,7 @@ public class Sarsa implements Predictor {
   private double v_tp1;
 
   public Sarsa(double alpha, double gamma, double lambda, int nbFeatures) {
-    this(alpha, gamma, lambda, nbFeatures, new PATraces());
+    this(alpha, gamma, lambda, nbFeatures, new ATraces());
   }
 
   public Sarsa(double alpha, double gamma, double lambda, int nbFeatures, Traces prototype) {

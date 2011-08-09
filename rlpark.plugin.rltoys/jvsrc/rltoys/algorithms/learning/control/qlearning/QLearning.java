@@ -3,10 +3,10 @@ package rltoys.algorithms.learning.control.qlearning;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.StateToStateAction;
-import rltoys.algorithms.representations.traces.PATraces;
+import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
 
 public class QLearning implements Predictor {
   private static final long serialVersionUID = -404558746167490755L;
@@ -28,7 +28,7 @@ public class QLearning implements Predictor {
     this.toStateAction = toStateAction;
     this.actions = actions;
     theta = new PVector(nbFeatures);
-    e = new PATraces(nbFeatures);
+    e = new ATraces(nbFeatures);
   }
 
   private void pickupBestAction(RealVector s_tp1) {

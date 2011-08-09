@@ -5,7 +5,7 @@ import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.RLProblem;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.math.normalization.IncMeanVarNormalizer;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 public class NoStateExperiment {

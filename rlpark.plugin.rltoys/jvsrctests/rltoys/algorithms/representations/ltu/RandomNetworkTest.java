@@ -13,9 +13,9 @@ import rltoys.algorithms.representations.ltu.networks.RandomNetworkAdaptive;
 import rltoys.algorithms.representations.ltu.networks.RandomNetworks;
 import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
 import rltoys.algorithms.representations.ltu.units.LTUThreshold;
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.BVector;
 
 
 @SuppressWarnings("serial")

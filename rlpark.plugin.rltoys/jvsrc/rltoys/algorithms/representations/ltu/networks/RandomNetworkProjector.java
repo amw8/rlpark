@@ -1,9 +1,9 @@
 package rltoys.algorithms.representations.ltu.networks;
 
 import rltoys.algorithms.representations.Projector;
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.BVector;
 
 public class RandomNetworkProjector implements Projector {
   private static final long serialVersionUID = 520975442867936390L;

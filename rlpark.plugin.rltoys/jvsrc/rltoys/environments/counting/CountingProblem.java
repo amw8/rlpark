@@ -1,6 +1,6 @@
 package rltoys.environments.counting;
 
-import rltoys.math.vector.BVector;
+import rltoys.math.vector.implementations.BVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor

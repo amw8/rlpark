@@ -9,8 +9,8 @@ import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.TRStep;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
 
 public class MountainCarBehaviourPolicy extends StochasticPolicy implements RLAgent {
   private static final long serialVersionUID = -8033945251597842725L;

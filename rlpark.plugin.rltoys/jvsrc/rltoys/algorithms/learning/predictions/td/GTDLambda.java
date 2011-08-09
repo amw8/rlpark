@@ -2,7 +2,7 @@ package rltoys.algorithms.learning.predictions.td;
 
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.RealVector;
-import rltoys.math.vector.SVector;
+import rltoys.math.vector.implementations.SVector;
 
 public class GTDLambda extends GTD {
   private static final long serialVersionUID = 8687476023177671278L;
@@ -28,9 +28,7 @@ public class GTDLambda extends GTD {
         phi_tp1.mapMultiply(e.vect().dotProduct(w) * gamma * (1 - lambda)) :
         new SVector(w.size);
     v.addToSelf(e_delta.subtract(correction).mapMultiplyToSelf(alpha_v));
-    assert v.checkValues();
     w.addToSelf(e_delta.subtract(phi_t.mapMultiply(w.dotProduct(phi_t))).mapMultiplyToSelf(alpha_w));
-    assert w.checkValues();
     return delta_t;
   }
 

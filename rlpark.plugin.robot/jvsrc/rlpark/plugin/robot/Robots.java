@@ -4,8 +4,8 @@ import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 import rlpark.plugin.robot.sync.ObservationVersatile;
 import rlpark.plugin.robot.sync.ScalarInterpreter;
 import rltoys.math.GrayCode;
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
+import rltoys.math.vector.implementations.BVector;
 import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
 import zephyr.plugin.core.api.monitoring.abstracts.Monitored;
 

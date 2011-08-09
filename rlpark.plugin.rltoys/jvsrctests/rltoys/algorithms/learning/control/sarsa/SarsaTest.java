@@ -18,7 +18,6 @@ import rltoys.algorithms.representations.tilescoding.discretizer.PartitionFactor
 import rltoys.algorithms.representations.tilescoding.hashing.UNH;
 import rltoys.algorithms.representations.traces.AMaxTraces;
 import rltoys.algorithms.representations.traces.ATraces;
-import rltoys.algorithms.representations.traces.PATraces;
 import rltoys.algorithms.representations.traces.RTraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.ranges.Range;
@@ -30,7 +29,7 @@ public class SarsaTest extends MountainCarOnPolicyTest {
     private final Traces traces;
 
     public SarsaControlFactory() {
-      this(new PATraces());
+      this(new ATraces());
     }
 
     public SarsaControlFactory(Traces traces) {

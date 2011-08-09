@@ -3,7 +3,8 @@ package rltoys.environments.envio.actions;
 import java.util.Arrays;
 
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.implementations.Vectors;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 
@@ -14,7 +15,7 @@ public class ActionArray implements Action {
 
   public ActionArray(double... actions) {
     this.actions = actions == null ? null : actions.clone();
-    assert actions == null || new PVector(actions).checkValues();
+    assert actions == null || Vectors.checkValues(new PVector(actions));
   }
 
   @Override

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rltoys.algorithms.representations.features.Identity;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 
 
 public class InputFeatureNetwork extends AbstractFeatureNetwork {

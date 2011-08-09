@@ -2,12 +2,12 @@ package rltoys.algorithms.learning.control.gq;
 
 import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
-import rltoys.algorithms.representations.traces.PATraces;
+import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
-import rltoys.math.vector.ModifiableVector;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
-import rltoys.math.vector.SVector;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.implementations.SVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
@@ -25,7 +25,7 @@ public class GQ implements Predictor, LinearLearner {
   private double delta_t;
 
   public GQ(double alpha_theta, double alpha_w, double beta, double lambda, int nbFeatures) {
-    this(alpha_theta, alpha_w, beta, lambda, nbFeatures, new PATraces());
+    this(alpha_theta, alpha_w, beta, lambda, nbFeatures, new ATraces());
   }
 
   public GQ(double alpha_theta, double alpha_w, double beta, double lambda, int nbFeatures, Traces prototype) {
@@ -49,7 +49,7 @@ public class GQ implements Predictor, LinearLearner {
     double v_tp1 = x_bar_tp1 != null ? theta.dotProduct(x_bar_tp1) : 0;
     delta_t = r_tp1 + beta_tp1 * z_tp1 + (1 - beta_tp1) * v_tp1 - theta.dotProduct(x_t);
     e.update((1 - beta_tp1) * lambda_t * rho_t, x_t);
-    ModifiableVector delta_e = e.vect().mapMultiply(delta_t);
+    MutableVector delta_e = e.vect().mapMultiply(delta_t);
     RealVector tdCorrection = x_bar_tp1 != null ?
         x_bar_tp1.mapMultiply((1 - beta_tp1) * (1 - lambda_t) * e.vect().dotProduct(w)) :
         new SVector(theta.size);

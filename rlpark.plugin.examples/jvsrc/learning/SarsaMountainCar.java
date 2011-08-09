@@ -9,7 +9,7 @@ import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.TabularAction;
 import rltoys.algorithms.representations.tilescoding.TileCodersNoHashing;
-import rltoys.algorithms.representations.traces.PAMaxTraces;
+import rltoys.algorithms.representations.traces.AMaxTraces;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.environments.mountaincar.MountainCar;
 import rltoys.math.vector.BinaryVector;
@@ -24,7 +24,7 @@ public class SarsaMountainCar {
     double alpha = .2 / tileCoders.nbActive();
     double gamma = 0.99;
     double lambda = .3;
-    Sarsa sarsa = new Sarsa(alpha, gamma, lambda, toStateAction.actionStateFeatureSize(), new PAMaxTraces());
+    Sarsa sarsa = new Sarsa(alpha, gamma, lambda, toStateAction.actionStateFeatureSize(), new AMaxTraces());
     double epsilon = 0.01;
     Policy acting = new EpsilonGreedy(new Random(0), problem.actions(), sarsa, toStateAction, epsilon);
     SarsaControl control = new SarsaControl(acting, toStateAction, sarsa);

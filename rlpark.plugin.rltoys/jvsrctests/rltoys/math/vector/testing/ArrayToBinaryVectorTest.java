@@ -1,4 +1,4 @@
-package rltoys.math.vector;
+package rltoys.math.vector.testing;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -9,6 +9,7 @@ import java.util.Random;
 import org.junit.Assert;
 import org.junit.Test;
 
+import rltoys.math.vector.implementations.BVector;
 import rltoys.utils.Utils;
 
 public class ArrayToBinaryVectorTest {

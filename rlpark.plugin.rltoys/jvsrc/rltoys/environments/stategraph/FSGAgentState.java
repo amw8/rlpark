@@ -14,8 +14,8 @@ import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.StateToStateAction;
 import rltoys.environments.stategraph.FiniteStateGraph.StepData;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
 
 public class FSGAgentState implements StateToStateAction {
   private static final long serialVersionUID = -6312948577339609928L;

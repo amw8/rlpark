@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import rltoys.math.representations.Function;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 
 public class LinearCombination implements Feature {
 

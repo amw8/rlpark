@@ -6,8 +6,8 @@ import java.util.Set;
 
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.algorithms.representations.ltu.units.LTUAdaptiveDensity;
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
+import rltoys.math.vector.implementations.BVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor

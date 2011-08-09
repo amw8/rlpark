@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import rltoys.algorithms.learning.predictions.LinearLearner;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.IgnoreMonitor;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 

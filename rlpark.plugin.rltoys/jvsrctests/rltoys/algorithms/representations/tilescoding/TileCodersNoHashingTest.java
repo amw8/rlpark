@@ -7,8 +7,8 @@ import org.junit.Test;
 
 import rltoys.algorithms.representations.tilescoding.discretizer.PartitionFactory;
 import rltoys.math.vector.BinaryVector;
-import rltoys.math.vector.PVector;
-import rltoys.math.vector.VectorsTestsUtils;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.testing.VectorsTestsUtils;
 
 
 public class TileCodersNoHashingTest {

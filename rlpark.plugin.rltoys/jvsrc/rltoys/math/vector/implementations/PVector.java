@@ -1,23 +1,73 @@
-package rltoys.math.vector;
-
-import static rltoys.utils.Utils.notImplemented;
+package rltoys.math.vector.implementations;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
-import rltoys.math.vector.SparseVector.ElementIterator;
+import rltoys.math.vector.DenseVector;
+import rltoys.math.vector.MutableVector;
+import rltoys.math.vector.RealVector;
+import rltoys.math.vector.SparseVector;
+import rltoys.math.vector.VectorEntry;
 import rltoys.utils.NotImplemented;
-import rltoys.utils.Utils;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
-public class PVector extends AbstractVector implements ModifiableVector {
+public class PVector extends AbstractVector implements DenseVector {
   private static final long serialVersionUID = -3114589590234820246L;
 
-  final public int size;
+  private static class PVectorEntry implements VectorEntry {
+    private int current;
+    private final double[] values;
+
+    public PVectorEntry(double[] values) {
+      this.values = values;
+    }
+
+    @Override
+    public int index() {
+      return current;
+    }
+
+    @Override
+    public double value() {
+      return values[current];
+    }
+
+    public void update(int current) {
+      this.current = current;
+    }
+  }
+
+  private class PVectorIterator implements Iterator<VectorEntry> {
+    private int current;
+    private final PVectorEntry entry;
+
+    protected PVectorIterator() {
+      current = 0;
+      entry = new PVectorEntry(accessData());
+    }
+
+    @Override
+    public boolean hasNext() {
+      return current < size;
+    }
+
+    @Override
+    public VectorEntry next() {
+      entry.update(current++);
+      return entry;
+    }
+
+    @Override
+    public void remove() {
+      throw new NotImplemented();
+    }
+  }
+
   final public double[] data;
 
   public PVector(int m) {
-    size = m;
+    super(m);
     data = new double[m];
   }
 
@@ -26,32 +76,22 @@ public class PVector extends AbstractVector implements ModifiableVector {
   }
 
   public PVector(double[] d, boolean copyArray) {
-    assert d != null && d.length > 0;
+    super(d.length);
     data = copyArray ? d.clone() : d;
-    size = data.length;
   }
 
   public PVector(RealVector v) {
+    super(v.getDimension());
     data = new double[v.getDimension()];
     for (int i = 0; i < data.length; ++i)
       data[i] = v.getEntry(i);
-    size = data.length;
   }
 
-  public PVector set(RealVector other) {
-    if (other instanceof PVector)
-      return set(((PVector) other).data);
-    if (other instanceof SparseVector) {
-      set(0);
-      ((SparseVector) other).forEach(new ElementIterator() {
-        @Override
-        public void element(int index, double value) {
-          data[index] = value;
-        }
-      });
-      return this;
-    }
-    throw new NotImplemented();
+  public void set(RealVector other) {
+    if (other instanceof DenseVector)
+      set(((DenseVector) other).accessData());
+    for (VectorEntry entry : other)
+      data[entry.index()] = entry.value();
   }
 
   public PVector set(double[] v) {
@@ -76,19 +116,19 @@ public class PVector extends AbstractVector implements ModifiableVector {
       ((SparseVector) other).subtractSelfTo(data);
       return this;
     }
-    double[] o = other.accessData();
+    double[] o = ((DenseVector) other).accessData();
     for (int i = 0; i < data.length; i++)
       data[i] -= o[i];
     return this;
   }
 
   @Override
-  public ModifiableVector addToSelf(RealVector other) {
+  public MutableVector addToSelf(RealVector other) {
     if (other instanceof SparseVector) {
       ((SparseVector) other).addSelfTo(data);
       return this;
     }
-    double[] o = other.accessData();
+    double[] o = ((DenseVector) other).accessData();
     for (int i = 0; i < data.length; i++)
       data[i] += o[i];
     return this;
@@ -106,17 +146,12 @@ public class PVector extends AbstractVector implements ModifiableVector {
   }
 
   @Override
-  public int getDimension() {
-    return size;
-  }
-
-  @Override
   public double getEntry(int i) {
     return data[i];
   }
 
   @Override
-  public ModifiableVector newInstance(int size) {
+  public MutableVector newInstance(int size) {
     return new PVector(size);
   }
 
@@ -131,38 +166,15 @@ public class PVector extends AbstractVector implements ModifiableVector {
   }
 
   @Override
-  public ModifiableVector mapMultiplyToSelf(double d) {
+  public MutableVector mapMultiplyToSelf(double d) {
     for (int i = 0; i < data.length; i++)
       data[i] *= d;
     return this;
   }
 
   @Override
-  public void setSubVector(int i, RealVector other) {
-    System.arraycopy(other.accessData(), 0, data, i, other.getDimension());
-  }
-
-  public void setSubVector(int i, double[] other) {
-    System.arraycopy(other, 0, data, i, other.length);
-  }
-
-  @Override
-  public boolean checkValues() {
-    for (int i = 0; i < data.length; i++)
-      if (!Utils.checkValue(data[i]))
-        return false;
-    return true;
-  }
-
-  @Override
   public double[] accessData() {
     return data;
-  }
-
-  @Override
-  public ModifiableVector getSubVector(int index, int n) {
-    notImplemented();
-    return null;
   }
 
   public void addToSelf(double[] array) {
@@ -172,14 +184,7 @@ public class PVector extends AbstractVector implements ModifiableVector {
   }
 
   @Override
-  public ModifiableVector mapAbsToSelf() {
-    for (int i = 0; i < data.length; i++)
-      data[i] = Math.abs(data[i]);
-    return this;
-  }
-
-  @Override
-  public ModifiableVector ebeMultiplyToSelf(RealVector v) {
+  public MutableVector ebeMultiplyToSelf(RealVector v) {
     if (v instanceof PVector)
       return ebeMultiplyToSelf(((PVector) v).data);
     for (int i = 0; i < data.length; i++)
@@ -187,14 +192,19 @@ public class PVector extends AbstractVector implements ModifiableVector {
     return this;
   }
 
-  private ModifiableVector ebeMultiplyToSelf(double[] other) {
+  private MutableVector ebeMultiplyToSelf(double[] other) {
     for (int i = 0; i < other.length; i++)
       data[i] *= other[i];
     return this;
   }
 
   @Override
-  public ModifiableVector copyAsMutable() {
+  public MutableVector copyAsMutable() {
     return copy();
+  }
+
+  @Override
+  public Iterator<VectorEntry> iterator() {
+    return new PVectorIterator();
   }
 }

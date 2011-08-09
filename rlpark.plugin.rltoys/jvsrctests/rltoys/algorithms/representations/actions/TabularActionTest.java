@@ -2,8 +2,8 @@ package rltoys.algorithms.representations.actions;
 
 import org.junit.Test;
 
-import rltoys.math.vector.PVector;
-import rltoys.math.vector.VectorsTestsUtils;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.testing.VectorsTestsUtils;
 
 @SuppressWarnings("serial")
 public class TabularActionTest {

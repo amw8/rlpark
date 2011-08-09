@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.BVector;
 
 
 public abstract class FiniteStateGraph implements Serializable {

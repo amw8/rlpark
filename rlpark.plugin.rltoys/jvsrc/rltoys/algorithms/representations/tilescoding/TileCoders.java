@@ -7,9 +7,9 @@ import rltoys.algorithms.representations.Projector;
 import rltoys.algorithms.representations.tilescoding.discretizer.Discretizer;
 import rltoys.algorithms.representations.tilescoding.discretizer.DiscretizerFactory;
 import rltoys.algorithms.representations.tilescoding.hashing.Tiling;
-import rltoys.math.vector.BVector;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.BVector;
 import rltoys.utils.Utils;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 

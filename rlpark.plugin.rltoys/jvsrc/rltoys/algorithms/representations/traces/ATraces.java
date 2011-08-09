@@ -2,43 +2,47 @@ package rltoys.algorithms.representations.traces;
 
 import java.util.Iterator;
 
+import rltoys.math.vector.DenseVector;
+import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
-import rltoys.math.vector.SVector;
+import rltoys.math.vector.VectorEntry;
+import rltoys.math.vector.implementations.SVector;
+import rltoys.math.vector.implementations.Vectors;
+import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 /**
  * Accumulating traces
  */
-public class ATraces extends SVector implements Traces {
-  private static final long serialVersionUID = 8878754041042713717L;
+public class ATraces implements Traces {
+  private static final long serialVersionUID = 6241887723527497111L;
   public static final double DefaultZeroValue = 1e-8;
+  public static final SVector DefaultPrototype = new SVector(0);
   protected double epsilon;
+  protected final MutableVector prototype;
+  @Monitor
+  protected final MutableVector vector;
 
   public ATraces() {
     this(0);
   }
 
+  public ATraces(MutableVector prototype) {
+    this(0, DefaultZeroValue, prototype);
+  }
+
   public ATraces(int size) {
-    this(size, DefaultZeroValue);
+    this(size, DefaultZeroValue, DefaultPrototype);
   }
 
-  public ATraces(int size, double epsilon) {
-    super(size);
+  public ATraces(int size, double epsilon, MutableVector prototype) {
     this.epsilon = epsilon;
-  }
-
-  public ATraces(RealVector orig) {
-    super(orig);
-    epsilon = orig instanceof ATraces ? ((ATraces) orig).epsilon : DefaultZeroValue;
-  }
-
-  public ATraces(double... o) {
-    super(o);
-    epsilon = DefaultZeroValue;
+    this.prototype = prototype;
+    vector = size > 0 ? prototype.newInstance(size) : null;
   }
 
   @Override
   public ATraces newTraces(int size) {
-    return new ATraces(size, epsilon);
+    return new ATraces(size, epsilon, prototype);
   }
 
   @Override
@@ -48,34 +52,34 @@ public class ATraces extends SVector implements Traces {
 
   @Override
   public Traces update(double lambda, RealVector phi, double rho) {
-    mapMultiplyToSelf(lambda);
+    vector.mapMultiplyToSelf(lambda);
     addToSelf(phi);
-    clearBelowThreshold();
+    if (!(vector instanceof DenseVector))
+      clearBelowThreshold();
     if (rho != 1.0)
-      mapMultiplyToSelf(rho);
+      vector.mapMultiplyToSelf(rho);
     return this;
   }
 
+  protected void addToSelf(RealVector phi) {
+    vector.addToSelf(phi);
+  }
+
   protected void clearBelowThreshold() {
-    for (Iterator<Double> iterator = values.values().iterator(); iterator.hasNext();) {
-      double value = iterator.next();
+    for (Iterator<VectorEntry> iterator = vector.iterator(); iterator.hasNext();) {
+      double value = iterator.next().value();
       if (Math.abs(value) < epsilon)
         iterator.remove();
     }
   }
 
   @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    return super.equals(object);
-  }
-
-  @Override
   public RealVector vect() {
-    return this;
+    return vector;
+  }
+
+  @Override
+  public void clear() {
+    Vectors.clear(vector);
   }
 }

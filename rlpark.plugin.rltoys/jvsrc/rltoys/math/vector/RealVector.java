@@ -2,30 +2,24 @@ package rltoys.math.vector;
 
 import java.io.Serializable;
 
-public interface RealVector extends Serializable {
-  double[] accessData();
-
-  RealVector getSubVector(int index, int n);
-
-  RealVector copy();
-
-  ModifiableVector mapMultiply(double d);
-
+public interface RealVector extends Serializable, Iterable<VectorEntry> {
   int getDimension();
 
   double getEntry(int i);
 
   double dotProduct(RealVector other);
 
-  ModifiableVector subtract(RealVector other);
+  MutableVector mapMultiply(double d);
 
-  ModifiableVector add(RealVector other);
+  MutableVector subtract(RealVector other);
 
-  ModifiableVector newInstance(int size);
+  MutableVector add(RealVector other);
 
-  boolean checkValues();
+  MutableVector ebeMultiply(RealVector v);
 
-  ModifiableVector ebeMultiply(RealVector v);
+  MutableVector newInstance(int size);
 
-  ModifiableVector copyAsMutable();
+  MutableVector copyAsMutable();
+
+  RealVector copy();
 }

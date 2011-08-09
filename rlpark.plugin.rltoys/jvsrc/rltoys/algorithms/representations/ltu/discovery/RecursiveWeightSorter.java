@@ -7,7 +7,7 @@ import java.util.Set;
 import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
 import rltoys.algorithms.representations.ltu.units.LTU;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 import rltoys.utils.Utils;
 import zephyr.plugin.core.api.monitoring.annotations.IgnoreMonitor;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;

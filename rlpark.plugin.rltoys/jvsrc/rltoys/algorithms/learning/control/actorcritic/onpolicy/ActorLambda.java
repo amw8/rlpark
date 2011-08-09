@@ -2,7 +2,7 @@ package rltoys.algorithms.learning.control.actorcritic.onpolicy;
 
 import rltoys.algorithms.representations.acting.PolicyDistribution;
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.algorithms.representations.traces.PATraces;
+import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
@@ -15,7 +15,7 @@ public class ActorLambda extends Actor {
   private final double lambda;
 
   public ActorLambda(double lambda, PolicyDistribution policyDistribution, double alpha_u, int nbFeatures) {
-    this(lambda, policyDistribution, alpha_u, nbFeatures, new PATraces());
+    this(lambda, policyDistribution, alpha_u, nbFeatures, new ATraces());
   }
 
   public ActorLambda(double lambda, PolicyDistribution policyDistribution, double alpha_u, int nbFeatures,

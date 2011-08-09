@@ -9,10 +9,10 @@ import rltoys.math.normalization.MinMaxNormalizerTest;
 import rltoys.math.normalization.MovingMeanVarNormalizerTest;
 import rltoys.math.normalization.NormalizerTest;
 import rltoys.math.ranges.RangeTest;
-import rltoys.math.vector.ArrayToBinaryVectorTest;
-import rltoys.math.vector.BVectorTest;
-import rltoys.math.vector.PVectorTest;
-import rltoys.math.vector.SVectorTest;
+import rltoys.math.vector.testing.ArrayToBinaryVectorTest;
+import rltoys.math.vector.testing.BVectorTest;
+import rltoys.math.vector.testing.PVectorTest;
+import rltoys.math.vector.testing.SVectorTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ BVectorTest.class, PVectorTest.class, SVectorTest.class, RangeTest.class,

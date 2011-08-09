@@ -3,7 +3,7 @@ package rltoys.algorithms.learning.predictions.supervised;
 import java.util.Random;
 
 import rltoys.algorithms.learning.predictions.LearningAlgorithm;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 import rltoys.utils.Utils;
 
 public class NoisyInputSum {

@@ -86,4 +86,6 @@ Export-Package: rltoys,
  rltoys.math.ranges,
  rltoys.math.representations,
  rltoys.math.vector,
+ rltoys.math.vector.implementations,
+ rltoys.math.vector.testing,
  rltoys.utils

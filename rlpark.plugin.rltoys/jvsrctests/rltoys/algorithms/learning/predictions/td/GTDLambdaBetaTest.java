@@ -10,8 +10,9 @@ import rltoys.algorithms.representations.acting.ConstantPolicy;
 import rltoys.environments.stategraph.FSGAgentState;
 import rltoys.environments.stategraph.FiniteStateGraph.StepData;
 import rltoys.environments.stategraph.RandomWalk;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.implementations.Vectors;
 
 
 public class GTDLambdaBetaTest {
@@ -147,6 +148,6 @@ public class GTDLambdaBetaTest {
       }
     }
     Assert.assertTrue(nbEpisode > 100);
-    Assert.assertTrue(gtd.theta().checkValues());
+    Assert.assertTrue(Vectors.checkValues(gtd.theta()));
   }
 }

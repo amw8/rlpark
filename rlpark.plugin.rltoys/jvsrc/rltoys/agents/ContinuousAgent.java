@@ -8,7 +8,7 @@ import rltoys.environments.envio.OffPolicyLearner;
 import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.environments.envio.observations.TStep;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 public class ContinuousAgent implements RLAgent, OffPolicyLearner {

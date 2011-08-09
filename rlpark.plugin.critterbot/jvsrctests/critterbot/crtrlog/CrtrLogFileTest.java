@@ -12,8 +12,8 @@ import rltoys.algorithms.representations.featuresnetwork.ObservationAgentState;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TStep;
 import rltoys.math.ranges.Range;
-import rltoys.math.vector.PVector;
-import rltoys.math.vector.VectorsTestsUtils;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.testing.VectorsTestsUtils;
 import rltoys.utils.Paths;
 import rltoys.utils.Utils;
 

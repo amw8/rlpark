@@ -1,4 +1,4 @@
-package rltoys.math.vector;
+package rltoys.math.vector.testing;
 
 import java.util.List;
 
@@ -6,6 +6,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import rltoys.math.representations.Function;
+import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.implementations.PVectors;
 import rltoys.utils.Utils;
 
 
@@ -30,6 +33,15 @@ public class PVectorTest extends VectorTest {
   public void testMean() {
     Assert.assertEquals(1.5, PVectors.mean((PVector) a), 0.0);
     Assert.assertEquals(3.5, PVectors.mean((PVector) b), 0.0);
+  }
+
+  @Test
+  public void testSetDouble() {
+    PVector v = newVector(2);
+    v.set(84.0);
+    VectorsTestsUtils.assertEquals(v, newVector(84.0, 84.0));
+    v.set(0.0);
+    VectorsTestsUtils.assertEquals(v, newVector(0.0, 0.0));
   }
 
 

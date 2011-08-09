@@ -10,7 +10,7 @@ import rltoys.algorithms.representations.features.Functions;
 import rltoys.algorithms.representations.features.Normalize;
 import rltoys.math.normalization.Normalizer;
 import rltoys.math.representations.Function;
-import rltoys.math.vector.PVector;
+import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.labels.Labels;
 
 

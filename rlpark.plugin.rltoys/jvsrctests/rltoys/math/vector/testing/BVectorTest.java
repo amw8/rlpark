@@ -1,13 +1,17 @@
-package rltoys.math.vector;
+package rltoys.math.vector.testing;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import rltoys.math.vector.implementations.BVector;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.implementations.SVector;
 
 
 public class BVectorTest {
   private final BVector a = new BVector(10, new int[] { 1, 2, 4, 5 });
   private final PVector b = new PVector(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0);
-  private final SVector c = new SVector(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0);
+  private final SVector c = VectorTest.newSVector(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0);
 
   @Test
   public void testAdd() {

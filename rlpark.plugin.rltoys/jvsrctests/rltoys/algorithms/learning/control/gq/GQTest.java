@@ -15,8 +15,9 @@ import rltoys.environments.stategraph.FSGAgentState;
 import rltoys.environments.stategraph.FiniteStateGraph.StepData;
 import rltoys.environments.stategraph.GraphState;
 import rltoys.environments.stategraph.RandomWalk;
-import rltoys.math.vector.PVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.implementations.Vectors;
 
 
 public class GQTest {
@@ -84,7 +85,7 @@ public class GQTest {
       v = computeValueFunction(agentState, gq, targetPolicy);
     }
     Assert.assertTrue(nbEpisode > 100);
-    Assert.assertTrue(controlGQ.theta().checkValues());
+    Assert.assertTrue(Vectors.checkValues(controlGQ.theta()));
   }
 
   private PVector computeValueFunction(FSGAgentState agentState, GQ gq, Policy targetPolicy) {
