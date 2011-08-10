@@ -1,11 +1,9 @@
 package rltoys.algorithms.representations.traces;
 
-import java.util.Iterator;
-
 import rltoys.math.vector.DenseVector;
 import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
-import rltoys.math.vector.VectorEntry;
+import rltoys.math.vector.SparseVector;
 import rltoys.math.vector.implementations.SVector;
 import rltoys.math.vector.implementations.Vectors;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
@@ -21,6 +19,8 @@ public class ATraces implements Traces {
   protected final MutableVector prototype;
   @Monitor
   protected final MutableVector vector;
+  private int lastActiveElements;
+  private int nbAcceptedElements;
 
   public ATraces() {
     this(0);
@@ -54,11 +54,29 @@ public class ATraces implements Traces {
   public Traces update(double lambda, RealVector phi, double rho) {
     vector.mapMultiplyToSelf(lambda);
     addToSelf(phi);
-    if (!(vector instanceof DenseVector))
+    if (clearRequired(phi, lambda))
       clearBelowThreshold();
     if (rho != 1.0)
       vector.mapMultiplyToSelf(rho);
     return this;
+  }
+
+  private boolean clearRequired(RealVector phi, double lambda) {
+    if (phi instanceof DenseVector)
+      return false;
+    if (vector instanceof DenseVector)
+      return false;
+    SparseVector sparsePhi = (SparseVector) phi;
+    int nbAcceptedElements = updateAcceptedElements(sparsePhi.nonZeroElements(), lambda);
+    return ((SparseVector) vector).nonZeroElements() >= nbAcceptedElements;
+  }
+
+  private int updateAcceptedElements(int activeElements, double lambda) {
+    if (lastActiveElements == activeElements)
+      return nbAcceptedElements;
+    lastActiveElements = activeElements;
+    nbAcceptedElements = (int) (Math.log(epsilon) / Math.log(lambda)) * activeElements;
+    return nbAcceptedElements;
   }
 
   protected void addToSelf(RealVector phi) {
@@ -66,10 +84,14 @@ public class ATraces implements Traces {
   }
 
   protected void clearBelowThreshold() {
-    for (Iterator<VectorEntry> iterator = vector.iterator(); iterator.hasNext();) {
-      double value = iterator.next().value();
-      if (Math.abs(value) < epsilon)
-        iterator.remove();
+    SVector svector = (SVector) vector;
+    double[] values = svector.values();
+    int i = 0;
+    while (i < svector.nonZeroElements()) {
+      if (values[i] <= epsilon)
+        svector.removeExistingEntry(i);
+      else
+        i++;
     }
   }
 

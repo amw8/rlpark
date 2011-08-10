@@ -131,7 +131,7 @@ public class SVector extends AbstractVector implements SparseRealVector {
     values[position] = value;
   }
 
-  void removeExistingEntry(int entryIndex) {
+  public void removeExistingEntry(int entryIndex) {
     System.arraycopy(indexes, entryIndex + 1, indexes, entryIndex, nbActive - entryIndex - 1);
     System.arraycopy(values, entryIndex + 1, values, entryIndex, nbActive - entryIndex - 1);
     nbActive--;
@@ -242,5 +242,9 @@ public class SVector extends AbstractVector implements SparseRealVector {
   @Override
   public Iterator<VectorEntry> iterator() {
     return new SVectorIterator();
+  }
+
+  public double[] values() {
+    return values;
   }
 }
