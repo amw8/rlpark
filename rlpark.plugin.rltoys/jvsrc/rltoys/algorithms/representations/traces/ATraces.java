@@ -85,7 +85,7 @@ public class ATraces implements Traces {
 
   protected void clearBelowThreshold() {
     SVector svector = (SVector) vector;
-    double[] values = svector.values();
+    double[] values = svector.values;
     int i = 0;
     while (i < svector.nonZeroElements()) {
       if (values[i] <= epsilon)

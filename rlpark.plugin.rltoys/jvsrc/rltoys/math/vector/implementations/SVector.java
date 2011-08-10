@@ -10,15 +10,10 @@ import rltoys.math.vector.VectorEntry;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 public class SVector extends AbstractVector implements SparseRealVector {
-  private static class SVectorEntry implements VectorEntry {
-    private final int[] indexes;
-    private final double[] values;
-    private int current;
+  private static final long serialVersionUID = -3324707947990480491L;
 
-    public SVectorEntry(int[] indexes, double[] values) {
-      this.indexes = indexes;
-      this.values = values;
-    }
+  private class SVectorEntry implements VectorEntry {
+    private int current;
 
     @Override
     public int index() {
@@ -44,7 +39,7 @@ public class SVector extends AbstractVector implements SparseRealVector {
     protected SVectorIterator() {
       current = -1;
       nbActive = SVector.this.nbActive;
-      entry = new SVectorEntry(indexes, values);
+      entry = new SVectorEntry();
     }
 
     @Override
@@ -69,9 +64,8 @@ public class SVector extends AbstractVector implements SparseRealVector {
     }
   }
 
-  private static final long serialVersionUID = -3324707947990480491L;
-  private int[] indexes;
-  private double[] values;
+  public int[] indexes;
+  public double[] values;
   @Monitor
   int nbActive = 0;
 
@@ -114,35 +108,34 @@ public class SVector extends AbstractVector implements SparseRealVector {
     return copy();
   }
 
-  private int search(int i) {
-    return Arrays.binarySearch(indexes, 0, nbActive, i);
-  }
-
-  @Override
-  public void setEntry(int index, double value) {
-    if (value == 0.0) {
-      int searchResult = search(index);
-      if (searchResult < 0)
-        return;
-      removeExistingEntry(searchResult);
-      return;
-    }
-    int position = findElementPosition(index);
-    values[position] = value;
-  }
-
   public void removeExistingEntry(int entryIndex) {
     System.arraycopy(indexes, entryIndex + 1, indexes, entryIndex, nbActive - entryIndex - 1);
     System.arraycopy(values, entryIndex + 1, values, entryIndex, nbActive - entryIndex - 1);
     nbActive--;
   }
 
-  private int findElementPosition(int index) {
-    assert index < size;
+  @Override
+  public void setEntry(int index, double value) {
     int searchResult = search(index);
-    if (searchResult >= 0)
-      return searchResult;
-    int insertion = -searchResult - 1;
+    if (value == 0.0) {
+      if (searchResult < 0)
+        return;
+      removeExistingEntry(searchResult);
+      return;
+    }
+    int position = searchResult;
+    if (position < 0) {
+      position = notFoundToPosition(position);
+      insertElementAtPosition(position, index, value);
+    } else
+      values[position] = value;
+  }
+
+  static public int notFoundToPosition(int searchResult) {
+    return -searchResult - 1;
+  }
+
+  public void insertElementAtPosition(int insertion, int index, double value) {
     nbActive++;
     int[] newActiveIndex = indexes;
     double[] newActiveValues = values;
@@ -156,9 +149,17 @@ public class SVector extends AbstractVector implements SparseRealVector {
     System.arraycopy(indexes, insertion, newActiveIndex, insertion + 1, nbActive - insertion - 1);
     System.arraycopy(values, insertion, newActiveValues, insertion + 1, nbActive - insertion - 1);
     newActiveIndex[insertion] = index;
+    newActiveValues[insertion] = value;
     indexes = newActiveIndex;
     values = newActiveValues;
-    return insertion;
+  }
+
+  private int search(int index) {
+    return searchFrom(0, index);
+  }
+
+  public int searchFrom(int start, int index) {
+    return Arrays.binarySearch(indexes, start, nbActive, index);
   }
 
   @Override
@@ -242,9 +243,5 @@ public class SVector extends AbstractVector implements SparseRealVector {
   @Override
   public Iterator<VectorEntry> iterator() {
     return new SVectorIterator();
-  }
-
-  public double[] values() {
-    return values;
   }
 }

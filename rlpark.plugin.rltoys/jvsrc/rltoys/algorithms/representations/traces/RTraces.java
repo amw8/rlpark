@@ -30,7 +30,17 @@ public class RTraces extends ATraces {
 
   @Override
   protected void addToSelf(RealVector phi) {
-    for (int i : ((BinaryVector) phi).activeIndexes())
-      vector.setEntry(i, 1);
+    SVector svector = (SVector) vector;
+    int tracePosition = 0;
+    for (int vectorIndex : ((BinaryVector) phi).activeIndexes()) {
+      int search = svector.searchFrom(tracePosition, vectorIndex);
+      int position = search;
+      if (position < 0) {
+        position = SVector.notFoundToPosition(search);
+        svector.insertElementAtPosition(position, vectorIndex, 1);
+      } else
+        svector.values[position] = 1;
+      tracePosition = position + 1;
+    }
   }
 }

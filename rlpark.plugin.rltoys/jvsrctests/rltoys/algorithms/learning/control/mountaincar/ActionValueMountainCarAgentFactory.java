@@ -18,7 +18,7 @@ public abstract class ActionValueMountainCarAgentFactory implements MountainCarC
     StateToStateAction toStateAction = new TabularAction(mountainCar.actions(), tilesCoder.vectorSize());
     Predictor predictor = createPredictor(mountainCar.actions(), toStateAction,
                                           tilesCoder.nbActive(), toStateAction.actionStateFeatureSize());
-    EpsilonGreedy acting = new EpsilonGreedy(new Random(0), mountainCar.actions(), predictor, toStateAction, 0.1);
+    EpsilonGreedy acting = new EpsilonGreedy(new Random(0), mountainCar.actions(), toStateAction, predictor, 0.1);
     return createControl(predictor, tilesCoder, toStateAction, acting);
   }
 

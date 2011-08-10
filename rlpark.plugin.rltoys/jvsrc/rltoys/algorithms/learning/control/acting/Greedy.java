@@ -1,47 +1,21 @@
 package rltoys.algorithms.learning.control.acting;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.StateToStateAction;
-import rltoys.math.Constants;
 import rltoys.math.vector.RealVector;
-import rltoys.utils.Utils;
-import zephyr.plugin.core.api.labels.Labels;
-import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
-import zephyr.plugin.core.api.monitoring.abstracts.MonitorContainer;
-import zephyr.plugin.core.api.monitoring.abstracts.Monitored;
 
-public class Greedy implements Policy, MonitorContainer {
+public class Greedy implements Policy {
   private static final long serialVersionUID = 1675962692054005355L;
-  public final double tolerance;
-  protected Random random;
   protected final StateToStateAction toStateAction;
-  protected final Map<Action, Double> actionValues = new LinkedHashMap<Action, Double>();
-  protected final List<Action> bestActions = new ArrayList<Action>();
   protected final Predictor predictor;
   protected final Action[] availableActions;
+  protected Action bestAction;
+  private double bestValue;
 
   public Greedy(Predictor predictor, Action[] actions, StateToStateAction toStateAction) {
-    this(null, actions, predictor, toStateAction);
-  }
-
-
-  public Greedy(Random random, Action[] actions, Predictor predictor, StateToStateAction toStateAction) {
-    this(random, predictor, actions, toStateAction, Constants.EPSILON);
-  }
-
-  public Greedy(Random random, Predictor predictor, Action[] actions, StateToStateAction toStateAction,
-      double tolerance) {
     this.toStateAction = toStateAction;
-    this.random = random;
-    this.tolerance = tolerance;
     this.predictor = predictor;
     availableActions = actions;
   }
@@ -52,59 +26,23 @@ public class Greedy implements Policy, MonitorContainer {
   }
 
   protected Action pickupBestAction(RealVector s_tp1) {
-    double bestValue = -Double.MAX_VALUE;
+    if (s_tp1 == null)
+      return bestAction;
+    bestAction = null;
     for (Action a : availableActions) {
       RealVector phi_sa = toStateAction.stateAction(s_tp1, a);
-      double value = phi_sa != null ? predictor.predict(phi_sa) : 0.0;
-      assert Utils.checkValue(value);
-      actionValues.put(a, value);
-      if (value > bestValue)
+      double value = predictor.predict(phi_sa);
+      if (bestAction == null || value > bestValue) {
         bestValue = value;
-    }
-    bestActions.clear();
-    for (Map.Entry<Action, Double> entry : actionValues.entrySet())
-      if (bestValue - entry.getValue() <= tolerance) {
-        bestActions.add(entry.getKey());
-        if (random == null)
-          break;
+        bestAction = a;
       }
-    assert bestActions.size() > 0;
-    if (random == null || bestActions.size() == 1)
-      return bestActions.get(0);
-    return bestActions.get(random.nextInt(bestActions.size()));
-  }
-
-  @Override
-  public String toString() {
-    return actionValues.toString();
+    }
+    return bestAction;
   }
 
   @Override
   public double pi(RealVector s, Action a) {
     pickupBestAction(s);
-    if (bestActions.contains(a))
-      return 1.0 / bestActions.size();
-    return 0.0;
-  }
-
-  @Override
-  public void addToMonitor(DataMonitor monitor) {
-    for (Action a : availableActions) {
-      final Action current = a;
-      monitor.add(Labels.label(a), 0, new Monitored() {
-        @Override
-        public double monitoredValue() {
-          Double value = actionValues.get(current);
-          return value != null ? value : 0;
-        }
-      });
-    }
-    final double nbActions = availableActions.length;
-    monitor.add(Labels.label("bestActionsRatio"), 0, new Monitored() {
-      @Override
-      public double monitoredValue() {
-        return bestActions.size() / nbActions;
-      }
-    });
+    return a == bestAction ? 1 : 0;
   }
 }

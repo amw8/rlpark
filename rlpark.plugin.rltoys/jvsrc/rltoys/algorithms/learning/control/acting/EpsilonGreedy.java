@@ -5,23 +5,19 @@ import java.util.Random;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.StateToStateAction;
-import rltoys.math.Constants;
 import rltoys.math.vector.RealVector;
 import rltoys.utils.Utils;
 
 public class EpsilonGreedy extends Greedy {
   private static final long serialVersionUID = -2618584767896890494L;
   private final double epsilon;
-
-  public EpsilonGreedy(Random random, Action[] actions, Predictor predictor, StateToStateAction toStateAction,
-      double epsilon) {
-    this(random, actions, toStateAction, predictor, epsilon, Constants.EPSILON);
-  }
+  private final Random random;
 
   public EpsilonGreedy(Random random, Action[] actions, StateToStateAction toStateAction, Predictor predictor,
-      double epsilon, double tolerance) {
-    super(random, predictor, actions, toStateAction, tolerance);
+      double epsilon) {
+    super(predictor, actions, toStateAction);
     this.epsilon = epsilon;
+    this.random = random;
   }
 
   @Override
@@ -36,8 +32,8 @@ public class EpsilonGreedy extends Greedy {
   public double pi(RealVector s, Action a) {
     pickupBestAction(s);
     double probability = 0.0;
-    if (bestActions.contains(a))
-      probability += (1.0 - epsilon) / bestActions.size();
+    if (a == bestAction)
+      return 1.0 - epsilon;
     return probability + epsilon / availableActions.length;
   }
 

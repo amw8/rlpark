@@ -29,7 +29,7 @@ public class TabularAction implements StateToStateAction {
       return stateAction((BinaryVector) s, a);
     MutableVector phi_sa = s.newInstance(actionStateFeatureSize());
     for (int i = 0; i < actions.length; i++)
-      if (actions[i].equals(a)) {
+      if (actions[i] == a) {
         int offset = stateFeatureSize * i;
         for (VectorEntry entry : s)
           phi_sa.setEntry(entry.index() + offset, entry.value());
@@ -42,7 +42,7 @@ public class TabularAction implements StateToStateAction {
     BVector phi_sa = new BVector(actionStateFeatureSize(), s.nonZeroElements());
     phi_sa.setOrderedIndexes(s.activeIndexes());
     for (int i = 0; i < actions.length; i++)
-      if (actions[i].equals(a)) {
+      if (actions[i] == a) {
         int offset = stateFeatureSize * i;
         int[] indexes = phi_sa.activeIndexes();
         for (int j = 0; j < indexes.length; j++)
