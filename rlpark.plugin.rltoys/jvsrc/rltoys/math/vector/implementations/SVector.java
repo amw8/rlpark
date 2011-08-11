@@ -164,18 +164,34 @@ public class SVector extends AbstractVector implements SparseRealVector {
 
   @Override
   public MutableVector addToSelf(RealVector other) {
+    int thisPosition = 0;
     for (VectorEntry entry : other) {
-      final int index = entry.index();
-      setEntry(index, getEntry(index) + entry.value());
+      int otherIndex = entry.index();
+      int search = searchFrom(thisPosition, otherIndex);
+      int position = search;
+      if (position < 0) {
+        position = notFoundToPosition(search);
+        insertElementAtPosition(position, otherIndex, entry.value());
+      } else
+        values[position] += entry.value();
+      thisPosition = position + 1;
     }
     return this;
   }
 
   @Override
   public MutableVector subtractToSelf(RealVector other) {
+    int thisPosition = 0;
     for (VectorEntry entry : other) {
-      final int index = entry.index();
-      setEntry(index, getEntry(index) - entry.value());
+      int otherIndex = entry.index();
+      int search = searchFrom(thisPosition, otherIndex);
+      int position = search;
+      if (position < 0) {
+        position = notFoundToPosition(search);
+        insertElementAtPosition(position, otherIndex, -entry.value());
+      } else
+        values[position] -= entry.value();
+      thisPosition = position + 1;
     }
     return this;
   }

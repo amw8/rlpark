@@ -3,7 +3,6 @@ package rltoys.algorithms.representations.ltu.networks;
 import java.util.Random;
 
 import rltoys.algorithms.representations.ltu.units.LTU;
-import rltoys.algorithms.representations.ltu.units.LTUConst;
 
 public class RandomNetworks {
   public static void fullyConnect(Random random, RandomNetwork randomNetwork, LTU prototype) {
@@ -18,7 +17,6 @@ public class RandomNetworks {
       }
       randomNetwork.addLTU(prototype.newLTU(i, inputs, weights));
     }
-    randomNetwork.addLTU(new LTUConst(outputSize - 1));
   }
 
   public static void connect(Random random, RandomNetwork randomNetwork, LTU prototype, int nbUnitInputs) {
@@ -34,7 +32,6 @@ public class RandomNetworks {
       }
       randomNetwork.addLTU(prototype.newLTU(i, inputs, weights));
     }
-    randomNetwork.addLTU(new LTUConst(outputSize - 1));
   }
 
   private static int chooseInput(Random random, boolean[] choosen) {

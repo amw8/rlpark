@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import rltoys.algorithms.representations.ltu.units.LTU;
-import rltoys.algorithms.representations.ltu.units.LTUConst;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.implementations.BVector;
 import zephyr.plugin.core.api.monitoring.annotations.IgnoreMonitor;
@@ -25,8 +24,6 @@ public class RandomNetwork implements Serializable {
   protected final LTU[] ltus;
   @IgnoreMonitor
   protected final List<LTU>[] connectedLTUs;
-  @IgnoreMonitor
-  private final List<LTU> disconnectedLTUs = new ArrayList<LTU>();
   protected int nbConnection = 0;
   protected int nbActive = 0;
 
@@ -36,8 +33,6 @@ public class RandomNetwork implements Serializable {
     this.inputSize = inputSize;
     connectedLTUs = new List[inputSize];
     ltus = new LTU[outputSize];
-    for (int i = 0; i < ltus.length; i++)
-      ltus[i] = new LTUConst(i);
     output = new BVector(outputSize);
   }
 
@@ -45,8 +40,6 @@ public class RandomNetwork implements Serializable {
     removeLTU(ltus[ltu.index()]);
     ltus[ltu.index()] = ltu;
     Set<Integer> ltuInputs = ltu.inputs();
-    if (ltuInputs.isEmpty())
-      disconnectedLTUs.add(ltu);
     for (int input : ltuInputs) {
       if (connectedLTUs[input] == null)
         connectedLTUs[input] = new ArrayList<LTU>();
@@ -64,6 +57,8 @@ public class RandomNetwork implements Serializable {
   }
 
   public void removeLTU(LTU ltu) {
+    if (ltu == null)
+      return;
     assert ltus[ltu.index()] != null;
     removeLTUStat(ltu);
     ltus[ltu.index()] = null;
@@ -96,7 +91,6 @@ public class RandomNetwork implements Serializable {
     output.clear();
     Set<LTU> updated = computeLTUSum(obs);
     updateActiveLTUs(updated);
-    updateActiveLTUs(disconnectedLTUs);
   }
 
   private void updateActiveLTUs(Collection<LTU> toUpdate) {
