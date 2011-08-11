@@ -2,10 +2,8 @@ package rltoys.algorithms.representations.ltu.networks;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.math.vector.BinaryVector;
@@ -26,6 +24,8 @@ public class RandomNetwork implements Serializable {
   protected final List<LTU>[] connectedLTUs;
   protected int nbConnection = 0;
   protected int nbActive = 0;
+  protected final double[] inputVector;
+  private final boolean[] updatedLTUs;
 
   @SuppressWarnings("unchecked")
   public RandomNetwork(int inputSize, int outputSize) {
@@ -34,12 +34,15 @@ public class RandomNetwork implements Serializable {
     connectedLTUs = new List[inputSize];
     ltus = new LTU[outputSize];
     output = new BVector(outputSize);
+    inputVector = new double[inputSize];
+    updatedLTUs = new boolean[outputSize];
+    Arrays.fill(updatedLTUs, false);
   }
 
   public void addLTU(LTU ltu) {
     removeLTU(ltus[ltu.index()]);
     ltus[ltu.index()] = ltu;
-    Set<Integer> ltuInputs = ltu.inputs();
+    int[] ltuInputs = ltu.inputs();
     for (int input : ltuInputs) {
       if (connectedLTUs[input] == null)
         connectedLTUs[input] = new ArrayList<LTU>();
@@ -49,11 +52,11 @@ public class RandomNetwork implements Serializable {
   }
 
   private void addLTUStat(LTU ltu) {
-    nbConnection += ltu.inputs().size();
+    nbConnection += ltu.inputs().length;
   }
 
   private void removeLTUStat(LTU ltu) {
-    nbConnection -= ltu.inputs().size();
+    nbConnection -= ltu.inputs().length;
   }
 
   public void removeLTU(LTU ltu) {
@@ -67,38 +70,40 @@ public class RandomNetwork implements Serializable {
         connectedLTUs[input].remove(ltu);
   }
 
-  protected Set<LTU> computeLTUSum(BinaryVector obs) {
-    Set<LTU> updated = new HashSet<LTU>();
+  protected void updateActiveLTUs(BinaryVector obs) {
     for (int activeInput : obs.activeIndexes()) {
       List<LTU> connected = connectedLTUs[activeInput];
       if (connected == null)
         continue;
       for (LTU ltu : connected) {
-        updated.add(ltu);
-        ltu.setActiveInput(activeInput);
+        final int index = ltu.index();
+        if (updatedLTUs[index])
+          continue;
+        if (ltu.update(inputVector))
+          output.setOn(index);
+        updatedLTUs[index] = true;
       }
     }
-    return updated;
+  }
+
+  protected void prepareProjection(BinaryVector obs) {
+    for (int activeIndex : obs.activeIndexes())
+      inputVector[activeIndex] = 1;
+    output.clear();
+  }
+
+  protected void postProjection(BinaryVector obs) {
+    for (int activeIndex : obs.activeIndexes())
+      inputVector[activeIndex] = 0;
+    Arrays.fill(updatedLTUs, false);
   }
 
   public BVector project(BinaryVector obs) {
+    prepareProjection(obs);
     updateActiveLTUs(obs);
+    postProjection(obs);
     nbActive = output.nonZeroElements();
     return output.copy();
-  }
-
-  protected void updateActiveLTUs(BinaryVector obs) {
-    output.clear();
-    Set<LTU> updated = computeLTUSum(obs);
-    updateActiveLTUs(updated);
-  }
-
-  private void updateActiveLTUs(Collection<LTU> toUpdate) {
-    for (LTU ltu : toUpdate) {
-      ltu.update();
-      if (ltu.isActive())
-        output.setOn(ltu.index());
-    }
   }
 
   public LTU ltu(int i) {

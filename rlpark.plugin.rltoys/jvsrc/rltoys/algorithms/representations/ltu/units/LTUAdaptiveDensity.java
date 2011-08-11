@@ -2,10 +2,8 @@ package rltoys.algorithms.representations.ltu.units;
 
 import java.util.Random;
 
-import rltoys.math.vector.BinaryVector;
-
 public interface LTUAdaptiveDensity extends LTU {
-  void increaseDensity(Random random, BinaryVector obs);
+  void increaseDensity(Random random, double[] inputVector);
 
-  void decreaseDensity(Random random, BinaryVector obs);
+  void decreaseDensity(Random random, double[] inputVector);
 }

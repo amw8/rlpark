@@ -1,18 +1,15 @@
 package rltoys.algorithms.representations.ltu.units;
 
 import java.io.Serializable;
-import java.util.Set;
 
 public interface LTU extends Serializable {
   int index();
 
-  Set<Integer> inputs();
+  int[] inputs();
 
-  void setActiveInput(int activeInput);
-
-  void update();
-
-  boolean isActive();
+  boolean update(double[] inputVector);
 
   LTU newLTU(int ltuIndex, int[] inputs, byte[] weights);
+
+  boolean isActive();
 }

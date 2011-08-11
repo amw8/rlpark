@@ -25,13 +25,14 @@ public class LTUAdaptive extends LTUThreshold {
   }
 
   @Override
-  public void update() {
-    super.update();
-    averageFrequency = Lambda * averageFrequency + (1 - Lambda) * (isActive() ? 1.0 : 0.0);
+  public boolean update(double[] inputVector) {
+    super.update(inputVector);
+    averageFrequency = Lambda * averageFrequency + (1 - Lambda) * (isActive ? 1.0 : 0.0);
     if (averageFrequency > maxFrequency)
       threshold += Epsilon;
     if (averageFrequency < minFrequency)
       threshold -= Epsilon;
+    return isActive;
   }
 
   @Override

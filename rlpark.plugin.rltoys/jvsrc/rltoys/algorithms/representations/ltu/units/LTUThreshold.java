@@ -1,11 +1,8 @@
 package rltoys.algorithms.representations.ltu.units;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
-import rltoys.math.vector.BinaryVector;
+import rltoys.math.vector.implementations.SVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
@@ -13,38 +10,31 @@ public class LTUThreshold implements LTUAdaptiveDensity {
   private static final long serialVersionUID = -4100313691365362138L;
   final static public double Beta = .6;
   final public int index;
-  protected final Map<Integer, Byte> inputsToWeights = new HashMap<Integer, Byte>();
+  protected final SVector connections;
   protected double threshold;
-  private int sum;
-  private boolean isActive;
-  final private int[] inputs;
+  protected boolean isActive;
 
   public LTUThreshold() {
     index = -1;
-    inputs = null;
+    connections = null;
   }
 
   public LTUThreshold(int index, int[] inputs, byte[] weights) {
     this.index = index;
     int nbNegative = 0;
+    connections = new SVector(inputs.length, inputs.length);
     for (int i = 0; i < inputs.length; i++) {
-      inputsToWeights.put(inputs[i], weights[i]);
+      connections.setEntry(inputs[i], weights[i]);
       if (weights[i] < 0)
         nbNegative++;
     }
     threshold = -nbNegative + 0.6 * inputs.length;
-    this.inputs = inputs.clone();
   }
 
   @Override
-  public void setActiveInput(int activeInput) {
-    sum += inputsToWeights.get(activeInput);
-  }
-
-  @Override
-  public void update() {
-    isActive = sum > threshold;
-    sum = 0;
+  public boolean update(double[] inputVector) {
+    isActive = connections.dotProduct(inputVector) > threshold;
+    return isActive;
   }
 
   @Override
@@ -53,8 +43,8 @@ public class LTUThreshold implements LTUAdaptiveDensity {
   }
 
   @Override
-  public Set<Integer> inputs() {
-    return inputsToWeights.keySet();
+  public int[] inputs() {
+    return connections.activeIndexes();
   }
 
   @Override
@@ -63,33 +53,29 @@ public class LTUThreshold implements LTUAdaptiveDensity {
   }
 
   @Override
-  public boolean isActive() {
-    return isActive;
-  }
-
-  @Override
-  public void decreaseDensity(Random random, BinaryVector obs) {
-    int bit = chooseBit(random);
-    byte weight = inputsToWeights.get(bit);
-    boolean inputActive = obs.getEntry(bit) > 0;
+  public void decreaseDensity(Random random, double[] inputVector) {
+    int bit = random.nextInt(connections.nonZeroElements());
+    double weight = connections.values[bit];
+    boolean inputActive = inputVector[connections.indexes[bit]] > 0;
     if ((weight == 1 && inputActive) || (weight == -1 && !inputActive)) {
-      inputsToWeights.put(bit, (byte) (weight * -1));
+      connections.values[bit] *= -1;
       threshold += 1;
     }
   }
 
   @Override
-  public void increaseDensity(Random random, BinaryVector obs) {
-    int bit = chooseBit(random);
-    byte weight = inputsToWeights.get(bit);
-    boolean inputActive = obs.getEntry(bit) > 0;
+  public void increaseDensity(Random random, double[] inputVector) {
+    int bit = random.nextInt(connections.nonZeroElements());
+    double weight = connections.values[bit];
+    boolean inputActive = inputVector[connections.indexes[bit]] > 0;
     if ((weight == -1 && inputActive) || (weight == +1 && !inputActive)) {
-      inputsToWeights.put(bit, (byte) (weight * -1));
+      connections.values[bit] *= -1;
       threshold -= 1;
     }
   }
 
-  private int chooseBit(Random random) {
-    return inputs[random.nextInt(inputs.length)];
+  @Override
+  public boolean isActive() {
+    return isActive;
   }
 }

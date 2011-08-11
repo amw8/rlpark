@@ -7,7 +7,6 @@ import java.util.Set;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.algorithms.representations.ltu.units.LTUAdaptiveDensity;
 import rltoys.math.vector.BinaryVector;
-import rltoys.math.vector.implementations.BVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
@@ -31,16 +30,15 @@ public class RandomNetworkAdaptive extends RandomNetwork {
   }
 
   @Override
-  public BVector project(BinaryVector obs) {
-    BVector projected = super.project(obs);
+  protected void postProjection(BinaryVector obs) {
     missingUnit = 0;
     overUnit = 0;
-    int nbActive = projected.nonZeroElements();
+    int nbActive = output.nonZeroElements();
     if (nbActive > maxUnitActive)
       decreaseDensity(obs);
     if (nbActive < minUnitActive)
       increaseDensity(obs);
-    return projected;
+    super.postProjection(obs);
   }
 
   private void increaseDensity(BinaryVector obs) {
@@ -51,7 +49,7 @@ public class RandomNetworkAdaptive extends RandomNetwork {
     for (LTUAdaptiveDensity ltu : couldHaveAgree) {
       if (random.nextFloat() > selectionProbability)
         continue;
-      ltu.increaseDensity(random, obs);
+      ltu.increaseDensity(random, inputVector);
     }
   }
 
@@ -79,7 +77,7 @@ public class RandomNetworkAdaptive extends RandomNetwork {
       LTU ltu = ltus[activeLTUIndex];
       if (ltu == null || !(ltu instanceof LTUAdaptiveDensity))
         continue;
-      ((LTUAdaptiveDensity) ltu).decreaseDensity(random, obs);
+      ((LTUAdaptiveDensity) ltu).decreaseDensity(random, inputVector);
     }
   }
 }

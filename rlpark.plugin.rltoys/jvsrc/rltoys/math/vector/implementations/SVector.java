@@ -260,4 +260,12 @@ public class SVector extends AbstractVector implements SparseRealVector {
   public Iterator<VectorEntry> iterator() {
     return new SVectorIterator();
   }
+
+  public int[] activeIndexes() {
+    if (indexes.length > nbActive) {
+      indexes = Arrays.copyOf(indexes, nbActive);
+      values = Arrays.copyOf(values, nbActive);
+    }
+    return indexes;
+  }
 }
