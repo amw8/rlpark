@@ -22,4 +22,6 @@ public interface RealVector extends Serializable, Iterable<VectorEntry> {
   MutableVector copyAsMutable();
 
   RealVector copy();
+
+  double[] accessData();
 }

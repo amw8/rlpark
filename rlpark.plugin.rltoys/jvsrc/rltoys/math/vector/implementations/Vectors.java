@@ -42,9 +42,22 @@ public class Vectors {
   }
 
   static public MutableVector absToSelf(MutableVector v) {
+    if (v instanceof SVector) {
+      absToSelf(((SVector) v).values);
+      return v;
+    }
+    if (v instanceof PVector) {
+      absToSelf(((PVector) v).data);
+      return v;
+    }
     for (VectorEntry entry : v)
       v.setEntry(entry.index(), Math.abs(entry.value()));
     return v;
+  }
+
+  static public void absToSelf(double[] data) {
+    for (int i = 0; i < data.length; i++)
+      data[i] = Math.abs(data[i]);
   }
 
   static public double sum(RealVector v) {

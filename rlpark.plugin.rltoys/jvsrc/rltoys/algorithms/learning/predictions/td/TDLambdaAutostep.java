@@ -4,7 +4,6 @@ import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
-import rltoys.math.vector.SparseVector;
 import rltoys.math.vector.VectorEntry;
 import rltoys.math.vector.implementations.PVector;
 import rltoys.math.vector.implementations.Vectors;
@@ -36,6 +35,7 @@ public class TDLambdaAutostep implements OnPolicyTD {
   private final double lambda;
   private double m;
   double tempM = 0.0;
+  private final double lowerNumericalBound;
 
   public TDLambdaAutostep(double lambda, double gamma, int nbFeatures) {
     this(lambda, gamma, 0.1, nbFeatures, new ATraces());
@@ -59,6 +59,7 @@ public class TDLambdaAutostep implements OnPolicyTD {
     h = new PVector(nbFeatures);
     normalizer = new PVector(nbFeatures);
     normalizer.set(1.0);
+    lowerNumericalBound = Math.pow(10.0, -10) / nbFeatures;
   }
 
   public void setMu(double mu) {
@@ -83,72 +84,47 @@ public class TDLambdaAutostep implements OnPolicyTD {
     v_tp1 = phi_tp1 != null ? v.dotProduct(phi_tp1) : 0.0;
     delta_t = r_tp1 + gamma * v_tp1 - v_t;
     e.update(lambda * gamma, phi_t);
-    if (e.vect() instanceof SparseVector)
-      updateNormalizationAndStepSizeSparse(delta_t, phi_t);
-    else
-      updateNormalizationAndStepSizeNonSparse(delta_t, phi_t);
-    MutableVector alphaDeltaE = e.vect().ebeMultiply(alpha).mapMultiplyToSelf(delta_t);
+    updateNormalizationAndStepSize(delta_t, phi_t);
+    MutableVector eAlpha = e.vect().ebeMultiply(alpha);
+    MutableVector alphaDeltaE = eAlpha.mapMultiply(delta_t);
     v.addToSelf(alphaDeltaE);
-    h.addToSelf(alphaDeltaE.subtractToSelf(Vectors.absToSelf(phi_t.ebeMultiply(alpha).ebeMultiplyToSelf(e.vect()))
-        .ebeMultiplyToSelf(h)));
+    h.addToSelf(alphaDeltaE.subtractToSelf(Vectors.absToSelf(eAlpha.ebeMultiplyToSelf(phi_t)).ebeMultiplyToSelf(h)));
     return delta_t;
   }
 
-  private void updateNormalizationAndStepSizeSparse(final double delta_t, final RealVector phi_t) {
-    SparseVector pe = (SparseVector) e.vect();
-    final SparseVector absDeltaEH = (SparseVector) computeAbsDeltaEH(delta_t);
-    for (VectorEntry entry : pe) {
+  private void updateNormalizationAndStepSize(final double delta_t, final RealVector phi) {
+    final double[] normalizerData = normalizer.data;
+    final double[] alphaData = alpha.data;
+    final double[] densePhi = phi.accessData();
+    for (VectorEntry entry : e.vect()) {
       int i = entry.index();
-      double peDatai = entry.value();
-      normalizer.data[i] = Math.max(absDeltaEH.getEntry(i),
-                                    normalizer.data[i]
-                                        + (alpha.data[i] * Math.abs(peDatai * phi_t.getEntry(i)) / tau)
-                                        * (absDeltaEH.getEntry(i) - normalizer.data[i]));
-      normalizer.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), normalizer.data[i]);
-      alpha.data[i] = alpha.data[i] * Math.exp(mu * delta_t * peDatai * h.data[i] / normalizer.data[i]);
-      alpha.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), alpha.data[i]);
+      double e_i = entry.value();
+      double absDeltaEH = computeAbsDeltaEH(i, e_i, delta_t);
+      normalizerData[i] = Math.max(absDeltaEH,
+                                   normalizerData[i]
+                                       + (alphaData[i] * Math.abs(e_i * densePhi[i]) / tau)
+                                       * (absDeltaEH - normalizerData[i]));
+      normalizerData[i] = Math.max(lowerNumericalBound, normalizerData[i]);
+      alphaData[i] = alphaData[i] * Math.exp(mu * delta_t * e_i * h.data[i] / normalizerData[i]);
+      alphaData[i] = Math.max(lowerNumericalBound, alphaData[i]);
     }
     tempM = 0.0;
-    for (VectorEntry entry : pe) {
+    for (VectorEntry entry : e.vect()) {
       int index = entry.index();
       double peDatai = entry.value();
-      tempM += alpha.data[index] * Math.abs(peDatai * phi_t.getEntry(index));
+      tempM += alphaData[index] * Math.abs(peDatai * densePhi[index]);
     }
     m = tempM;
     maxOneM2 = Math.max(1, m);
-    for (VectorEntry entry : pe) {
+    for (VectorEntry entry : e.vect()) {
       int index = entry.index();
-      if (phi_t.getEntry(index) != 0)
-        alpha.data[index] = alpha.data[index] / maxOneM2;
+      if (densePhi[index] != 0)
+        alphaData[index] = alphaData[index] / maxOneM2;
     }
   }
 
-  private RealVector computeAbsDeltaEH(double delta) {
-    return Vectors.absToSelf(e.vect().ebeMultiply(h).mapMultiplyToSelf(delta));
-  }
-
-  private void updateNormalizationAndStepSizeNonSparse(double delta_t, RealVector phi_t) {
-    PVector pe = (PVector) e.vect();
-    PVector absDeltaEH = (PVector) computeAbsDeltaEH(delta_t);
-    for (int i = 0; i < pe.size; i++) {
-      normalizer.data[i] = Math.max(absDeltaEH.data[i],
-                                    normalizer.data[i]
-                                        + (alpha.data[i] * Math.abs(pe.data[i] * phi_t.getEntry(i)) / tau)
-                                        * (absDeltaEH.data[i] - normalizer.data[i]));
-      normalizer.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), normalizer.data[i]);
-      alpha.data[i] = alpha.data[i] * Math.exp(mu * delta_t * pe.data[i] * h.data[i] / normalizer.data[i]);
-      alpha.data[i] = Math.max(Math.pow(10.0, -10) / phi_t.getDimension(), alpha.data[i]);
-    }
-    tempM = 0.0;
-    for (int i = 0; i < pe.size; i++) {
-      tempM += alpha.data[i] * Math.abs(pe.data[i] * phi_t.getEntry(i));
-    }
-    m = tempM;
-    maxOneM2 = Math.max(1, m);
-    for (int i = 0; i < pe.size; i++) {
-      if (phi_t.getEntry(i) * pe.data[i] != 0)
-        alpha.data[i] = alpha.data[i] / maxOneM2;
-    }
+  private double computeAbsDeltaEH(int index, double traceValue, double delta) {
+    return Math.abs(traceValue * h.data[index] * delta);
   }
 
   public Traces eligibility() {

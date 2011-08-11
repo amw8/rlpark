@@ -3,6 +3,7 @@ package rltoys.math.vector.implementations;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import rltoys.math.vector.DenseVector;
 import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.SparseRealVector;
@@ -80,9 +81,9 @@ public class SVector extends AbstractVector implements SparseRealVector {
   }
 
   public SVector(SVector other) {
-    super(other.size);
-    indexes = other.indexes.clone();
-    values = other.values.clone();
+    this(other.size, other.nonZeroElements());
+    System.arraycopy(other.indexes, 0, indexes, 0, indexes.length);
+    System.arraycopy(other.values, 0, values, 0, values.length);
     nbActive = other.nbActive;
   }
 
@@ -196,8 +197,35 @@ public class SVector extends AbstractVector implements SparseRealVector {
     return this;
   }
 
+  public MutableVector ebeMultiplyToSelf(SVector other) {
+    int i = 0, j = 0;
+    while (i < nbActive && j < other.nbActive) {
+      if (indexes[i] > indexes[j])
+        j++;
+      else if (indexes[i] < indexes[j])
+        i++;
+      else {
+        values[i] *= other.values[j];
+        i++;
+        j++;
+      }
+    }
+    return this;
+  }
+
+  public MutableVector ebeMultiplyToSelf(DenseVector other) {
+    double[] otherValues = other.accessData();
+    for (int i = 0; i < nbActive; i++)
+      values[i] *= otherValues[indexes[i]];
+    return this;
+  }
+
   @Override
   public MutableVector ebeMultiplyToSelf(RealVector other) {
+    if (other instanceof SVector)
+      return ebeMultiplyToSelf((SVector) other);
+    if (other instanceof DenseVector)
+      return ebeMultiplyToSelf((PVector) other);
     for (VectorEntry entry : other) {
       final int index = entry.index();
       setEntry(index, getEntry(index) * entry.value());
@@ -207,7 +235,7 @@ public class SVector extends AbstractVector implements SparseRealVector {
 
   @Override
   public MutableVector mapMultiplyToSelf(double d) {
-    for (int i = 0; i < values.length; i++)
+    for (int i = 0; i < nbActive; i++)
       values[i] *= d;
     return this;
   }
@@ -267,5 +295,13 @@ public class SVector extends AbstractVector implements SparseRealVector {
       values = Arrays.copyOf(values, nbActive);
     }
     return indexes;
+  }
+
+  @Override
+  public double[] accessData() {
+    double[] data = new double[size];
+    for (int i = 0; i < nbActive; i++)
+      data[indexes[i]] = values[i];
+    return data;
   }
 }

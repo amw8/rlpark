@@ -262,4 +262,12 @@ public class BVector extends AbstractVector implements BinaryVector {
     result.setOrderedIndexes(orderedIndexes);
     return result;
   }
+
+  @Override
+  public double[] accessData() {
+    double[] data = new double[size];
+    for (int i : activeIndexes())
+      data[i] = 1.0;
+    return data;
+  }
 }
