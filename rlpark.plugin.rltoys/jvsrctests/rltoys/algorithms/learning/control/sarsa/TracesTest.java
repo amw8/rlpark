@@ -9,6 +9,7 @@ import rltoys.algorithms.learning.control.sarsa.SarsaTest.SarsaControlFactory;
 import rltoys.algorithms.representations.actions.StateToStateAction;
 import rltoys.algorithms.representations.traces.AMaxTraces;
 import rltoys.algorithms.representations.traces.ATraces;
+import rltoys.algorithms.representations.traces.MaxLengthTraces;
 import rltoys.algorithms.representations.traces.RTraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.MutableVector;
@@ -39,5 +40,12 @@ public class TracesTest extends MountainCarOnPolicyTest {
   @Test
   public void testSarsaOnMountainCarPVectorTraces() {
     testTraces(new PVector(0));
+  }
+
+  @Test
+  public void testSarsaOnMountainCarMaxLengthTraces() {
+    testTraces(new MaxLengthTraces(new ATraces(new SVector(0)), 100));
+    testTraces(new MaxLengthTraces(new AMaxTraces(new SVector(0)), 100));
+    testTraces(new MaxLengthTraces(new RTraces(), 100));
   }
 }

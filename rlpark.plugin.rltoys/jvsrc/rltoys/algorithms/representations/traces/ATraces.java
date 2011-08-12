@@ -60,7 +60,9 @@ public class ATraces implements Traces {
       vector.mapMultiplyToSelf(rho);
   }
 
-  private boolean clearRequired(RealVector phi, double lambda) {
+  protected boolean clearRequired(RealVector phi, double lambda) {
+    if (epsilon == 0)
+      return false;
     if (phi instanceof DenseVector)
       return false;
     if (vector instanceof DenseVector)

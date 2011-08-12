@@ -2,10 +2,11 @@ package rltoys.algorithms.learning.predictions.td;
 
 import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
+import rltoys.math.vector.DenseVector;
 import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
-import rltoys.math.vector.VectorEntry;
 import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.implementations.SVector;
 import rltoys.math.vector.implementations.Vectors;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.monitoring.wrappers.Abs;
@@ -84,43 +85,64 @@ public class TDLambdaAutostep implements OnPolicyTD {
     v_tp1 = phi_tp1 != null ? v.dotProduct(phi_tp1) : 0.0;
     delta_t = r_tp1 + gamma * v_tp1 - v_t;
     e.update(lambda * gamma, phi_t);
-    updateNormalizationAndStepSize(delta_t, phi_t);
+    PVector densePhi = new PVector(phi_t.accessData());
+    if (e.vect() instanceof SVector)
+      updateNormalizationAndStepSizeSparse(delta_t, densePhi.data);
+    else if (e.vect() instanceof DenseVector)
+      updateNormalizationAndStepSizeDense(delta_t, densePhi.data);
+    else
+      throw new RuntimeException("Not implemented");
     MutableVector eAlpha = e.vect().ebeMultiply(alpha);
     MutableVector alphaDeltaE = eAlpha.mapMultiply(delta_t);
     v.addToSelf(alphaDeltaE);
-    h.addToSelf(alphaDeltaE.subtractToSelf(Vectors.absToSelf(eAlpha.ebeMultiplyToSelf(phi_t)).ebeMultiplyToSelf(h)));
+    h.addToSelf(alphaDeltaE.subtractToSelf(Vectors.absToSelf(eAlpha.ebeMultiplyToSelf(densePhi)).ebeMultiplyToSelf(h)));
     return delta_t;
   }
 
-  private void updateNormalizationAndStepSize(final double delta_t, final RealVector phi) {
+  private void updateNormalizationAndStepSizeDense(double delta_t, double[] densePhi) {
     final double[] normalizerData = normalizer.data;
     final double[] alphaData = alpha.data;
-    final double[] densePhi = phi.accessData();
-    for (VectorEntry entry : e.vect()) {
-      int i = entry.index();
-      double e_i = entry.value();
-      double absDeltaEH = computeAbsDeltaEH(i, e_i, delta_t);
-      normalizerData[i] = Math.max(absDeltaEH,
-                                   normalizerData[i]
-                                       + (alphaData[i] * Math.abs(e_i * densePhi[i]) / tau)
-                                       * (absDeltaEH - normalizerData[i]));
-      normalizerData[i] = Math.max(lowerNumericalBound, normalizerData[i]);
-      alphaData[i] = alphaData[i] * Math.exp(mu * delta_t * e_i * h.data[i] / normalizerData[i]);
-      alphaData[i] = Math.max(lowerNumericalBound, alphaData[i]);
-    }
-    tempM = 0.0;
-    for (VectorEntry entry : e.vect()) {
-      int index = entry.index();
-      double peDatai = entry.value();
-      tempM += alphaData[index] * Math.abs(peDatai * densePhi[index]);
-    }
-    m = tempM;
+    final double[] data = ((DenseVector) e.vect()).accessData();
+    for (int i = 0; i < data.length; i++)
+      updateStepSizeNormalizers(densePhi, normalizerData, alphaData, i, data[i], delta_t);
+    m = 0.0;
+    for (int i = 0; i < data.length; i++)
+      m += featureNorm(densePhi, alphaData, i, data[i]);
     maxOneM2 = Math.max(1, m);
-    for (VectorEntry entry : e.vect()) {
-      int index = entry.index();
+    for (int index = 0; index < data.length; index++)
       if (densePhi[index] != 0)
-        alphaData[index] = alphaData[index] / maxOneM2;
-    }
+        alphaData[index] /= maxOneM2;
+  }
+
+  private void updateNormalizationAndStepSizeSparse(double delta_t, double[] densePhi) {
+    final double[] normalizerData = normalizer.data;
+    final double[] alphaData = alpha.data;
+    final SVector se = (SVector) e.vect();
+    for (int i = 0; i < se.nonZeroElements(); i++)
+      updateStepSizeNormalizers(densePhi, normalizerData, alphaData, se.indexes[i], se.values[i], delta_t);
+    m = 0.0;
+    for (int i = 0; i < se.nonZeroElements(); i++)
+      m += featureNorm(densePhi, alphaData, se.indexes[i], se.values[i]);
+    maxOneM2 = Math.max(1, m);
+    for (int index : se.indexes)
+      if (densePhi[index] != 0)
+        alphaData[index] /= maxOneM2;
+  }
+
+  private void updateStepSizeNormalizers(double[] densePhi, final double[] normalizerData, final double[] alphaData,
+      int eIndex, double eValue, final double delta_t) {
+    double absDeltaEH = computeAbsDeltaEH(eIndex, eValue, delta_t);
+    normalizerData[eIndex] = Math.max(absDeltaEH,
+                                      normalizerData[eIndex]
+                                          + (featureNorm(densePhi, alphaData, eIndex, eValue) / tau)
+                                          * (absDeltaEH - normalizerData[eIndex]));
+    normalizerData[eIndex] = Math.max(lowerNumericalBound, normalizerData[eIndex]);
+    alphaData[eIndex] = alphaData[eIndex] * Math.exp(mu * delta_t * eValue * h.data[eIndex] / normalizerData[eIndex]);
+    alphaData[eIndex] = Math.max(lowerNumericalBound, alphaData[eIndex]);
+  }
+
+  private double featureNorm(double[] densePhi, final double[] alphaData, int index, double value) {
+    return alphaData[index] * Math.abs(value * densePhi[index]);
   }
 
   private double computeAbsDeltaEH(int index, double traceValue, double delta) {
