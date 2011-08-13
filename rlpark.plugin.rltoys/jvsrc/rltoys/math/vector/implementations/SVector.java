@@ -163,21 +163,47 @@ public class SVector extends AbstractVector implements SparseRealVector {
     return Arrays.binarySearch(indexes, start, nbActive, index);
   }
 
-  @Override
-  public MutableVector addToSelf(RealVector other) {
+  public MutableVector addToSelf(BVector other) {
     int thisPosition = 0;
-    for (VectorEntry entry : other) {
-      int otherIndex = entry.index();
-      int search = searchFrom(thisPosition, otherIndex);
-      int position = search;
-      if (position < 0) {
-        position = notFoundToPosition(search);
-        insertElementAtPosition(position, otherIndex, entry.value());
-      } else
-        values[position] += entry.value();
+    for (int i : other.activeIndexes()) {
+      int position = addEntryToSelf(thisPosition, i, 1);
       thisPosition = position + 1;
     }
     return this;
+  }
+
+  public MutableVector addToSelf(SVector other) {
+    int thisPosition = 0;
+    for (int i = 0; i < other.nbActive; i++) {
+      int position = addEntryToSelf(thisPosition, other.indexes[i], other.values[i]);
+      thisPosition = position + 1;
+    }
+    return this;
+  }
+
+  @Override
+  public MutableVector addToSelf(RealVector other) {
+    if (other instanceof SVector)
+      return addToSelf((SVector) other);
+    if (other instanceof BVector)
+      return addToSelf((BVector) other);
+    int thisPosition = 0;
+    for (VectorEntry entry : other) {
+      int position = addEntryToSelf(thisPosition, entry.index(), entry.value());
+      thisPosition = position + 1;
+    }
+    return this;
+  }
+
+  private int addEntryToSelf(int positionSearchFrom, int otherIndex, double otherValue) {
+    int search = searchFrom(positionSearchFrom, otherIndex);
+    int position = search;
+    if (position < 0) {
+      position = notFoundToPosition(search);
+      insertElementAtPosition(position, otherIndex, otherValue);
+    } else
+      values[position] += otherValue;
+    return position;
   }
 
   @Override
