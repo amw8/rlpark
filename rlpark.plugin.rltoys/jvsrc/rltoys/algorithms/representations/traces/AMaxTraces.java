@@ -21,6 +21,10 @@ public class AMaxTraces extends ATraces {
     this(maximumValue, DefaultPrototype);
   }
 
+  public AMaxTraces(double maximumValue, int targetSize, double targetTolerance) {
+    this(maximumValue, DefaultPrototype, targetSize, targetTolerance);
+  }
+
   public AMaxTraces(double maximumValue, MutableVector prototype) {
     this(maximumValue, DefaultPrototype, -1, 0);
   }
@@ -40,26 +44,13 @@ public class AMaxTraces extends ATraces {
     return new AMaxTraces(size, targetSize, targetTolerance, maximumValue, prototype);
   }
 
-  private void addToSelfAsSVector(RealVector phi) {
-    SVector svector = (SVector) vector;
-    int thisPosition = 0;
-    for (VectorEntry entry : phi) {
-      int otherIndex = entry.index();
-      int search = svector.searchFrom(thisPosition, otherIndex);
-      int position = search;
-      if (position < 0) {
-        position = SVector.notFoundToPosition(search);
-        svector.insertElementAtPosition(position, otherIndex, adjustValue(entry.value()));
-      } else
-        svector.values[position] = adjustValue(entry.value() + svector.values[position]);
-      thisPosition = position + 1;
-    }
-  }
-
   @Override
   protected void addToSelf(RealVector phi) {
-    if (phi instanceof SVector) {
-      addToSelfAsSVector(phi);
+    super.addToSelf(phi);
+    if (vector instanceof SVector) {
+      SVector svector = (SVector) vector;
+      for (int i = 0; i < svector.nonZeroElements(); i++)
+        svector.values[i] = adjustValue(svector.values[i]);
       return;
     }
     for (VectorEntry entry : phi) {
