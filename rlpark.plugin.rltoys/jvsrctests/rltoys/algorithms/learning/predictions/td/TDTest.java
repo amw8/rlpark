@@ -113,7 +113,7 @@ public class TDTest {
     testTD(randomWalkProblem, new OnPolicyTDFactory() {
       @Override
       public OnPolicyTD create(int nbFeatures) {
-        return new GTDLambda(0.0, 0.9, 0.01, 0.5, nbFeatures, new AMaxTraces(1e-8, 1));
+        return new GTDLambda(0.0, 0.9, 0.01, 0.5, nbFeatures, new AMaxTraces());
       }
     });
   }

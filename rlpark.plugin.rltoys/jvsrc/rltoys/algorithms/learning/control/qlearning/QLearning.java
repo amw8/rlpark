@@ -3,7 +3,6 @@ package rltoys.algorithms.learning.control.qlearning;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.StateToStateAction;
-import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.PVector;
@@ -21,14 +20,14 @@ public class QLearning implements Predictor {
   private final Action[] actions;
 
   public QLearning(Action[] actions, double alpha, double gamma, double lambda, StateToStateAction toStateAction,
-      int nbFeatures) {
+      int nbFeatures, Traces prototype) {
     this.alpha = alpha;
     this.gamma = gamma;
     this.lambda = lambda;
     this.toStateAction = toStateAction;
     this.actions = actions;
     theta = new PVector(nbFeatures);
-    e = new ATraces(nbFeatures);
+    e = prototype.newTraces(nbFeatures);
   }
 
   private void pickupBestAction(RealVector s_tp1) {

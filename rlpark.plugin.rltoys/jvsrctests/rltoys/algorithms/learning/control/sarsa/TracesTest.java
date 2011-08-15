@@ -28,7 +28,7 @@ public class TracesTest extends MountainCarOnPolicyTest {
 
   private void testTraces(MutableVector prototype) {
     testTraces(new ATraces(prototype));
-    testTraces(new AMaxTraces(prototype));
+    testTraces(new AMaxTraces(1.0, prototype));
   }
 
   @Test
@@ -45,7 +45,7 @@ public class TracesTest extends MountainCarOnPolicyTest {
   @Test
   public void testSarsaOnMountainCarMaxLengthTraces() {
     testTraces(new MaxLengthTraces(new ATraces(new SVector(0)), 100));
-    testTraces(new MaxLengthTraces(new AMaxTraces(new SVector(0)), 100));
+    testTraces(new MaxLengthTraces(new AMaxTraces(1.0, new SVector(0)), 100));
     testTraces(new MaxLengthTraces(new RTraces(), 100));
   }
 }

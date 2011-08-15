@@ -10,6 +10,7 @@ import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.StateToStateAction;
 import rltoys.algorithms.representations.tilescoding.TileCoders;
+import rltoys.algorithms.representations.traces.ATraces;
 
 public class QLearningTest extends MountainCarOnPolicyTest {
   @Test
@@ -24,7 +25,7 @@ public class QLearningTest extends MountainCarOnPolicyTest {
       @Override
       protected Predictor createPredictor(Action[] actions, StateToStateAction toStateAction, int nbActiveFeatures,
           int nbFeatures) {
-        return new QLearning(actions, 0.1 / nbActiveFeatures, 0.9, 0.0, toStateAction, nbFeatures);
+        return new QLearning(actions, 0.1 / nbActiveFeatures, 0.9, 0.0, toStateAction, nbFeatures, new ATraces());
       }
     });
   }

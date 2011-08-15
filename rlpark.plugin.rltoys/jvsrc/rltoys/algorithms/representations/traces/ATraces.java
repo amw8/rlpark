@@ -13,36 +13,50 @@ import zephyr.plugin.core.api.monitoring.annotations.Monitor;
  */
 public class ATraces implements Traces {
   private static final long serialVersionUID = 6241887723527497111L;
-  public static final double DefaultZeroValue = 1e-8;
   public static final SVector DefaultPrototype = new SVector(0);
-  protected double epsilon;
+  @Monitor
+  protected double threshold = 1e-8;
   protected final MutableVector prototype;
   @Monitor
   protected final MutableVector vector;
-  private int lastActiveElements;
-  private int nbAcceptedElements;
+  protected final int targetSize;
+  protected final double targetTolerance;
+  @Monitor
+  private double minimumValue;
+  @Monitor
+  private final int targetMin;
+  @Monitor
+  private final int targetMax;
 
   public ATraces() {
-    this(0);
+    this(DefaultPrototype);
   }
 
   public ATraces(MutableVector prototype) {
-    this(0, DefaultZeroValue, prototype);
+    this(0, -1, 0, DefaultPrototype);
   }
 
-  public ATraces(int size) {
-    this(size, DefaultZeroValue, DefaultPrototype);
+  public ATraces(int targetSize, double targetTolerance) {
+    this(DefaultPrototype, targetSize, targetTolerance);
   }
 
-  public ATraces(int size, double epsilon, MutableVector prototype) {
-    this.epsilon = epsilon;
+  public ATraces(MutableVector prototype, int targetSize, double targetTolerance) {
+    this(0, targetSize, targetTolerance, DefaultPrototype);
+    assert prototype instanceof SparseVector;
+  }
+
+  protected ATraces(int size, int targetSize, double targetTolerance, MutableVector prototype) {
     this.prototype = prototype;
+    this.targetSize = targetSize;
+    this.targetTolerance = targetTolerance;
     vector = size > 0 ? prototype.newInstance(size) : null;
+    targetMin = targetSize > 0 ? (int) (targetSize - targetSize * targetTolerance) : -1;
+    targetMax = targetSize > 0 ? (int) (targetSize + targetSize * targetTolerance) : -1;
   }
 
   @Override
   public ATraces newTraces(int size) {
-    return new ATraces(size, epsilon, prototype);
+    return new ATraces(size, targetSize, targetTolerance, prototype);
   }
 
   @Override
@@ -54,30 +68,30 @@ public class ATraces implements Traces {
   public void update(double lambda, RealVector phi, double rho) {
     vector.mapMultiplyToSelf(lambda);
     addToSelf(phi);
-    if (clearRequired(phi, lambda))
+    if (clearRequired(phi, lambda)) {
       clearBelowThreshold();
+      adjustThreshold(lambda);
+    }
     if (rho != 1.0)
       vector.mapMultiplyToSelf(rho);
   }
 
-  protected boolean clearRequired(RealVector phi, double lambda) {
-    if (epsilon == 0)
-      return false;
-    if (phi instanceof DenseVector)
+  private void adjustThreshold(double lambda) {
+    SparseVector sparseVector = (SparseVector) vector;
+    if (sparseVector.nonZeroElements() > targetMax) {
+      threshold = minimumValue / (lambda * Math.exp(.3 * Math.log(lambda)));
+    }
+    if (sparseVector.nonZeroElements() < targetMin) {
+      threshold = minimumValue * (lambda * Math.exp(.3 * Math.log(lambda)));
+    }
+  }
+
+  private boolean clearRequired(RealVector phi, double lambda) {
+    if (threshold == 0 || targetSize <= 0)
       return false;
     if (vector instanceof DenseVector)
       return false;
-    SparseVector sparsePhi = (SparseVector) phi;
-    int nbAcceptedElements = updateAcceptedElements(sparsePhi.nonZeroElements(), lambda);
-    return ((SparseVector) vector).nonZeroElements() >= nbAcceptedElements;
-  }
-
-  private int updateAcceptedElements(int activeElements, double lambda) {
-    if (lastActiveElements == activeElements)
-      return nbAcceptedElements;
-    lastActiveElements = activeElements;
-    nbAcceptedElements = (int) (Math.log(epsilon) / Math.log(lambda)) * activeElements;
-    return nbAcceptedElements;
+    return true;
   }
 
   protected void addToSelf(RealVector phi) {
@@ -88,8 +102,11 @@ public class ATraces implements Traces {
     SVector svector = (SVector) vector;
     double[] values = svector.values;
     int i = 0;
+    minimumValue = Double.MAX_VALUE;
     while (i < svector.nonZeroElements()) {
-      if (values[i] <= epsilon)
+      final double absValue = Math.abs(values[i]);
+      minimumValue = Math.min(minimumValue, absValue);
+      if (absValue <= threshold)
         svector.removeExistingEntry(i);
       else
         i++;

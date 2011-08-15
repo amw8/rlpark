@@ -12,20 +12,20 @@ public class RTraces extends ATraces {
   private static final long serialVersionUID = -324210619484987917L;
 
   public RTraces() {
-    this(0);
+    this(-1, 0);
   }
 
-  public RTraces(int size) {
-    this(size, DefaultZeroValue);
+  public RTraces(int targetSize, double targetTolerance) {
+    this(0, targetSize, targetTolerance);
   }
 
-  public RTraces(int size, double epsilon) {
-    super(size, epsilon, new SVector(0));
+  public RTraces(int size, int targetSize, double targetTolerance) {
+    super(size, targetSize, targetTolerance, new SVector(0));
   }
 
   @Override
   public RTraces newTraces(int size) {
-    return new RTraces(size, epsilon);
+    return new RTraces(size, targetSize, targetTolerance);
   }
 
   @Override

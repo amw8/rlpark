@@ -110,7 +110,7 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
       for (double gamma : gammas) {
         double alpha = .1 / stateFeatureNorm;
         int nbFeatures = vectorSize;
-        TDLambda td = new TDLambda(.7, gamma, alpha, nbFeatures, new RTraces((int) (stateFeatureNorm * 10)));
+        TDLambda td = new TDLambda(.7, gamma, alpha, nbFeatures, new RTraces((int) (stateFeatureNorm * 10), 0.05));
         demonScheduler.add(new PredictionDemon(rewardFunction, td));
       }
     }
