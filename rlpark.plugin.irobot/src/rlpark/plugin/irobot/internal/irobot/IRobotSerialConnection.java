@@ -130,7 +130,7 @@ public class IRobotSerialConnection implements IRobotObservationReceiver {
   @Override
   public synchronized ObservationVersatile waitForData() {
     waitForRawData();
-    return Robots.createObservation(byteBuffer, sensors);
+    return Robots.createObservation(System.currentTimeMillis(), byteBuffer, sensors);
   }
 
   @Override

@@ -67,7 +67,8 @@ public class DiscoConnection implements ObservationReceiver {
       e.printStackTrace();
       close();
     }
-    return packet != null ? Robots.createObservation(packet.byteBuffer(), sensorGroup) : null;
+    return packet != null ? Robots.createObservation(System.currentTimeMillis(), packet.byteBuffer(), sensorGroup)
+        : null;
   }
 
   @Override

@@ -30,7 +30,7 @@ public class CreateBinaryLogfile implements MonitorContainer, RobotProblem {
     while (discoLogFile.hasNext()) {
       DiscoPacket packet = discoLogFile.next();
       if (sensorDrop.name().equals(packet.name))
-        return Robots.createObservation(packet.byteBuffer(), sensorGroup);
+        return Robots.createObservation(packet.time, packet.byteBuffer(), sensorGroup);
     }
     return null;
   }

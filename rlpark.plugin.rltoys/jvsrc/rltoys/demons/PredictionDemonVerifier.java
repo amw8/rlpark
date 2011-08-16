@@ -27,6 +27,7 @@ public class PredictionDemonVerifier implements Serializable {
   private double prediction, observed;
   private boolean errorComputed;
   private final double precision;
+  private final double gamma;
 
   public PredictionDemonVerifier(PredictionDemon predictionDemon) {
     this(predictionDemon, 0.01);
@@ -35,7 +36,7 @@ public class PredictionDemonVerifier implements Serializable {
   public PredictionDemonVerifier(PredictionDemon predictionDemon, double precision) {
     this.predictionDemon = predictionDemon;
     rewardFunction = predictionDemon.rewardFunction();
-    double gamma = extractGamma(predictionDemon.predicter());
+    gamma = extractGamma(predictionDemon.predicter());
     this.precision = precision;
     offsetLength = gamma > 0 ? (int) Math.ceil(Math.log(precision) / Math.log(gamma)) : 1;
     predictionHistory = new double[offsetLength];
@@ -106,5 +107,9 @@ public class PredictionDemonVerifier implements Serializable {
 
   public double returnValue() {
     return observed;
+  }
+
+  public double gamma() {
+    return gamma;
   }
 }

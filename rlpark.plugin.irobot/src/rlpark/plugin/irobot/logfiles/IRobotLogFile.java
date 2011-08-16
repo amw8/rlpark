@@ -44,7 +44,7 @@ public class IRobotLogFile implements RobotProblem, Timed {
       if (lastReceived == null)
         lastReceived = new ObservationVersatile[1];
       logfile.step();
-      lastReceived[0] = new ObservationVersatile(null, logfile.currentLine());
+      lastReceived[0] = new ObservationVersatile(-1, null, logfile.currentLine());
     } else {
       lastReceived = null;
     }

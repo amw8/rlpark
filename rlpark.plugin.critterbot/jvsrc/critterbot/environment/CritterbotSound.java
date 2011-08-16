@@ -46,7 +46,7 @@ public class CritterbotSound implements ObservationReceiver {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return packet != null ? Robots.createObservation(packet.byteBuffer(), soundData) : null;
+    return packet != null ? Robots.createObservation(System.currentTimeMillis(), packet.byteBuffer(), soundData) : null;
   }
 
   @Override
