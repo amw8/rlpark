@@ -32,7 +32,7 @@ public class LTUThreshold implements LTUAdaptiveDensity {
   }
 
   @Override
-  public boolean update(double[] inputVector) {
+  public boolean update(int time, double[] inputVector) {
     isActive = connections.dotProduct(inputVector) > threshold;
     return isActive;
   }

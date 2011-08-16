@@ -49,7 +49,7 @@ public class RandomNetworkAdaptive extends RandomNetwork {
     for (LTUAdaptiveDensity ltu : couldHaveAgree) {
       if (random.nextFloat() > selectionProbability)
         continue;
-      ltu.increaseDensity(random, inputVector);
+      ltu.increaseDensity(random, denseInputVector);
     }
   }
 
@@ -77,7 +77,7 @@ public class RandomNetworkAdaptive extends RandomNetwork {
       LTU ltu = ltus[activeLTUIndex];
       if (ltu == null || !(ltu instanceof LTUAdaptiveDensity))
         continue;
-      ((LTUAdaptiveDensity) ltu).decreaseDensity(random, inputVector);
+      ((LTUAdaptiveDensity) ltu).decreaseDensity(random, denseInputVector);
     }
   }
 }

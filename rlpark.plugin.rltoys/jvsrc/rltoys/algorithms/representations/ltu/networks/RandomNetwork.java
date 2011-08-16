@@ -1,10 +1,9 @@
 package rltoys.algorithms.representations.ltu.networks;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+import rltoys.algorithms.representations.ltu.internal.LTUArray;
+import rltoys.algorithms.representations.ltu.internal.LTUUpdated;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.implementations.BVector;
@@ -21,22 +20,30 @@ public class RandomNetwork implements Serializable {
   @Monitor(level = 4)
   protected final LTU[] ltus;
   @IgnoreMonitor
-  protected final List<LTU>[] connectedLTUs;
+  protected final LTUArray[] connectedLTUs;
   protected int nbConnection = 0;
   protected int nbActive = 0;
-  protected final double[] inputVector;
-  private final boolean[] updatedLTUs;
+  protected final double[] denseInputVector;
+  final LTUUpdated updatedLTUs;
+  private final RandomNetworkScheduler scheduler;
+  protected int time = 0;
+  @SuppressWarnings("unused")
+  @Monitor
+  private int nbUnitUpdated = 0;
 
-  @SuppressWarnings("unchecked")
   public RandomNetwork(int inputSize, int outputSize) {
+    this(new RandomNetworkScheduler(), inputSize, outputSize);
+  }
+
+  public RandomNetwork(RandomNetworkScheduler scheduler, int inputSize, int outputSize) {
     this.outputSize = outputSize;
     this.inputSize = inputSize;
-    connectedLTUs = new List[inputSize];
+    this.scheduler = scheduler;
+    connectedLTUs = new LTUArray[inputSize];
     ltus = new LTU[outputSize];
     output = new BVector(outputSize);
-    inputVector = new double[inputSize];
-    updatedLTUs = new boolean[outputSize];
-    Arrays.fill(updatedLTUs, false);
+    denseInputVector = new double[inputSize];
+    updatedLTUs = new LTUUpdated(outputSize);
   }
 
   public void addLTU(LTU ltu) {
@@ -45,7 +52,7 @@ public class RandomNetwork implements Serializable {
     int[] ltuInputs = ltu.inputs();
     for (int input : ltuInputs) {
       if (connectedLTUs[input] == null)
-        connectedLTUs[input] = new ArrayList<LTU>();
+        connectedLTUs[input] = new LTUArray();
       connectedLTUs[input].add(ltu);
     }
     addLTUStat(ltu);
@@ -70,37 +77,23 @@ public class RandomNetwork implements Serializable {
         connectedLTUs[input].remove(ltu);
   }
 
-  protected void updateActiveLTUs(BinaryVector obs) {
-    for (int activeInput : obs.activeIndexes()) {
-      List<LTU> connected = connectedLTUs[activeInput];
-      if (connected == null)
-        continue;
-      for (LTU ltu : connected) {
-        final int index = ltu.index();
-        if (updatedLTUs[index])
-          continue;
-        if (ltu.update(inputVector))
-          output.setOn(index);
-        updatedLTUs[index] = true;
-      }
-    }
-  }
-
   protected void prepareProjection(BinaryVector obs) {
     for (int activeIndex : obs.activeIndexes())
-      inputVector[activeIndex] = 1;
+      denseInputVector[activeIndex] = 1;
     output.clear();
+    updatedLTUs.clean();
   }
 
   protected void postProjection(BinaryVector obs) {
     for (int activeIndex : obs.activeIndexes())
-      inputVector[activeIndex] = 0;
-    Arrays.fill(updatedLTUs, false);
+      denseInputVector[activeIndex] = 0;
   }
 
   public BVector project(BinaryVector obs) {
+    time++;
     prepareProjection(obs);
-    updateActiveLTUs(obs);
+    scheduler.update(this, obs);
+    nbUnitUpdated = updatedLTUs.nbUnitUpdated();
     postProjection(obs);
     nbActive = output.nonZeroElements();
     return output.copy();
@@ -110,7 +103,7 @@ public class RandomNetwork implements Serializable {
     return ltus[i];
   }
 
-  public List<LTU> parents(int index) {
-    return connectedLTUs[index] != null ? connectedLTUs[index] : new ArrayList<LTU>();
+  public LTU[] parents(int index) {
+    return connectedLTUs[index] != null ? connectedLTUs[index].array() : new LTU[] {};
   }
 }

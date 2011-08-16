@@ -7,7 +7,7 @@ public interface LTU extends Serializable {
 
   int[] inputs();
 
-  boolean update(double[] inputVector);
+  boolean update(int time, double[] inputVector);
 
   LTU newLTU(int ltuIndex, int[] inputs, byte[] weights);
 

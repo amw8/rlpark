@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.math.MovingAverage;
 import rltoys.math.vector.RealVector;
+import rltoys.utils.Scheduling;
 import rltoys.utils.Utils;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.synchronization.Chrono;
@@ -49,7 +49,7 @@ public class DemonScheduler implements Serializable {
   private final MovingAverage updateTimeAverage = new MovingAverage(100);
 
   public DemonScheduler() {
-    this(getDefaultNbThreads(), new ArrayList<Demon>());
+    this(Scheduling.getDefaultNbThreads(), new ArrayList<Demon>());
   }
 
   public DemonScheduler(int nbThread, Demon... demons) {
@@ -57,11 +57,7 @@ public class DemonScheduler implements Serializable {
   }
 
   public DemonScheduler(List<Demon> demons) {
-    this(getDefaultNbThreads(), demons);
-  }
-
-  private static int getDefaultNbThreads() {
-    return Runtime.getRuntime().availableProcessors();
+    this(Scheduling.getDefaultNbThreads(), demons);
   }
 
   public DemonScheduler(int nbThread) {
@@ -79,7 +75,7 @@ public class DemonScheduler implements Serializable {
     for (int i = 0; i < updaters.length; i++)
       updaters[i] = new DemonUpdater(i);
     futurs = new Future<?>[nbThread];
-    executor = Executors.newFixedThreadPool(nbThread);
+    executor = Scheduling.newFixedThreadPool("demons", nbThread);
     chrono = new Chrono();
   }
 

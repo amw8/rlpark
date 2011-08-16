@@ -55,7 +55,7 @@ public class QLearning implements Predictor {
     double delta = r_tp1 + gamma * q_sa_tp1 - theta.dotProduct(phi_sa_t);
     if (a_tp1 == a_star)
       e.update(gamma * lambda, phi_sa_t);
-    theta.addToSelf(e.vect().mapMultiply(alpha * delta));
+    theta.addToSelf(alpha * delta, e.vect());
     return delta;
   }
 

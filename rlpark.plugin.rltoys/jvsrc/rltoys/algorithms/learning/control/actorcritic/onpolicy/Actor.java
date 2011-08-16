@@ -29,7 +29,7 @@ public class Actor implements Serializable {
       return;
     RealVector[] gradLog = policyDistribution.getGradLog(x_t, a_t);
     for (int i = 0; i < u.length; i++)
-      u[i].addToSelf(gradLog[i].mapMultiply(alpha_u * delta));
+      u[i].addToSelf(alpha_u * delta, gradLog[i]);
   }
 
   public Action proposeAction(RealVector x) {

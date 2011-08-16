@@ -207,4 +207,13 @@ public class PVector extends AbstractVector implements DenseVector {
   public Iterator<VectorEntry> iterator() {
     return new PVectorIterator();
   }
+
+  public PVector addToSelf(double factor, RealVector vect) {
+    if (vect instanceof SVector)
+      ((SVector) vect).addSelfTo(factor, data);
+    else
+      for (VectorEntry entry : vect)
+        data[entry.index()] += factor * entry.value();
+    return this;
+  }
 }

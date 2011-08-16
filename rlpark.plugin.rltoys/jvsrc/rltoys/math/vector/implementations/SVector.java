@@ -281,7 +281,7 @@ public class SVector extends AbstractVector implements SparseRealVector {
   }
 
   @Override
-  public double dotProduct(double[] data) {
+  public double dotProduct(final double[] data) {
     double sum = 0;
     for (int i = 0; i < nbActive; i++)
       sum += values[i] * data[indexes[i]];
@@ -292,6 +292,11 @@ public class SVector extends AbstractVector implements SparseRealVector {
   public void addSelfTo(double[] data) {
     for (int i = 0; i < nbActive; i++)
       data[indexes[i]] += values[i];
+  }
+
+  public void addSelfTo(double selfFactor, double[] data) {
+    for (int i = 0; i < nbActive; i++)
+      data[indexes[i]] += selfFactor * values[i];
   }
 
   @Override

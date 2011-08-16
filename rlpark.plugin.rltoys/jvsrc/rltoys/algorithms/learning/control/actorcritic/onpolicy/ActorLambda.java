@@ -41,7 +41,7 @@ public class ActorLambda extends Actor {
 
   protected void updatePolicyParameters(double delta) {
     for (int i = 0; i < u.length; i++)
-      u[i].addToSelf(e_u[i].vect().mapMultiply(alpha_u * delta));
+      u[i].addToSelf(alpha_u * delta, e_u[i].vect());
   }
 
   private void initEpisode() {

@@ -40,7 +40,7 @@ public class Sarsa implements Predictor {
     v_t = theta.dotProduct(phi_t);
     delta = r_tp1 + gamma * v_tp1 - v_t;
     e.update(gamma * lambda, phi_t);
-    theta.addToSelf(e.vect().mapMultiply(alpha * delta));
+    theta.addToSelf(alpha * delta, e.vect());
     return delta;
   }
 
