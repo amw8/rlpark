@@ -40,6 +40,8 @@ public class RandomNetwork implements Serializable {
     this.inputSize = inputSize;
     this.scheduler = scheduler;
     connectedLTUs = new LTUArray[inputSize];
+    for (int i = 0; i < connectedLTUs.length; i++)
+      connectedLTUs[i] = new LTUArray();
     ltus = new LTU[outputSize];
     output = new BVector(outputSize);
     denseInputVector = new double[inputSize];
@@ -50,11 +52,8 @@ public class RandomNetwork implements Serializable {
     removeLTU(ltus[ltu.index()]);
     ltus[ltu.index()] = ltu;
     int[] ltuInputs = ltu.inputs();
-    for (int input : ltuInputs) {
-      if (connectedLTUs[input] == null)
-        connectedLTUs[input] = new LTUArray();
+    for (int input : ltuInputs)
       connectedLTUs[input].add(ltu);
-    }
     addLTUStat(ltu);
   }
 

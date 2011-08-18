@@ -9,7 +9,7 @@ import java.util.Map;
 import org.eclipse.jface.action.IToolBarManager;
 
 import rlpark.plugin.irobot.logfiles.IRobotLogFile;
-import rlpark.plugin.irobotview.FileHandler;
+import rlpark.plugin.irobotview.filehandlers.IRobotLogFileHandler;
 import rlpark.plugin.robot.RobotProblem;
 import rlpark.plugin.robot.Robots;
 import rltoys.math.ranges.Range;
@@ -136,7 +136,7 @@ public abstract class IRobotView extends EnvironmentView<RobotProblem> implement
     ZephyrCore.start(new Runnable() {
       @Override
       public void run() {
-        FileHandler.handle(filepath);
+        IRobotLogFileHandler.handle(filepath);
       }
     });
   }

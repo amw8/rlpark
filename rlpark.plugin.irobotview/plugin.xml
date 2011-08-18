@@ -116,7 +116,10 @@
          id="critterview.filehandler"
          point="zephyr.filehandler">
       <client
-            class="rlpark.plugin.irobotview.FileHandler">
+            class="rlpark.plugin.irobotview.filehandlers.IRobotLogFileHandler">
+      </client>
+      <client
+            class="rlpark.plugin.irobotview.filehandlers.CreateDiscoFileHandler">
       </client>
    </extension>
  </plugin>

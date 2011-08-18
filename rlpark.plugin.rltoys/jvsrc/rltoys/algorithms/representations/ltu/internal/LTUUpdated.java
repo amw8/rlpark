@@ -14,8 +14,9 @@ public class LTUUpdated implements Serializable {
     updated = new boolean[nbLTU];
   }
 
-  final public boolean updateLTU(int time, int index, LTU ltu, double[] denseInputVector) {
-    return markLTU(index) ? ltu.update(time, denseInputVector) : false;
+  final public void updateLTUSum(int time, int index, LTU ltu, double[] denseInputVector) {
+    if (markLTU(index))
+      ltu.updateSum(denseInputVector);
   }
 
   synchronized private boolean markLTU(int index) {

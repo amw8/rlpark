@@ -17,6 +17,7 @@ import rltoys.algorithms.representations.acting.PolicyDistribution;
 import rltoys.algorithms.representations.actions.StateToStateAction;
 import rltoys.algorithms.representations.actions.TabularAction;
 import rltoys.algorithms.representations.tilescoding.TileCoders;
+import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.environments.mountaincar.MountainCar;
 
 
@@ -34,7 +35,8 @@ public class ActorCriticMountainCarTest extends MountainCarOnPolicyTest {
     }
 
     protected OnPolicyTD createCritic(TileCoders tilesCoder, final double lambda, final double gamma) {
-      return new TDLambda(lambda, gamma, .1 / tilesCoder.nbActive(), tilesCoder.vectorSize());
+      return new TDLambda(lambda, gamma, .1 / tilesCoder.nbActive(), tilesCoder.vectorSize(),
+                          new ATraces(tilesCoder.nbActive() * 100, 0.05));
     }
   }
 

@@ -14,14 +14,14 @@ import rltoys.utils.Scheduling;
 public class RandomNetworkScheduler implements Serializable {
   private static final long serialVersionUID = -2515509378000478726L;
 
-  protected class LTUUpdater implements Runnable {
+  protected class LTUSumUpdater implements Runnable {
     private final int offset;
     private final LTUArray[] connectedLTUs;
     private final LTUUpdated updatedLTUs;
     private final double[] denseInputVector;
     private final boolean[] updated;
 
-    LTUUpdater(RandomNetwork randomNetwork, int offset) {
+    LTUSumUpdater(RandomNetwork randomNetwork, int offset) {
       this.offset = offset;
       connectedLTUs = randomNetwork.connectedLTUs;
       updatedLTUs = randomNetwork.updatedLTUs;
@@ -47,14 +47,35 @@ public class RandomNetworkScheduler implements Serializable {
         final int index = ltu.index();
         if (updated[index])
           continue;
-        if (updatedLTUs.updateLTU(time, index, ltu, denseInputVector))
-          setOutputOn(index);
+        updatedLTUs.updateLTUSum(time, index, ltu, denseInputVector);
+      }
+    }
+  }
+
+  protected class LTUActivationUpdater implements Runnable {
+    private final int offset;
+    private final LTU[] ltus;
+
+    LTUActivationUpdater(RandomNetwork randomNetwork, int offset) {
+      this.offset = offset;
+      ltus = randomNetwork.ltus;
+    }
+
+    @Override
+    public void run() {
+      int currentPosition = offset;
+      while (currentPosition < ltus.length) {
+        final LTU ltu = ltus[currentPosition];
+        if (ltu != null && ltu.updateActivation())
+          setOutputOn(currentPosition);
+        currentPosition += nbThread;
       }
     }
   }
 
   transient private ExecutorService executor = null;
-  transient private LTUUpdater[] updaters;
+  transient private LTUSumUpdater[] sumUpdaters;
+  transient private LTUActivationUpdater[] activationUpdaters;
   transient private Future<?>[] futurs;
   protected final int nbThread;
   BinaryVector obs;
@@ -70,9 +91,12 @@ public class RandomNetworkScheduler implements Serializable {
   }
 
   private void initialize(RandomNetwork randomNetwork) {
-    updaters = new LTUUpdater[nbThread];
-    for (int i = 0; i < updaters.length; i++)
-      updaters[i] = new LTUUpdater(randomNetwork, i);
+    sumUpdaters = new LTUSumUpdater[nbThread];
+    activationUpdaters = new LTUActivationUpdater[nbThread];
+    for (int i = 0; i < nbThread; i++) {
+      sumUpdaters[i] = new LTUSumUpdater(randomNetwork, i);
+      activationUpdaters[i] = new LTUActivationUpdater(randomNetwork, i);
+    }
     futurs = new Future<?>[nbThread];
     executor = Scheduling.newFixedThreadPool("randomnetwork", nbThread);
   }
@@ -83,15 +107,22 @@ public class RandomNetworkScheduler implements Serializable {
     this.obs = obs;
     this.output = randomNetwork.output;
     this.time = randomNetwork.time;
-    for (int i = 0; i < updaters.length; i++)
-      futurs[i] = executor.submit(updaters[i]);
+    for (int i = 0; i < sumUpdaters.length; i++)
+      futurs[i] = executor.submit(sumUpdaters[i]);
+    waitWorkingThread();
+    for (int i = 0; i < sumUpdaters.length; i++)
+      futurs[i] = executor.submit(activationUpdaters[i]);
+    waitWorkingThread();
+  }
+
+  private void waitWorkingThread() {
     try {
       for (Future<?> futur : futurs)
         futur.get();
     } catch (InterruptedException e) {
       e.printStackTrace();
     } catch (ExecutionException e) {
-      e.getCause().printStackTrace();
+      throw new RuntimeException(e.getCause());
     }
   }
 

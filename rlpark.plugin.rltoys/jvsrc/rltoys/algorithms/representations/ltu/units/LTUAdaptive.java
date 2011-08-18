@@ -11,7 +11,6 @@ public class LTUAdaptive extends LTUThreshold {
   public final double maxFrequency;
   private final double lambda;
   private double averageFrequency;
-  private int lastTime;
 
 
   public LTUAdaptive(double minFrequency, double maxFrequency) {
@@ -31,9 +30,8 @@ public class LTUAdaptive extends LTUThreshold {
   }
 
   @Override
-  public boolean update(int time, double[] inputVector) {
-    super.update(time, inputVector);
-    assert time > lastTime;
+  public boolean updateActivation() {
+    boolean isActive = super.updateActivation();
     averageFrequency *= lambda;
     if (isActive)
       averageFrequency += 1 - lambda;
@@ -41,7 +39,6 @@ public class LTUAdaptive extends LTUThreshold {
       threshold += Epsilon;
     else if (averageFrequency < minFrequency)
       threshold -= Epsilon;
-    lastTime = time;
     return isActive;
   }
 

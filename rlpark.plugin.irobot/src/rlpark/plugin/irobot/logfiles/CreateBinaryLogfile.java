@@ -15,6 +15,7 @@ import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
 import zephyr.plugin.core.api.monitoring.abstracts.MonitorContainer;
 
 public class CreateBinaryLogfile implements MonitorContainer, RobotProblem {
+  public static final String Extension = "crtbin";
   private final static Drop sensorDrop = IRobotDrops.newCreateSensorDrop();
   private final static DropScalarGroup sensorGroup = new DropScalarGroup(sensorDrop);
   private final DiscoLogfile discoLogFile;

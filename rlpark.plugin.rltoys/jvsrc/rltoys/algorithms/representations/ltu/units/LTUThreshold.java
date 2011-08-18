@@ -12,7 +12,8 @@ public class LTUThreshold implements LTUAdaptiveDensity {
   final public int index;
   protected final SVector connections;
   protected double threshold;
-  protected boolean isActive;
+  private double sum;
+  private boolean isActive;
 
   public LTUThreshold() {
     index = -1;
@@ -32,9 +33,8 @@ public class LTUThreshold implements LTUAdaptiveDensity {
   }
 
   @Override
-  public boolean update(int time, double[] inputVector) {
-    isActive = connections.dotProduct(inputVector) > threshold;
-    return isActive;
+  public void updateSum(double[] inputVector) {
+    sum = connections.dotProduct(inputVector);
   }
 
   @Override
@@ -72,6 +72,13 @@ public class LTUThreshold implements LTUAdaptiveDensity {
       connections.values[bit] *= -1;
       threshold -= 1;
     }
+  }
+
+  @Override
+  public boolean updateActivation() {
+    isActive = sum >= threshold;
+    sum = 0;
+    return isActive;
   }
 
   @Override

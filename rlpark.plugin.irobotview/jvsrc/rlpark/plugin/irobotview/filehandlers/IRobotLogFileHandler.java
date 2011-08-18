@@ -1,4 +1,4 @@
-package rlpark.plugin.irobotview;
+package rlpark.plugin.irobotview.filehandlers;
 
 import static rlpark.plugin.irobot.logfiles.IRobotLogFile.Extension;
 
@@ -10,7 +10,7 @@ import zephyr.plugin.core.Utils;
 import zephyr.plugin.core.api.Zephyr;
 import zephyr.plugin.filehandling.IFileHandler;
 
-public class FileHandler implements IFileHandler {
+public class IRobotLogFileHandler implements IFileHandler {
 
   @Override
   public List<String> extensions() {
