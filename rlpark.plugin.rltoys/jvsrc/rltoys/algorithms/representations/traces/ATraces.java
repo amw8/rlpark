@@ -77,6 +77,8 @@ public class ATraces implements Traces {
   }
 
   private void adjustThreshold(double lambda) {
+    if (targetSize <= 0)
+      return;
     SparseVector sparseVector = (SparseVector) vector;
     if (sparseVector.nonZeroElements() > targetMax) {
       threshold = minimumValue / (lambda * Math.exp(.3 * Math.log(lambda)));
@@ -87,7 +89,7 @@ public class ATraces implements Traces {
   }
 
   private boolean clearRequired(RealVector phi, double lambda) {
-    if (threshold == 0 || targetSize <= 0)
+    if (threshold == 0 && targetSize <= 0)
       return false;
     if (vector instanceof DenseVector)
       return false;

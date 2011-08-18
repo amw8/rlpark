@@ -34,7 +34,7 @@ public class LTUAdaptive extends LTUThreshold {
   public boolean update(int time, double[] inputVector) {
     super.update(time, inputVector);
     assert time > lastTime;
-    averageFrequency *= Math.pow(lambda, time - lastTime);
+    averageFrequency *= lambda;
     if (isActive)
       averageFrequency += 1 - lambda;
     if (averageFrequency > maxFrequency)
