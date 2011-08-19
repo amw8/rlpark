@@ -14,9 +14,11 @@ import rltoys.experiments.parametersweep.interfaces.ParametersProvider;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
-import rltoys.experiments.scheduling.JobPool;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.JobPool;
+import rltoys.experiments.scheduling.interfaces.JobPool.JobPoolListener;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
+import rltoys.experiments.scheduling.pools.MemoryJobPool;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import zephyr.plugin.core.api.signals.Listener;
 
@@ -62,16 +64,16 @@ public class Sweep {
   private void submitRequiredJob(ParametersLogFile logFile, Set<FrozenParameters> doneParameters,
       List<Runnable> todoJobList) {
     Listener<JobDoneEvent> jobListener = createJobListener(logFile, doneParameters);
-    Listener<JobPool> poolListener = createPoolListener(logFile, doneParameters);
-    JobPool pool = new JobPool(poolListener, jobListener);
+    JobPoolListener poolListener = createPoolListener(logFile, doneParameters);
+    MemoryJobPool pool = new MemoryJobPool(poolListener, jobListener);
     for (Runnable job : todoJobList)
       pool.add(job);
     pool.submitTo(scheduler);
   }
 
-  private Listener<JobPool> createPoolListener(final ParametersLogFile logFile,
+  private JobPoolListener createPoolListener(final ParametersLogFile logFile,
       final Set<FrozenParameters> doneParameters) {
-    return new Listener<JobPool>() {
+    return new JobPoolListener() {
       @Override
       public void listen(JobPool eventInfo) {
         try {

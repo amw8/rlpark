@@ -6,15 +6,17 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import rltoys.experiments.scheduling.JobPool;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.JobPool;
+import rltoys.experiments.scheduling.interfaces.JobPool.JobPoolListener;
+import rltoys.experiments.scheduling.pools.MemoryJobPool;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.Job;
 import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.JobDoneListener;
 import zephyr.plugin.core.api.signals.Listener;
 
 public class JobPoolTest {
-  static public class JobPoolListener implements Listener<JobPool> {
+  static public class JobPoolListenerTest implements JobPoolListener {
     int poolDone = 0;
 
     @Override
@@ -30,9 +32,9 @@ public class JobPoolTest {
   public void testJobPool() {
     LocalScheduler scheduler = new LocalScheduler(10);
     JobDoneListener jobListener = SchedulerTestsUtils.createListener();
-    JobPoolListener poolListener = new JobPoolListener();
+    JobPoolListenerTest poolListener = new JobPoolListenerTest();
     for (int i = 0; i < NbPool; i++) {
-      JobPool jobPool = createPool(poolListener, jobListener);
+      MemoryJobPool jobPool = createPool(poolListener, jobListener);
       jobPool.submitTo(scheduler);
     }
     scheduler.runAll();
@@ -41,10 +43,10 @@ public class JobPoolTest {
     SchedulerTestsUtils.assertAreDone(jobListener.jobDone(), true);
   }
 
-  private JobPool createPool(Listener<JobPool> poolListener, Listener<JobDoneEvent> jobListener) {
+  private MemoryJobPool createPool(JobPoolListenerTest poolListener, Listener<JobDoneEvent> jobListener) {
     List<Job> jobs = SchedulerTestsUtils.createJobs(NbJobs);
     SchedulerTestsUtils.assertAreDone(jobs, false);
-    JobPool pool = new JobPool(poolListener, jobListener);
+    MemoryJobPool pool = new MemoryJobPool(poolListener, jobListener);
     for (Job job : jobs)
       pool.add(job);
     return pool;
