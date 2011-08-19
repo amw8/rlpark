@@ -33,21 +33,20 @@ public class RandomNetworkScheduler implements Serializable {
     public void run() {
       int currentPosition = offset;
       int[] activeIndexes = obs.activeIndexes();
-      final int runTime = time;
       while (currentPosition < activeIndexes.length) {
         int activeInput = activeIndexes[currentPosition];
         LTU[] connected = connectedLTUs[activeInput].array();
-        updateConnectedLTU(runTime, connected);
+        updateConnectedLTU(connected);
         currentPosition += nbThread;
       }
     }
 
-    private void updateConnectedLTU(int time, LTU[] connected) {
+    private void updateConnectedLTU(LTU[] connected) {
       for (LTU ltu : connected) {
         final int index = ltu.index();
         if (updated[index])
           continue;
-        updatedLTUs.updateLTUSum(time, index, ltu, denseInputVector);
+        updatedLTUs.updateLTUSum(index, ltu, denseInputVector);
       }
     }
   }
@@ -80,7 +79,6 @@ public class RandomNetworkScheduler implements Serializable {
   protected final int nbThread;
   BinaryVector obs;
   BinaryVector output;
-  int time;
 
   public RandomNetworkScheduler() {
     this(Scheduling.getDefaultNbThreads());
@@ -106,7 +104,6 @@ public class RandomNetworkScheduler implements Serializable {
       initialize(randomNetwork);
     this.obs = obs;
     this.output = randomNetwork.output;
-    this.time = randomNetwork.time;
     for (int i = 0; i < sumUpdaters.length; i++)
       futurs[i] = executor.submit(sumUpdaters[i]);
     waitWorkingThread();

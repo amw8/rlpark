@@ -74,7 +74,7 @@ public class LocalScheduler implements Scheduler {
   }
 
   @Override
-  public List<Runnable> runAll() {
+  public void runAll() {
     start();
     for (Future<?> future : futurs)
       try {
@@ -85,9 +85,6 @@ public class LocalScheduler implements Scheduler {
       }
     if (exceptionThrown != null)
       throw new RuntimeException(exceptionThrown);
-    if (runnables instanceof LocalQueue)
-      return ((LocalQueue) runnables).queryJobDone();
-    return null;
   }
 
   public long updateTimeAverage() {

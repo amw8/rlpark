@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
@@ -87,18 +86,17 @@ public class ServerScheduler implements Scheduler {
   }
 
   @Override
-  public List<Runnable> runAll() {
+  public void runAll() {
     JobStatListener listener = new JobStatListener();
     localQueue.onJobDone().connect(listener);
     start();
-    List<Runnable> result = LocalQueue.waitAllDone(localQueue);
+    LocalQueue.waitAllDone(localQueue);
     if (localScheduler != null) {
       Throwable exceptionOccured = localScheduler.exceptionOccured();
       if (exceptionOccured != null)
         throw new RuntimeException(exceptionOccured);
     }
     localQueue.onJobDone().disconnect(listener);
-    return result;
   }
 
   public void start() {

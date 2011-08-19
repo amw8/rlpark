@@ -14,7 +14,7 @@ public class LTUUpdated implements Serializable {
     updated = new boolean[nbLTU];
   }
 
-  final public void updateLTUSum(int time, int index, LTU ltu, double[] denseInputVector) {
+  final public void updateLTUSum(int index, LTU ltu, double[] denseInputVector) {
     if (markLTU(index))
       ltu.updateSum(denseInputVector);
   }

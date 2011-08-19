@@ -1,5 +1,7 @@
 package rltoys.algorithms.representations.ltu;
 
+import static rltoys.math.vector.implementations.BVector.toBVector;
+
 import java.util.Random;
 
 import junit.framework.Assert;
@@ -15,7 +17,6 @@ import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
 import rltoys.algorithms.representations.ltu.units.LTUThreshold;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.RealVector;
-import static rltoys.math.vector.implementations.BVector.toBVector;
 
 
 @SuppressWarnings("serial")
@@ -98,7 +99,7 @@ public class RandomNetworkTest {
   @Test
   public void testRandomRepresentationWithLMSAndAdaptiveLTUs() {
     BinaryTargetProblem problem = createProblem();
-    final LTUAdaptive ltu = new LTUAdaptive(0.2, 0.3);
+    final LTUAdaptive ltu = new LTUAdaptive(0.2, 0.3, 0.99, .001);
     RandomNetwork randomNetwork = new RandomNetwork(problem.inputSize, 1000);
     RandomNetworks.fullyConnect(new Random(0), randomNetwork, ltu);
     evaluateRepresentation(problem, randomNetwork, 0.08);
@@ -107,7 +108,7 @@ public class RandomNetworkTest {
   @Test
   public void testAdaptiveRandomRepresentationWithLMSAndAdaptiveLTUs() {
     BinaryTargetProblem problem = createProblem();
-    final LTUAdaptive ltu = new LTUAdaptive(0.2, 0.3);
+    final LTUAdaptive ltu = new LTUAdaptive(0.2, 0.3, 0.99, .001);
     RandomNetwork randomNetwork = new RandomNetworkAdaptive(new Random(0), problem.inputSize, 1000, .2, .3);
     RandomNetworks.fullyConnect(new Random(0), randomNetwork, ltu);
     evaluateRepresentation(problem, randomNetwork, 0.08);

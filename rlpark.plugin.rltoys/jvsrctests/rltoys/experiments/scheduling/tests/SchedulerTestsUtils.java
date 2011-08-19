@@ -27,6 +27,23 @@ public class SchedulerTestsUtils {
     }
   }
 
+  static public class JobDoneListener implements Listener<JobDoneEvent> {
+    private final List<Runnable> done = new ArrayList<Runnable>();
+
+    @Override
+    public void listen(JobDoneEvent eventInfo) {
+      done.add(eventInfo.done);
+    }
+
+    public int nbJobDone() {
+      return done.size();
+    }
+
+    public List<Runnable> jobDone() {
+      return done;
+    }
+  }
+
   static List<Job> createJobs(int nbJobs) {
     List<Job> jobs = new ArrayList<Job>();
     for (int i = 0; i < nbJobs; i++)
@@ -44,13 +61,12 @@ public class SchedulerTestsUtils {
     for (int i = 0; i < 2; i++) {
       List<Job> jobs = SchedulerTestsUtils.createJobs(NbJobs);
       SchedulerTestsUtils.assertAreDone(jobs, false);
-      int[] nbJobDone = new int[] { 0 };
-      Listener<JobDoneEvent> listener = createListener(nbJobDone);
+      JobDoneListener listener = createListener();
       for (Job job : jobs)
         scheduler.add(job, listener);
-      List<Runnable> done = scheduler.runAll();
-      Assert.assertEquals(NbJobs, nbJobDone[0]);
-      SchedulerTestsUtils.assertAreDone(done, true);
+      scheduler.runAll();
+      Assert.assertEquals(NbJobs, listener.nbJobDone());
+      SchedulerTestsUtils.assertAreDone(listener.jobDone(), true);
       // Checking if, when we have a ServerScheduler, some code has been
       // transfered between the client and the server
       if (scheduler instanceof ServerScheduler)
@@ -59,12 +75,7 @@ public class SchedulerTestsUtils {
     }
   }
 
-  static <T> Listener<T> createListener(final int[] nbJobDone) {
-    return new Listener<T>() {
-      @Override
-      public void listen(T eventInfo) {
-        nbJobDone[0]++;
-      }
-    };
+  static public JobDoneListener createListener() {
+    return new JobDoneListener();
   }
 }

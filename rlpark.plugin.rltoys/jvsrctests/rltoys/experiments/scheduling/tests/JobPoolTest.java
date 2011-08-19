@@ -1,6 +1,5 @@
 package rltoys.experiments.scheduling.tests;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -11,36 +10,35 @@ import rltoys.experiments.scheduling.JobPool;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.Job;
+import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.JobDoneListener;
 import zephyr.plugin.core.api.signals.Listener;
 
 public class JobPoolTest {
+  static public class JobPoolListener implements Listener<JobPool> {
+    int poolDone = 0;
+
+    @Override
+    public void listen(JobPool pool) {
+      poolDone++;
+    }
+  }
+
   final static private int NbJobs = 100;
   final static private int NbPool = 5;
 
   @Test
   public void testJobPool() {
     LocalScheduler scheduler = new LocalScheduler(10);
-    int[] nbPoolDone = new int[] { 0 };
-    List<Runnable> jobDone = new ArrayList<Runnable>();
-    Listener<JobDoneEvent> jobListener = createListener(jobDone);
-    Listener<JobPool> poolListener = SchedulerTestsUtils.createListener(nbPoolDone);
+    JobDoneListener jobListener = SchedulerTestsUtils.createListener();
+    JobPoolListener poolListener = new JobPoolListener();
     for (int i = 0; i < NbPool; i++) {
       JobPool jobPool = createPool(poolListener, jobListener);
       jobPool.submitTo(scheduler);
     }
     scheduler.runAll();
-    Assert.assertEquals(NbPool, nbPoolDone[0]);
-    Assert.assertEquals(NbJobs * NbPool, jobDone.size());
-    SchedulerTestsUtils.assertAreDone(jobDone, true);
-  }
-
-  private Listener<JobDoneEvent> createListener(final List<Runnable> done) {
-    return new Listener<JobDoneEvent>() {
-      @Override
-      public void listen(JobDoneEvent event) {
-        done.add(event.done);
-      }
-    };
+    Assert.assertEquals(NbPool, poolListener.poolDone);
+    Assert.assertEquals(NbJobs * NbPool, jobListener.nbJobDone());
+    SchedulerTestsUtils.assertAreDone(jobListener.jobDone(), true);
   }
 
   private JobPool createPool(Listener<JobPool> poolListener, Listener<JobDoneEvent> jobListener) {

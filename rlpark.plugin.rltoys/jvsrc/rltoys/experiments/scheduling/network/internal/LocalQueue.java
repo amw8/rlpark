@@ -1,11 +1,9 @@
 package rltoys.experiments.scheduling.network.internal;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +17,6 @@ public class LocalQueue implements JobQueue {
   private final Map<Runnable, Listener<JobDoneEvent>> listeners = new HashMap<Runnable, Listener<JobDoneEvent>>();
   private final LinkedList<Runnable> waiting = new LinkedList<Runnable>();
   private final Set<Runnable> pending = new LinkedHashSet<Runnable>();
-  private final List<Runnable> done = new ArrayList<Runnable>();
   private final Set<Runnable> pendingLocally = new HashSet<Runnable>();
   private final Signal<JobDoneEvent> onJobDone = new Signal<JobDoneEvent>();
   private int nbJobs = 0;
@@ -60,7 +57,6 @@ public class LocalQueue implements JobQueue {
     boolean removed = pending.remove(todo);
     if (!removed)
       return;
-    this.done.add(done);
     pendingLocally.remove(todo);
     onJobDone(todo, done);
     nbJobsDone++;
@@ -88,10 +84,10 @@ public class LocalQueue implements JobQueue {
 
   @Override
   synchronized public int nbJobs() {
-    return waiting.size() + pending.size() + done.size();
+    return waiting.size() + pending.size() + nbJobsDone;
   }
 
-  static public List<Runnable> waitAllDone(LocalQueue queue) {
+  static public void waitAllDone(LocalQueue queue) {
     Messages.debug("To do " + queue.nbJobs());
     while (!queue.areAllDone()) {
       synchronized (queue) {
@@ -103,15 +99,6 @@ public class LocalQueue implements JobQueue {
       }
     }
     Messages.debug("Done: " + queue.nbJobs());
-    assert queue.nbJobs == queue.nbJobs();
-    return queue.queryJobDone();
-  }
-
-  synchronized public List<Runnable> queryJobDone() {
-    nbJobs -= done.size();
-    ArrayList<Runnable> result = new ArrayList<Runnable>(done);
-    done.clear();
-    return result;
   }
 
   @Override

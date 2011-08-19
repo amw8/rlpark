@@ -26,7 +26,6 @@ public class RandomNetwork implements Serializable {
   protected final double[] denseInputVector;
   final LTUUpdated updatedLTUs;
   private final RandomNetworkScheduler scheduler;
-  protected int time = 0;
   @SuppressWarnings("unused")
   @Monitor
   private int nbUnitUpdated = 0;
@@ -89,7 +88,6 @@ public class RandomNetwork implements Serializable {
   }
 
   public BVector project(BinaryVector obs) {
-    time++;
     prepareProjection(obs);
     scheduler.update(this, obs);
     nbUnitUpdated = updatedLTUs.nbUnitUpdated();

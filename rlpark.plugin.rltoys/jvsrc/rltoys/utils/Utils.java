@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 
 public class Utils {
@@ -209,7 +213,10 @@ public class Utils {
 
   public static void save(Serializable serialized, File file) {
     try {
-      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+      OutputStream fout = new FileOutputStream(file);
+      if (file.getName().endsWith(".gz"))
+        fout = new GZIPOutputStream(fout);
+      ObjectOutputStream out = new ObjectOutputStream(fout);
       out.writeObject(serialized);
       out.close();
     } catch (IOException e) {
@@ -242,7 +249,9 @@ public class Utils {
 
   public static Object load(File file, final ClassLoader... loaders) {
     try {
-      FileInputStream fis = new FileInputStream(file);
+      InputStream fis = new FileInputStream(file);
+      if (file.getName().endsWith(".gz"))
+        fis = new GZIPInputStream(fis);
       ObjectInputStream oIn = new ObjectInputStream(fis) {
         @Override
         protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {

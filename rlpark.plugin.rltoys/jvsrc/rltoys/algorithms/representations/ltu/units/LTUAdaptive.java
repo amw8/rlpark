@@ -1,49 +1,51 @@
 package rltoys.algorithms.representations.ltu.units;
 
-import rltoys.utils.Utils;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
 public class LTUAdaptive extends LTUThreshold {
   private static final long serialVersionUID = 7927007001800685788L;
-  static final public double Epsilon = 0.001;
   public final double minFrequency;
   public final double maxFrequency;
-  private final double lambda;
+  private final double frequencyLatencySpeed;
   private double averageFrequency;
+  private final double thresholdStepSize;
 
 
-  public LTUAdaptive(double minFrequency, double maxFrequency) {
+  public LTUAdaptive(double minFrequency, double maxFrequency, double frequencyLatencySpeed, double thresholdStepSize) {
     assert minFrequency >= 0.0 && maxFrequency > minFrequency;
     this.minFrequency = minFrequency;
     this.maxFrequency = maxFrequency;
+    this.thresholdStepSize = thresholdStepSize;
     this.averageFrequency = (minFrequency + maxFrequency) / 2.0;
-    lambda = Double.NaN;
+    this.frequencyLatencySpeed = frequencyLatencySpeed;
   }
 
-  public LTUAdaptive(int index, int[] inputs, byte[] weights, double minFrequency, double maxFrequency) {
+  public LTUAdaptive(int index, int[] inputs, byte[] weights, double minFrequency, double maxFrequency,
+      double frequencyLatencySpeed, double thresholdStepSize) {
     super(index, inputs, weights);
     assert minFrequency >= 0.0 && maxFrequency > minFrequency;
     this.minFrequency = minFrequency;
     this.maxFrequency = maxFrequency;
-    this.lambda = Utils.timeStepsToDiscount(((int) (1.0 / minFrequency)) * 10);
+    this.frequencyLatencySpeed = frequencyLatencySpeed;
+    this.thresholdStepSize = thresholdStepSize;
   }
 
   @Override
   public boolean updateActivation() {
     boolean isActive = super.updateActivation();
-    averageFrequency *= lambda;
+    averageFrequency *= frequencyLatencySpeed;
     if (isActive)
-      averageFrequency += 1 - lambda;
+      averageFrequency += 1 - frequencyLatencySpeed;
     if (averageFrequency > maxFrequency)
-      threshold += Epsilon;
+      threshold += thresholdStepSize;
     else if (averageFrequency < minFrequency)
-      threshold -= Epsilon;
+      threshold -= thresholdStepSize;
     return isActive;
   }
 
   @Override
   public LTUAdaptive newLTU(int index, int[] inputs, byte[] weights) {
-    return new LTUAdaptive(index, inputs, weights, minFrequency, maxFrequency);
+    return new LTUAdaptive(index, inputs, weights, minFrequency, maxFrequency, frequencyLatencySpeed, thresholdStepSize);
   }
 }

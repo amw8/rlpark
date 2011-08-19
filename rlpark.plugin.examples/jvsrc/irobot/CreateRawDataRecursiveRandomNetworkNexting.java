@@ -46,7 +46,7 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
   private final Random random = new Random(0);
   private final RandomPolicy policy = new RandomPolicy(random, CreateAction.AllActions);
   private final int rawObsVectorSize = environment.observationPacketSize() * 8;
-  private final LTU prototype = new LTUAdaptive(MinDensity, MaxDensity);
+  private final LTU prototype = new LTUAdaptive(MinDensity, MaxDensity, 0.99, .001);
   private final DemonScheduler demonScheduler;
   private final RewardObservationFunction[] rewardFunctions;
   private final PredictionDemonVerifier[] verifiers;
