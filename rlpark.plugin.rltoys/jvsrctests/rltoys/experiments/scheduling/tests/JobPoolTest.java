@@ -9,6 +9,7 @@ import org.junit.Test;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobPool;
 import rltoys.experiments.scheduling.interfaces.JobPool.JobPoolListener;
+import rltoys.experiments.scheduling.pools.FileJobPool;
 import rltoys.experiments.scheduling.pools.MemoryJobPool;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.Job;
@@ -25,16 +26,39 @@ public class JobPoolTest {
     }
   }
 
+  interface PoolFactory {
+    JobPool createPool(JobPoolListenerTest poolListener, Listener<JobDoneEvent> jobListener);
+  }
+
   final static private int NbJobs = 100;
   final static private int NbPool = 5;
 
   @Test
-  public void testJobPool() {
+  public void testMemoryJobPool() {
+    testJobPool(new PoolFactory() {
+      @Override
+      public JobPool createPool(JobPoolListenerTest poolListener, Listener<JobDoneEvent> jobListener) {
+        return new MemoryJobPool(poolListener, jobListener);
+      }
+    });
+  }
+
+  @Test
+  public void testFileJobPool() {
+    testJobPool(new PoolFactory() {
+      @Override
+      public JobPool createPool(JobPoolListenerTest poolListener, Listener<JobDoneEvent> jobListener) {
+        return new FileJobPool(poolListener, jobListener);
+      }
+    });
+  }
+
+  private void testJobPool(PoolFactory poolFactory) {
     LocalScheduler scheduler = new LocalScheduler(10);
     JobDoneListener jobListener = SchedulerTestsUtils.createListener();
     JobPoolListenerTest poolListener = new JobPoolListenerTest();
     for (int i = 0; i < NbPool; i++) {
-      MemoryJobPool jobPool = createPool(poolListener, jobListener);
+      JobPool jobPool = preparePool(poolFactory, poolListener, jobListener);
       jobPool.submitTo(scheduler);
     }
     scheduler.runAll();
@@ -43,10 +67,11 @@ public class JobPoolTest {
     SchedulerTestsUtils.assertAreDone(jobListener.jobDone(), true);
   }
 
-  private MemoryJobPool createPool(JobPoolListenerTest poolListener, Listener<JobDoneEvent> jobListener) {
+  private JobPool preparePool(PoolFactory poolFactory, JobPoolListenerTest poolListener,
+      Listener<JobDoneEvent> jobListener) {
     List<Job> jobs = SchedulerTestsUtils.createJobs(NbJobs);
     SchedulerTestsUtils.assertAreDone(jobs, false);
-    MemoryJobPool pool = new MemoryJobPool(poolListener, jobListener);
+    JobPool pool = poolFactory.createPool(poolListener, jobListener);
     for (Job job : jobs)
       pool.add(job);
     return pool;

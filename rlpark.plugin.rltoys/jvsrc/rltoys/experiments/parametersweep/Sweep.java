@@ -1,5 +1,6 @@
 package rltoys.experiments.parametersweep;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobPool;
 import rltoys.experiments.scheduling.interfaces.JobPool.JobPoolListener;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
-import rltoys.experiments.scheduling.pools.MemoryJobPool;
+import rltoys.experiments.scheduling.pools.FileJobPool;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import zephyr.plugin.core.api.signals.Listener;
 
@@ -48,7 +49,7 @@ public class Sweep {
   }
 
   private void createAndSubmitRequiredJobs(Context context, ParametersLogFile logFile) {
-    println(logFile.filepath);
+    println(extractName(logFile));
     List<Parameters> allParameters = parametersProvider.provideParameters(context);
     Set<FrozenParameters> doneParameters = logFile.extractParameters(allParameters.get(0).labels());
     List<Runnable> todoJobList = new ArrayList<Runnable>();
@@ -65,10 +66,15 @@ public class Sweep {
       List<Runnable> todoJobList) {
     Listener<JobDoneEvent> jobListener = createJobListener(logFile, doneParameters);
     JobPoolListener poolListener = createPoolListener(logFile, doneParameters);
-    MemoryJobPool pool = new MemoryJobPool(poolListener, jobListener);
+    JobPool pool = new FileJobPool(extractName(logFile), poolListener, jobListener);
     for (Runnable job : todoJobList)
       pool.add(job);
     pool.submitTo(scheduler);
+  }
+
+  private String extractName(ParametersLogFile logFile) {
+    File file = new File(logFile.filepath);
+    return String.format("%s/%s", file.getParentFile().getName(), file.getName());
   }
 
   private JobPoolListener createPoolListener(final ParametersLogFile logFile,

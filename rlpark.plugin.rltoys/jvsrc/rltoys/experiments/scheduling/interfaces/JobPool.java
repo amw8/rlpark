@@ -7,4 +7,6 @@ public interface JobPool {
   };
 
   void submitTo(Scheduler scheduler);
+
+  void add(Runnable job);
 }

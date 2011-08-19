@@ -16,6 +16,7 @@ public class MemoryJobPool extends AbstractJobPool {
     super(onAllJobDone, onJobDone);
   }
 
+  @Override
   public void add(Runnable job) {
     checkHasBeenSubmitted();
     jobs.add(job);

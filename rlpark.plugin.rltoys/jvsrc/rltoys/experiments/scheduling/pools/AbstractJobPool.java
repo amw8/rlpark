@@ -26,8 +26,11 @@ public abstract class AbstractJobPool implements JobPool {
 
     @Override
     public Runnable next() {
+      if (nbRequestedJob == 0)
+        onPoolStart();
       Runnable next = iterator.next();
       jobSubmitted.add(next);
+      nbRequestedJob++;
       return next;
     }
 
@@ -46,10 +49,17 @@ public abstract class AbstractJobPool implements JobPool {
   protected final Listener<JobDoneEvent> onJobDone;
   final List<Runnable> jobSubmitted = new ArrayList<Runnable>();
   protected RunnableIterator jobIterator = null;
+  protected int nbRequestedJob = 0;
 
   public AbstractJobPool(JobPoolListener onAllJobDone, Listener<JobDoneEvent> onJobDone) {
     this.onAllJobDone = onAllJobDone;
     this.onJobDone = onJobDone;
+  }
+
+  protected void onPoolStart() {
+  }
+
+  protected void onPoolEnd() {
   }
 
   protected boolean hasBeenSubmitted() {
@@ -73,8 +83,10 @@ public abstract class AbstractJobPool implements JobPool {
     if (onJobDone != null)
       onJobDone.listen(event);
     jobSubmitted.remove(event.todo);
-    if (jobSubmitted.isEmpty() && !jobIterator.hasNext())
+    if (jobSubmitted.isEmpty() && !jobIterator.hasNext()) {
       onAllJobDone.listen(this);
+      onPoolEnd();
+    }
   }
 
   abstract protected Iterator<Runnable> createIterator();

@@ -25,15 +25,12 @@ public class DiscoLogfile implements Iterator<DiscoPacket> {
   }
 
   private DiscoPacket readPacket() {
-    if (objin == null)
-      return null;
     try {
       return (DiscoPacket) objin.readObject();
     } catch (EOFException e) {
-      close();
+      return null;
     } catch (Exception e) {
       e.printStackTrace();
-      close();
     }
     return null;
   }
