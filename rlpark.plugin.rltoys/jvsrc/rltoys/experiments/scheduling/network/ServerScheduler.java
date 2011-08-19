@@ -1,7 +1,6 @@
 package rltoys.experiments.scheduling.network;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
@@ -25,14 +24,11 @@ public class ServerScheduler implements Scheduler {
 
     @Override
     public void listen(JobDoneEvent eventInfo) {
-      int nbRemainingJobs = localQueue.nbRemainingJobs();
-      if (chrono.getCurrentChrono() - lastChronoValue < StatPeriod && nbRemainingJobs > 0)
+      if (chrono.getCurrentChrono() - lastChronoValue < StatPeriod)
         return;
       lastChronoValue = chrono.getCurrentChrono();
       double nbJobPerSecond = localQueue.nbJobsDone() / lastChronoValue;
       System.out.printf("%f jobs/minutes. ", nbJobPerSecond * 60);
-      if (nbRemainingJobs > 0)
-        System.out.printf("%s remaining.\n", Chrono.toStringMillis((long) (nbRemainingJobs * nbJobPerSecond)));
       System.out.println();
     }
   }
@@ -72,17 +68,6 @@ public class ServerScheduler implements Scheduler {
 
   protected void addClient(SocketClient clientScheduler) {
     clients.add(clientScheduler);
-    printClientStats();
-  }
-
-  private void printClientStats() {
-    printAboutClient(String.format("%d client(s) for %d remaining jobs", clients.size(), localQueue.nbRemainingJobs()));
-  }
-
-  static private void printAboutClient(String message) {
-    if (!serverVerbose)
-      return;
-    System.out.println(message);
   }
 
   @Override
@@ -108,18 +93,10 @@ public class ServerScheduler implements Scheduler {
       clientScheduler.wakeUp();
   }
 
-  @Override
-  public void add(Runnable runnable, Listener<JobDoneEvent> listener) {
-    if (!(runnable instanceof Serializable))
-      throw new RuntimeException("Job needs to be serializable");
-    localQueue.add(runnable, listener);
-  }
-
   public void removeClient(SocketClient socketClient) {
     clients.remove(socketClient);
     for (Runnable pendingJob : socketClient.pendingJobs())
       localQueue.requestCancel(pendingJob);
-    printClientStats();
   }
 
   public void dispose() {

@@ -63,9 +63,9 @@ public class Sweep {
       List<Runnable> todoJobList) {
     Listener<JobDoneEvent> jobListener = createJobListener(logFile, doneParameters);
     Listener<JobPool> poolListener = createPoolListener(logFile, doneParameters);
-    JobPool pool = new JobPool(poolListener);
+    JobPool pool = new JobPool(poolListener, jobListener);
     for (Runnable job : todoJobList)
-      pool.add(job, jobListener);
+      pool.add(job);
     pool.submitTo(scheduler);
   }
 
@@ -114,7 +114,6 @@ public class Sweep {
       counter.nextExperiment();
       submitOneSweep();
     }
-    System.out.println(scheduler.queue().nbJobs() + " to run in total.");
     scheduler.runAll();
   }
 

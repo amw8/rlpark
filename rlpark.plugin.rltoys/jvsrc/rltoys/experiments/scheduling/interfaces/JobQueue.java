@@ -8,6 +8,4 @@ public interface JobQueue {
   void done(Runnable todo, Runnable done);
 
   Signal<JobDoneEvent> onJobDone();
-
-  int nbJobs();
 }

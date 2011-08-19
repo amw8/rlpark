@@ -9,6 +9,7 @@ import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.network.ServerScheduler;
 import rltoys.experiments.scheduling.network.internal.NetworkClassLoader;
+import rltoys.experiments.scheduling.schedulers.Schedulers;
 import zephyr.plugin.core.api.signals.Listener;
 
 public class SchedulerTestsUtils {
@@ -62,8 +63,7 @@ public class SchedulerTestsUtils {
       List<Job> jobs = SchedulerTestsUtils.createJobs(NbJobs);
       SchedulerTestsUtils.assertAreDone(jobs, false);
       JobDoneListener listener = createListener();
-      for (Job job : jobs)
-        scheduler.add(job, listener);
+      Schedulers.addAll(scheduler, jobs, listener);
       scheduler.runAll();
       Assert.assertEquals(NbJobs, listener.nbJobDone());
       SchedulerTestsUtils.assertAreDone(listener.jobDone(), true);

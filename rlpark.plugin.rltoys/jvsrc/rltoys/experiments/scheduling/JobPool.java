@@ -1,11 +1,11 @@
 package rltoys.experiments.scheduling;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
-
+import rltoys.experiments.scheduling.schedulers.Schedulers;
 import zephyr.plugin.core.api.signals.Listener;
 
 
@@ -17,32 +17,32 @@ public class JobPool {
       onJobDone(eventInfo);
     }
   };
-  private final Map<Runnable, Listener<JobDoneEvent>> jobs = new LinkedHashMap<Runnable, Listener<JobDoneEvent>>();
+  private final List<Runnable> jobs = new ArrayList<Runnable>();
+  private final Listener<JobDoneEvent> onJobDone;
   private boolean submitted = false;
 
-  public JobPool(Listener<JobPool> onAllJobDone) {
+  public JobPool(Listener<JobPool> onAllJobDone, Listener<JobDoneEvent> onJobDone) {
     this.onAllJobDone = onAllJobDone;
+    this.onJobDone = onJobDone;
   }
 
-  public void add(Runnable job, Listener<JobDoneEvent> listener) {
+  public void add(Runnable job) {
     if (submitted)
       throw new RuntimeException("No jobs can be added to a pool submitted");
-    jobs.put(job, listener);
+    jobs.add(job);
   }
 
   public void submitTo(Scheduler scheduler) {
     if (submitted)
       throw new RuntimeException("The pool has already been submitted");
     submitted = true;
-    for (Runnable job : jobs.keySet())
-      scheduler.add(job, poolListener);
+    Schedulers.addAll(scheduler, jobs, poolListener);
   }
 
   protected void onJobDone(JobDoneEvent event) {
-    assert jobs.containsKey(event.todo);
-    Listener<JobDoneEvent> listener = jobs.get(event.todo);
-    if (listener != null)
-      listener.listen(event);
+    assert jobs.contains(event.todo);
+    if (onJobDone != null)
+      onJobDone.listen(event);
     jobs.remove(event.todo);
     if (jobs.isEmpty())
       onAllJobDone.listen(this);

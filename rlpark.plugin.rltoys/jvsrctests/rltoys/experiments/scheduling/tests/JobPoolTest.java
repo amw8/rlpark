@@ -44,9 +44,9 @@ public class JobPoolTest {
   private JobPool createPool(Listener<JobPool> poolListener, Listener<JobDoneEvent> jobListener) {
     List<Job> jobs = SchedulerTestsUtils.createJobs(NbJobs);
     SchedulerTestsUtils.assertAreDone(jobs, false);
-    JobPool pool = new JobPool(poolListener);
+    JobPool pool = new JobPool(poolListener, jobListener);
     for (Job job : jobs)
-      pool.add(job, jobListener);
+      pool.add(job);
     return pool;
   }
 }

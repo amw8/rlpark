@@ -70,11 +70,6 @@ public class NetworkJobQueue implements JobQueue {
     return onJobDone;
   }
 
-  @Override
-  public int nbJobs() {
-    return Integer.MAX_VALUE;
-  }
-
   public void denyNewJobRequest() {
     denyNewJobRequest = true;
   }

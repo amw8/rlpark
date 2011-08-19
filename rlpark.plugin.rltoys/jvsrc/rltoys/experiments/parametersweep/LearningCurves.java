@@ -17,6 +17,7 @@ import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
+import rltoys.experiments.scheduling.schedulers.Schedulers;
 
 public class LearningCurves {
   private final ParametersProvider parametersProvider;
@@ -71,13 +72,15 @@ public class LearningCurves {
     Map<Context, List<Parameters>> descriptions = new LinkedHashMap<Context, List<Parameters>>();
     for (Context context : contextProvider.provideContexts())
       descriptions.put(context, createJobsDescription(context));
+    List<Runnable> jobs = new ArrayList<Runnable>();
     while (counter.hasNext()) {
       counter.nextExperiment();
       for (Map.Entry<Context, List<Parameters>> entry : descriptions.entrySet())
         for (Parameters parameters : entry.getValue())
-          scheduler.add(entry.getKey().createLearningCurveJob(parameters, counter), null);
-      scheduler.runAll();
+          jobs.add(entry.getKey().createLearningCurveJob(parameters, counter));
     }
+    Schedulers.addAll(scheduler, jobs, null);
+    scheduler.runAll();
   }
 
   public static Set<FrozenParameters> toParametersSet(String[] args) {
