@@ -83,7 +83,7 @@ public class ServerScheduler implements Scheduler {
   protected void addClient(SocketClient client) {
     clients.add(client);
     client.onClosed.connect(clientClosedListener);
-    printConnectionInfo(client.clientName() + "connected");
+    printConnectionInfo(client.clientName() + " connected");
   }
 
   protected void printConnectionInfo(String news) {

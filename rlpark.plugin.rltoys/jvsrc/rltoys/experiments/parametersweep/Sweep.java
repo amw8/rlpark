@@ -72,7 +72,9 @@ public class Sweep {
 
   private String extractName(ParametersLogFile logFile) {
     File file = new File(logFile.filepath);
-    return String.format("%s/%s", file.getParentFile().getName(), file.getName());
+    File algoNameParentFile = file.getParentFile();
+    File problemNameParentFile = algoNameParentFile.getParentFile();
+    return String.format("%s/%s/%s", problemNameParentFile.getName(), algoNameParentFile.getName(), file.getName());
   }
 
   private JobPoolListener createPoolListener(final ParametersLogFile logFile, final String[] parameterLabels) {
