@@ -1,12 +1,10 @@
 package rltoys.experiments.scheduling.network.internal;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobQueue;
@@ -28,17 +26,14 @@ public class LocalQueue implements JobQueue {
   private final Map<Iterator<? extends Runnable>, Listener<JobDoneEvent>> listeners = new HashMap<Iterator<? extends Runnable>, Listener<JobDoneEvent>>();
   private final LinkedList<Iterator<? extends Runnable>> waiting = new LinkedList<Iterator<? extends Runnable>>();
   private final Map<Runnable, Listener<JobDoneEvent>> pending = new LinkedHashMap<Runnable, Listener<JobDoneEvent>>();
-  private final Set<Runnable> pendingLocally = new HashSet<Runnable>();
   private final Signal<JobDoneEvent> onJobDone = new Signal<JobDoneEvent>();
   private final LinkedList<JobInfo> canceled = new LinkedList<JobInfo>();
   private Iterator<? extends Runnable> currentJobIterator = null;
   private int nbJobsDone = 0;
 
   synchronized public void requestCancel(Runnable pendingJob) {
-    if (!pending.containsKey(pendingJob))
-      return;
+    assert pending.containsKey(pendingJob);
     Listener<JobDoneEvent> listener = pending.remove(pendingJob);
-    pendingLocally.remove(pendingJob);
     canceled.addFirst(new JobInfo(pendingJob, listener));
   }
 
@@ -48,7 +43,7 @@ public class LocalQueue implements JobQueue {
       if (currentJobIterator == null)
         currentJobIterator = waiting.poll();
       if (currentJobIterator == null)
-        return null;
+        break;
       if (currentJobIterator.hasNext()) {
         Runnable job = currentJobIterator.next();
         jobInfo = new JobInfo(job, listeners.get(currentJobIterator));
@@ -62,23 +57,12 @@ public class LocalQueue implements JobQueue {
   }
 
   @Override
-  synchronized public Runnable request(boolean isLocal) {
+  synchronized public Runnable request() {
     JobInfo jobInfo = findJob();
-    if (jobInfo != null) {
-      pending.put(jobInfo.job, jobInfo.listener);
-      if (isLocal)
-        pendingLocally.add(jobInfo.job);
-      return jobInfo.job;
-    }
-    if (!isLocal)
+    if (jobInfo == null)
       return null;
-    for (Runnable candidate : pending.keySet()) {
-      if (pendingLocally.contains(candidate))
-        continue;
-      pendingLocally.add(candidate);
-      return candidate;
-    }
-    return null;
+    pending.put(jobInfo.job, jobInfo.listener);
+    return jobInfo.job;
   }
 
   @Override
@@ -86,7 +70,6 @@ public class LocalQueue implements JobQueue {
     boolean removed = pending.containsKey(todo);
     if (!removed)
       return;
-    pendingLocally.remove(todo);
     Listener<JobDoneEvent> listener = pending.remove(todo);
     onJobDone(todo, done, listener);
     nbJobsDone++;

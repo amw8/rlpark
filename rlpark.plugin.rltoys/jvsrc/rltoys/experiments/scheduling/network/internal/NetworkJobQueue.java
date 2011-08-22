@@ -28,7 +28,7 @@ public class NetworkJobQueue implements JobQueue {
   }
 
   @Override
-  synchronized public Runnable request(boolean isLocal) {
+  synchronized public Runnable request() {
     if (denyNewJobRequest)
       return null;
     Runnable job = null;

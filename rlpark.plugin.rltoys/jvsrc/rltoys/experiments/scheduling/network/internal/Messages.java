@@ -64,7 +64,7 @@ public class Messages {
         ignored = true;
         break;
       }
-    if (verbose || !ignored)
+    if (debug || !ignored)
       throwable.printStackTrace();
   }
 

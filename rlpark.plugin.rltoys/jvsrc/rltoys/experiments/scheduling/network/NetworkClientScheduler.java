@@ -11,7 +11,7 @@ import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class NetworkClientScheduler {
-  private static final int SleepWhenPersitentSeconds = 3600;
+  private static final int SleepWhenPersitentSeconds = 600;
   static private boolean persistentClient = false;
   static private double maximumMinutesTime = -1;
   static private String serverHost = "";
@@ -19,7 +19,7 @@ public class NetworkClientScheduler {
   static private int nbCore = LocalScheduler.getDefaultNbThreads();
 
   private final LocalScheduler localScheduler;
-  final NetworkJobQueue networkJobQueue;
+  final protected NetworkJobQueue networkJobQueue;
 
   public NetworkClientScheduler(String serverHost, int port) throws UnknownHostException, IOException {
     this(new LocalScheduler(createJobQueue(serverHost, port)));
@@ -127,7 +127,7 @@ public class NetworkClientScheduler {
   public static void main(String[] args) {
     if (args.length < 1) {
       System.err
-          .println("Usage: java -jar <jarfile.jar> <-tmax time: 30,60,... mins> -p<persistent: 0 or 1> -c<nb cores> <hostname:port>");
+          .println("Usage: java -jar <jarfile.jar> -t<max time: 30,60,... mins> -p<persistent: 0 or 1> -c<nb cores> <hostname:port>");
       System.exit(1);
     }
     readParams(args);

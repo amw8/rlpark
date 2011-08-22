@@ -16,11 +16,11 @@ public class LocalScheduler implements Scheduler {
     @Override
     public void run() {
       try {
-        Runnable runnable = runnables.request(true);
+        Runnable runnable = runnables.request();
         while (runnable != null) {
           runnable.run();
           runnables.done(runnable, runnable);
-          runnable = runnables.request(true);
+          runnable = runnables.request();
         }
       } catch (Throwable exception) {
         if (exceptionThrown == null)

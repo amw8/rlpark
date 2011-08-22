@@ -86,14 +86,18 @@ public class ParametersLogFile {
     return new File(filepath).canRead();
   }
 
-  public void writeParameters(Set<FrozenParameters> unsortedResultingParameters) throws IOException {
-    List<FrozenParameters> resultingParameters = new ArrayList<FrozenParameters>(unsortedResultingParameters);
-    Collections.sort(resultingParameters);
-    LoggerRow loggerRow = new LoggerRow(filepath);
-    loggerRow.writeLegend(resultingParameters.get(0).labels());
-    for (FrozenParameters parameters : resultingParameters)
-      loggerRow.writeRow(parameters.values());
-    loggerRow.close();
+  public void writeParameters(Set<FrozenParameters> unsortedResultingParameters) {
+    try {
+      List<FrozenParameters> resultingParameters = new ArrayList<FrozenParameters>(unsortedResultingParameters);
+      Collections.sort(resultingParameters);
+      LoggerRow loggerRow = new LoggerRow(filepath);
+      loggerRow.writeLegend(resultingParameters.get(0).labels());
+      for (FrozenParameters parameters : resultingParameters)
+        loggerRow.writeRow(parameters.values());
+      loggerRow.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public void appendParameters(Parameters mutableParameters) {
@@ -109,5 +113,10 @@ public class ParametersLogFile {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public void reorganizeLogFile(String... parameterLabelsArray) {
+    Set<FrozenParameters> logFileData = extractParameters(parameterLabelsArray);
+    writeParameters(logFileData);
   }
 }

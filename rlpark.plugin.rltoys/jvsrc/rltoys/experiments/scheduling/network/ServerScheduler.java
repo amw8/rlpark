@@ -3,6 +3,8 @@ package rltoys.experiments.scheduling.network;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -54,7 +56,7 @@ public class ServerScheduler implements Scheduler {
   final ServerSocket serverSocket;
   private final LocalScheduler localScheduler;
   private final Thread serverThread = new Thread(acceptClientsRunnable, "AcceptThread");
-  private final Set<SocketClient> clients = new HashSet<SocketClient>();
+  private final Set<SocketClient> clients = Collections.synchronizedSet(new HashSet<SocketClient>());
 
   public ServerScheduler() throws IOException {
     this(DefaultPort, LocalScheduler.getDefaultNbThreads());
@@ -68,6 +70,11 @@ public class ServerScheduler implements Scheduler {
 
   protected void addClient(SocketClient clientScheduler) {
     clients.add(clientScheduler);
+    printClientStats();
+  }
+
+  private void printClientStats() {
+    Messages.println(String.format("%d client(s)", clients.size()));
   }
 
   @Override
@@ -89,7 +96,7 @@ public class ServerScheduler implements Scheduler {
       serverThread.start();
     if (localScheduler != null)
       localScheduler.start();
-    for (SocketClient clientScheduler : clients)
+    for (SocketClient clientScheduler : new ArrayList<SocketClient>(clients))
       clientScheduler.wakeUp();
   }
 
@@ -97,6 +104,7 @@ public class ServerScheduler implements Scheduler {
     clients.remove(socketClient);
     for (Runnable pendingJob : socketClient.pendingJobs())
       localQueue.requestCancel(pendingJob);
+    printClientStats();
   }
 
   public void dispose() {

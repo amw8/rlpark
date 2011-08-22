@@ -69,7 +69,7 @@ public class SocketClient {
 
   synchronized private void requestJob(boolean blocking) {
     waitingForJob = waitingForJob || blocking;
-    Runnable todo = serverScheduler.localQueue.request(false);
+    Runnable todo = serverScheduler.localQueue.request();
     if (todo == null && blocking)
       return;
     sendJob(todo);
@@ -96,7 +96,7 @@ public class SocketClient {
   synchronized public void wakeUp() {
     if (!waitingForJob)
       return;
-    Runnable todo = serverScheduler.localQueue.request(false);
+    Runnable todo = serverScheduler.localQueue.request();
     if (todo == null)
       return;
     sendJob(todo);

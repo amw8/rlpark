@@ -17,6 +17,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.network.internal.Messages;
 import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
@@ -84,7 +85,7 @@ public class FileJobPool extends AbstractJobPool {
     nbFilePool++;
     try {
       file = File.createTempFile("jobpool", null);
-      objout = new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(file))));
+      objout = new ObjectOutputStream(new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(file))));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -93,6 +94,7 @@ public class FileJobPool extends AbstractJobPool {
   @Override
   protected void onPoolStart() {
     Messages.println(String.format("Starting %s: %d jobs to do", name, nbJobs));
+    chrono.start();
   }
 
   @Override
@@ -107,11 +109,17 @@ public class FileJobPool extends AbstractJobPool {
     nbJobs++;
     try {
       objout.writeObject(job);
-      objout.flush();
       objout.reset();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public void submitTo(Scheduler scheduler) {
+    close(objout);
+    if (nbJobs > 0)
+      super.submitTo(scheduler);
   }
 
   void close(Closeable closeable) {
@@ -124,7 +132,6 @@ public class FileJobPool extends AbstractJobPool {
 
   @Override
   protected Iterator<Runnable> createIterator() {
-    close(objout);
     return new FileJobIterator(file);
   }
 }
