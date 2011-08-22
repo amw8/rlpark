@@ -18,7 +18,7 @@ import java.util.zip.GZIPOutputStream;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
-import rltoys.experiments.scheduling.network.internal.Messages;
+import rltoys.experiments.scheduling.internal.messages.Messages;
 import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
 

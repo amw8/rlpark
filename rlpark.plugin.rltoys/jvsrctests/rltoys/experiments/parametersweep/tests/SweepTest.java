@@ -1,4 +1,4 @@
-package rltoys.experiments.parametersweep;
+package rltoys.experiments.parametersweep.tests;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,10 +10,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import rltoys.experiments.ExperimentCounter;
+import rltoys.experiments.parametersweep.Sweep;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
-import rltoys.experiments.scheduling.network.NetworkClientScheduler;
+import rltoys.experiments.scheduling.network.NetworkClient;
 import rltoys.experiments.scheduling.network.ServerScheduler;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import rltoys.experiments.scheduling.tests.SchedulerTest;
@@ -39,7 +40,7 @@ public class SweepTest {
   @Test(timeout = SchedulerTest.Timeout)
   public void testSweepNetworkScheduler() throws IOException {
     ServerScheduler scheduler = new ServerScheduler(Port, 0);
-    new NetworkClientScheduler(2, "localhost", Port).start();
+    new NetworkClient(2, "localhost", Port).start();
     testSweep(scheduler);
     scheduler.dispose();
   }

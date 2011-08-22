@@ -7,12 +7,21 @@ import java.util.List;
 import junit.framework.Assert;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
+import rltoys.experiments.scheduling.internal.network.SocketClient;
 import rltoys.experiments.scheduling.network.ServerScheduler;
-import rltoys.experiments.scheduling.network.internal.NetworkClassLoader;
 import rltoys.experiments.scheduling.schedulers.Schedulers;
 import zephyr.plugin.core.api.signals.Listener;
 
 public class SchedulerTestsUtils {
+  static class ClassResolutionListener implements Listener<String> {
+    final List<String> names = new ArrayList<String>();
+
+    @Override
+    public void listen(String name) {
+      names.add(name);
+    }
+  }
+
   static public class Job implements Runnable, Serializable {
     private static final long serialVersionUID = -1405281337225571229L;
     public boolean done = false;
@@ -57,6 +66,18 @@ public class SchedulerTestsUtils {
       Assert.assertEquals(isDone, ((Job) job).done);
   }
 
+  static public void testServerScheduler(ServerScheduler scheduler) {
+    if (scheduler.isLocalSchedulingEnabled()) {
+      testScheduler(scheduler);
+      return;
+    }
+    ClassResolutionListener listener = new ClassResolutionListener();
+    SocketClient.onClassRequested.connect(listener);
+    testScheduler(scheduler);
+    SocketClient.onClassRequested.disconnect(listener);
+    Assert.assertTrue(listener.names.contains(Job.class.getName()));
+  }
+
   static public void testScheduler(Scheduler scheduler) {
     final int NbJobs = 100;
     for (int i = 0; i < 2; i++) {
@@ -67,11 +88,6 @@ public class SchedulerTestsUtils {
       scheduler.runAll();
       Assert.assertEquals(NbJobs, listener.nbJobDone());
       SchedulerTestsUtils.assertAreDone(listener.jobDone(), true);
-      // Checking if, when we have a ServerScheduler, some code has been
-      // transfered between the client and the server
-      if (scheduler instanceof ServerScheduler)
-        Assert.assertTrue(((ServerScheduler) scheduler).isLocalSchedulingEnabled() ||
-            NetworkClassLoader.downloaded() > 0);
     }
   }
 

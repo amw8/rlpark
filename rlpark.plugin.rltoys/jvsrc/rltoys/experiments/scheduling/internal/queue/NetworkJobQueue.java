@@ -1,4 +1,4 @@
-package rltoys.experiments.scheduling.network.internal;
+package rltoys.experiments.scheduling.internal.queue;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -8,6 +8,10 @@ import java.util.Map;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobQueue;
+import rltoys.experiments.scheduling.internal.messages.MessageJob;
+import rltoys.experiments.scheduling.internal.messages.Messages;
+import rltoys.experiments.scheduling.internal.network.NetworkClassLoader;
+import rltoys.experiments.scheduling.internal.network.SyncSocket;
 import zephyr.plugin.core.api.signals.Signal;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
@@ -24,6 +28,7 @@ public class NetworkJobQueue implements JobQueue {
 
   public NetworkJobQueue(String serverHostName, int port) throws UnknownHostException, IOException {
     syncSocket = new SyncSocket(new Socket(serverHostName, port));
+    syncSocket.sendClientName();
     classLoader = NetworkClassLoader.newClassLoader(syncSocket);
   }
 

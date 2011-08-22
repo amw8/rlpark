@@ -1,7 +1,5 @@
 package rltoys.experiments.scheduling.tests;
 
-import static rltoys.experiments.scheduling.tests.SchedulerTestsUtils.testScheduler;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +9,15 @@ import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import rltoys.experiments.scheduling.network.NetworkClientScheduler;
+import rltoys.experiments.scheduling.internal.messages.ClassLoading;
+import rltoys.experiments.scheduling.internal.messages.Messages;
+import rltoys.experiments.scheduling.internal.queue.LocalQueue;
+import rltoys.experiments.scheduling.network.NetworkClient;
 import rltoys.experiments.scheduling.network.ServerScheduler;
-import rltoys.experiments.scheduling.network.internal.LocalQueue;
-import rltoys.experiments.scheduling.network.internal.Messages;
-import rltoys.experiments.scheduling.network.internal.NetworkClassLoader;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.Job;
 import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.JobDoneListener;
+import rltoys.utils.Command;
 
 public class SchedulerTest {
   private static final String Localhost = "localhost";
@@ -27,7 +26,7 @@ public class SchedulerTest {
 
   @BeforeClass
   static public void junitMode() {
-    NetworkClassLoader.enableForceNetworkClassResolution();
+    ClassLoading.enableForceNetworkClassResolution();
     Messages.disableVerbose();
     // Messages.enableDebug();
   }
@@ -62,16 +61,16 @@ public class SchedulerTest {
   @Test(timeout = Timeout)
   public void testServerScheduler() throws IOException {
     ServerScheduler scheduler = new ServerScheduler(Port, 10);
-    testScheduler(scheduler);
+    SchedulerTestsUtils.testServerScheduler(scheduler);
     scheduler.dispose();
   }
 
   @Test(timeout = Timeout)
   public void testServerSchedulerWithUniqueClient() throws IOException {
     ServerScheduler scheduler = new ServerScheduler(Port, 0);
-    NetworkClientScheduler client01 = new NetworkClientScheduler(1, Localhost, Port);
+    NetworkClient client01 = new NetworkClient(1, Localhost, Port);
     client01.start();
-    testScheduler(scheduler);
+    SchedulerTestsUtils.testServerScheduler(scheduler);
     client01.dispose();
     scheduler.dispose();
   }
@@ -79,9 +78,9 @@ public class SchedulerTest {
   @Test(timeout = Timeout)
   public void testServerSchedulerWithUniqueClientMultipleThreads() throws IOException {
     ServerScheduler scheduler = new ServerScheduler(Port, 0);
-    NetworkClientScheduler client01 = new NetworkClientScheduler(2, Localhost, Port);
+    NetworkClient client01 = new NetworkClient(2, Localhost, Port);
     client01.start();
-    testScheduler(scheduler);
+    SchedulerTestsUtils.testServerScheduler(scheduler);
     scheduler.dispose();
     client01.dispose();
   }
@@ -89,13 +88,22 @@ public class SchedulerTest {
   @Test(timeout = Timeout)
   public void testServerSchedulerWithMultipleClients() throws IOException {
     ServerScheduler scheduler = new ServerScheduler(Port, 0);
-    NetworkClientScheduler client01 = new NetworkClientScheduler(10, Localhost, Port);
-    NetworkClientScheduler client02 = new NetworkClientScheduler(10, Localhost, Port);
+    NetworkClient client01 = new NetworkClient(10, Localhost, Port);
+    NetworkClient client02 = new NetworkClient(10, Localhost, Port);
     client01.start();
     client02.start();
-    testScheduler(scheduler);
+    SchedulerTestsUtils.testServerScheduler(scheduler);
     scheduler.dispose();
     client01.dispose();
     client02.dispose();
+  }
+
+  public static void main(String[] args) throws IOException {
+    ServerScheduler scheduler = new ServerScheduler(Port, 0);
+    Command command = new Command("jar client", "/usr/bin/java", "-jar", "rltoys-client.jar", "localhost");
+    command.start();
+    SchedulerTestsUtils.testServerScheduler(scheduler);
+    scheduler.dispose();
+    command.kill();
   }
 }

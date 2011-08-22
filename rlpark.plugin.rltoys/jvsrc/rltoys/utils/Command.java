@@ -38,7 +38,7 @@ public class Command {
   private StreamReader errorThread;
   private final String[] commandLine;
 
-  public Command(String label, String[] commandLine) {
+  public Command(String label, String... commandLine) {
     this.label = label;
     this.commandLine = commandLine;
   }

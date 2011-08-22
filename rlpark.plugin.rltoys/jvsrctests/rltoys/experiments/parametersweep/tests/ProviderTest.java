@@ -1,4 +1,4 @@
-package rltoys.experiments.parametersweep;
+package rltoys.experiments.parametersweep.tests;
 
 
 import java.io.Serializable;

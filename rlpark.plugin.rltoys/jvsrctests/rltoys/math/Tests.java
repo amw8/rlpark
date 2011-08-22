@@ -4,7 +4,6 @@ package rltoys.math;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import rltoys.math.history.HistoryTest;
 import rltoys.math.normalization.MinMaxNormalizerTest;
 import rltoys.math.normalization.MovingMeanVarNormalizerTest;
 import rltoys.math.normalization.NormalizerTest;

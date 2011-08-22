@@ -1,6 +1,6 @@
 package rltoys.experiments.scheduling.tests;
 
-import static rltoys.experiments.scheduling.tests.SchedulerTestsUtils.testScheduler;
+import static rltoys.experiments.scheduling.tests.SchedulerTestsUtils.testServerScheduler;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -8,11 +8,11 @@ import java.net.UnknownHostException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import rltoys.experiments.scheduling.network.NetworkClientScheduler;
+import rltoys.experiments.scheduling.internal.messages.ClassLoading;
+import rltoys.experiments.scheduling.internal.messages.Messages;
+import rltoys.experiments.scheduling.internal.queue.NetworkJobQueue;
+import rltoys.experiments.scheduling.network.NetworkClient;
 import rltoys.experiments.scheduling.network.ServerScheduler;
-import rltoys.experiments.scheduling.network.internal.Messages;
-import rltoys.experiments.scheduling.network.internal.NetworkClassLoader;
-import rltoys.experiments.scheduling.network.internal.NetworkJobQueue;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 
 public class SchedulerNetworkUnreliableTest {
@@ -37,7 +37,7 @@ public class SchedulerNetworkUnreliableTest {
 
   @BeforeClass
   static public void junitMode() {
-    NetworkClassLoader.enableForceNetworkClassResolution();
+    ClassLoading.enableForceNetworkClassResolution();
     Messages.disableVerbose();
     // Messages.enableDebug();
   }
@@ -47,9 +47,9 @@ public class SchedulerNetworkUnreliableTest {
     ServerScheduler scheduler = new ServerScheduler(Port, 0);
     scheduler.start();
     startUnreliableClients();
-    NetworkClientScheduler reliableClient = new NetworkClientScheduler(1, Localhost, Port);
+    NetworkClient reliableClient = new NetworkClient(1, Localhost, Port);
     reliableClient.start();
-    testScheduler(scheduler);
+    testServerScheduler(scheduler);
     reliableClient.dispose();
     scheduler.dispose();
   }
@@ -58,7 +58,7 @@ public class SchedulerNetworkUnreliableTest {
     for (int i = 0; i < 5; i++) {
       UnreliableNetworkQueue queue = new UnreliableNetworkQueue(Localhost, Port);
       final LocalScheduler localScheduler = new LocalScheduler(queue);
-      NetworkClientScheduler client = new NetworkClientScheduler(localScheduler);
+      NetworkClient client = new NetworkClient(localScheduler);
       client.start();
     }
   }

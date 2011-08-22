@@ -1,4 +1,4 @@
-package rltoys.math.history;
+package rltoys.math;
 
 import org.junit.Assert;
 import org.junit.Test;

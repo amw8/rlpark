@@ -1,4 +1,4 @@
-package rltoys.experiments.scheduling.network.internal;
+package rltoys.experiments.scheduling.internal.messages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import rltoys.experiments.scheduling.network.internal.Messages.MessageType;
+import rltoys.experiments.scheduling.internal.messages.Messages.MessageType;
 
 public class MessageJob extends Message {
   private final Serializable job;
@@ -47,7 +47,7 @@ public class MessageJob extends Message {
   }
 
   private Serializable readJob(InputStream in, ClassLoader classLoader) throws IOException {
-    ObjectInputStream objIn = NetworkClassLoader.createObjectInputStream(in, classLoader);
+    ObjectInputStream objIn = ClassLoading.createObjectInputStream(in, classLoader);
     Serializable job = null;
     try {
       job = (Serializable) objIn.readObject();

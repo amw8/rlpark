@@ -4,8 +4,8 @@ package rltoys.experiments;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import rltoys.experiments.parametersweep.SweepTest;
-import rltoys.experiments.parametersweep.interfaces.ParametersTest;
+import rltoys.experiments.parametersweep.tests.SweepTest;
+import rltoys.experiments.parametersweep.tests.interfaces.ParametersTest;
 import rltoys.experiments.scheduling.tests.JobPoolTest;
 import rltoys.experiments.scheduling.tests.SchedulerNetworkUnreliableTest;
 import rltoys.experiments.scheduling.tests.SchedulerTest;

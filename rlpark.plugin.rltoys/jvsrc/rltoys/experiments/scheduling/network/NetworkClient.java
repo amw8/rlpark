@@ -5,12 +5,12 @@ import java.net.UnknownHostException;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobQueue;
-import rltoys.experiments.scheduling.network.internal.NetworkJobQueue;
+import rltoys.experiments.scheduling.internal.queue.NetworkJobQueue;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
-public class NetworkClientScheduler {
+public class NetworkClient {
   private static final int SleepWhenPersitentSeconds = 600;
   static private boolean persistentClient = false;
   static private double maximumMinutesTime = -1;
@@ -21,15 +21,15 @@ public class NetworkClientScheduler {
   private final LocalScheduler localScheduler;
   final protected NetworkJobQueue networkJobQueue;
 
-  public NetworkClientScheduler(String serverHost, int port) throws UnknownHostException, IOException {
+  public NetworkClient(String serverHost, int port) throws UnknownHostException, IOException {
     this(new LocalScheduler(createJobQueue(serverHost, port)));
   }
 
-  public NetworkClientScheduler(int nbThread, String serverHost, int port) throws UnknownHostException, IOException {
+  public NetworkClient(int nbThread, String serverHost, int port) throws UnknownHostException, IOException {
     this(new LocalScheduler(nbThread, createJobQueue(serverHost, port)));
   }
 
-  public NetworkClientScheduler(final LocalScheduler localScheduler) {
+  public NetworkClient(final LocalScheduler localScheduler) {
     this.localScheduler = localScheduler;
     networkJobQueue = (NetworkJobQueue) localScheduler.queue();
     networkJobQueue.onJobReceived.connect(new Listener<JobQueue>() {
@@ -111,7 +111,7 @@ public class NetworkClientScheduler {
   }
 
   private static void startScheduler() throws UnknownHostException, IOException {
-    NetworkClientScheduler scheduler = new NetworkClientScheduler(nbCore, serverHost, serverPort);
+    NetworkClient scheduler = new NetworkClient(nbCore, serverHost, serverPort);
     if (maximumMinutesTime > 0)
       scheduler.setMaximumTime(maximumMinutesTime * 60);
     scheduler.run();

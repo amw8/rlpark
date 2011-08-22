@@ -1,7 +1,7 @@
-package rltoys.experiments.scheduling.network.internal;
+package rltoys.experiments.scheduling.internal.messages;
 
-import static rltoys.experiments.scheduling.network.internal.Messages.Header;
-import static rltoys.experiments.scheduling.network.internal.Messages.HeaderSize;
+import static rltoys.experiments.scheduling.internal.messages.Messages.Header;
+import static rltoys.experiments.scheduling.internal.messages.Messages.HeaderSize;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;

@@ -1,4 +1,4 @@
-package rltoys.experiments.scheduling.network.internal;
+package rltoys.experiments.scheduling.internal.messages;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -6,7 +6,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import rltoys.experiments.scheduling.network.internal.Messages.MessageType;
+import rltoys.experiments.scheduling.internal.messages.Messages.MessageType;
 
 public class Message {
   protected MessageType type = MessageType.Error;

@@ -1,9 +1,19 @@
-package rltoys.experiments.scheduling.network.internal;
+package rltoys.experiments.scheduling.internal.network;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
+
+import rltoys.experiments.scheduling.internal.messages.Message;
+import rltoys.experiments.scheduling.internal.messages.MessageBinary;
+import rltoys.experiments.scheduling.internal.messages.MessageClassData;
+import rltoys.experiments.scheduling.internal.messages.MessageJob;
+import rltoys.experiments.scheduling.internal.messages.MessageRequestClass;
+import rltoys.experiments.scheduling.internal.messages.MessageRequestJob;
+import rltoys.experiments.scheduling.internal.messages.MessageSendClientName;
+import rltoys.experiments.scheduling.internal.messages.Messages;
 
 public class SyncSocket {
   private final Socket socket;
@@ -92,6 +102,15 @@ public class SyncSocket {
     return messageJobTodo;
   }
 
+  public void sendClientName() {
+    String localhostName = "unknown";
+    try {
+      localhostName = java.net.InetAddress.getLocalHost().getHostName();
+    } catch (UnknownHostException e) {
+    }
+    write(new MessageSendClientName(localhostName));
+  }
+
   public void close() {
     try {
       socket.close();
@@ -102,5 +121,13 @@ public class SyncSocket {
 
   public boolean isClosed() {
     return socket.isClosed();
+  }
+
+  public static Message readNextMessage(SyncSocket clientSocket) {
+    return readNextMessage(clientSocket, null);
+  }
+
+  public static Message readNextMessage(SyncSocket clientSocket, ClassLoader classLoader) {
+    return Messages.cast(clientSocket.read(), classLoader);
   }
 }

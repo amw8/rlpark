@@ -33,7 +33,7 @@
 		      <attribute name="Implementation-Vendor" value="Thomas"/>
 		      <attribute name="Implementation-Title" value="RLPark-client"/>
 		      <attribute name="Implementation-Version" value="1.0.0"/>
-		      <attribute name="Main-Class" value="rltoys.experiments.scheduling.network.NetworkClientScheduler"/>
+		      <attribute name="Main-Class" value="rltoys.experiments.scheduling.network.NetworkClient"/>
 		    </manifest>
 		</jar>
     </target>

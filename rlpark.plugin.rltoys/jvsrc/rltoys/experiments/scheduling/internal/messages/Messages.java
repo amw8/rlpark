@@ -1,8 +1,10 @@
-package rltoys.experiments.scheduling.network.internal;
+package rltoys.experiments.scheduling.internal.messages;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.SocketException;
+
+
 
 public class Messages {
   static private boolean verbose = true;
@@ -15,7 +17,8 @@ public class Messages {
     RequestJob,
     Job,
     RequestClass,
-    ClassData
+    ClassData,
+    SendClientName
   }
 
   public static Message cast(MessageBinary message, ClassLoader classLoader) {
@@ -31,21 +34,14 @@ public class Messages {
         return new MessageRequestClass(message);
       case ClassData:
         return new MessageClassData(message);
+      case SendClientName:
+        return new MessageSendClientName(message);
       }
     } catch (IOException e) {
       displayError(e);
       return null;
     }
     return message;
-  }
-
-  public static Message readNextMessage(SyncSocket clientSocket) {
-    return readNextMessage(clientSocket, null);
-  }
-
-
-  public static Message readNextMessage(SyncSocket clientSocket, ClassLoader classLoader) {
-    return cast(clientSocket.read(), classLoader);
   }
 
   static public void disableVerbose() {

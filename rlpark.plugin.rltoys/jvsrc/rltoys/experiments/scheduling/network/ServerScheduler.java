@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,8 +12,9 @@ import java.util.Set;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobQueue;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
-import rltoys.experiments.scheduling.network.internal.LocalQueue;
-import rltoys.experiments.scheduling.network.internal.Messages;
+import rltoys.experiments.scheduling.internal.messages.Messages;
+import rltoys.experiments.scheduling.internal.network.SocketClient;
+import rltoys.experiments.scheduling.internal.queue.LocalQueue;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
@@ -37,6 +39,12 @@ public class ServerScheduler implements Scheduler {
 
   static final public int DefaultPort = 5000;
   static public boolean serverVerbose = true;
+  private final Listener<SocketClient> clientClosedListener = new Listener<SocketClient>() {
+    @Override
+    public void listen(SocketClient client) {
+      removeClient(client);
+    }
+  };
   private final Runnable acceptClientsRunnable = new Runnable() {
     @Override
     public void run() {
@@ -44,7 +52,11 @@ public class ServerScheduler implements Scheduler {
       while (!serverSocket.isClosed()) {
         try {
           Socket clientSocket = serverSocket.accept();
-          SocketClient socketClient = new SocketClient(ServerScheduler.this, clientSocket);
+          SocketClient socketClient = new SocketClient(localQueue, clientSocket);
+          if (!socketClient.readName()) {
+            socketClient.close();
+            continue;
+          }
           addClient(socketClient);
           socketClient.start();
         } catch (IOException e) {
@@ -68,13 +80,14 @@ public class ServerScheduler implements Scheduler {
     localScheduler = nbLocalThread > 0 ? new LocalScheduler(nbLocalThread, localQueue) : null;
   }
 
-  protected void addClient(SocketClient clientScheduler) {
-    clients.add(clientScheduler);
-    printClientStats();
+  protected void addClient(SocketClient client) {
+    clients.add(client);
+    client.onClosed.connect(clientClosedListener);
+    printConnectionInfo(client.clientName() + "connected");
   }
 
-  private void printClientStats() {
-    Messages.println(String.format("%d client(s)", clients.size()));
+  protected void printConnectionInfo(String news) {
+    Messages.println(String.format("%s. %d client%s.", news, clients.size(), clients.size() > 1 ? "s" : ""));
   }
 
   @Override
@@ -100,11 +113,14 @@ public class ServerScheduler implements Scheduler {
       clientScheduler.wakeUp();
   }
 
-  public void removeClient(SocketClient socketClient) {
-    clients.remove(socketClient);
-    for (Runnable pendingJob : socketClient.pendingJobs())
+  void removeClient(SocketClient client) {
+    client.onClosed.disconnect(clientClosedListener);
+    clients.remove(client);
+    Collection<Runnable> pendingJobs = client.pendingJobs();
+    for (Runnable pendingJob : pendingJobs)
       localQueue.requestCancel(pendingJob);
-    printClientStats();
+    printConnectionInfo(String.format("%s disconnected. Canceling %d job%s", client.clientName(),
+                                      pendingJobs.size(), pendingJobs.size() > 1 ? "s" : ""));
   }
 
   public void dispose() {

@@ -1,4 +1,4 @@
-package rltoys.experiments.scheduling.network.internal;
+package rltoys.experiments.scheduling.internal.messages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import rltoys.experiments.scheduling.network.internal.Messages.MessageType;
+import rltoys.experiments.scheduling.internal.messages.Messages.MessageType;
 
 public class MessageClassData extends Message {
   private final String className;
