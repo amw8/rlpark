@@ -33,6 +33,8 @@ public class FrozenParameters extends AbstractParameters {
     int hashcode = 0;
     for (Map.Entry<String, Double> entry : parameters.entrySet())
       hashcode += entry.hashCode();
+    for (String flag : flags)
+      hashcode += flag.hashCode();
     return hashcode;
   }
 
@@ -43,7 +45,7 @@ public class FrozenParameters extends AbstractParameters {
     if (super.equals(obj))
       return true;
     AbstractParameters other = (AbstractParameters) obj;
-    return parameters.equals(other.parameters);
+    return parameters.equals(other.parameters) && flags.equals(other.flags);
   }
 
   @Override

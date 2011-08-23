@@ -15,7 +15,6 @@ import rltoys.experiments.parametersweep.interfaces.ParametersProvider;
 import rltoys.experiments.parametersweep.onpolicy.ContextOnPolicyEvaluation;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
-import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import rltoys.experiments.scheduling.schedulers.Schedulers;
 
@@ -23,7 +22,7 @@ public class LearningCurves {
   private final ParametersProvider parametersProvider;
   private final ContextProvider contextProvider;
   private final ExperimentCounter counter;
-  private final Scheduler scheduler = new LocalScheduler();
+  private final LocalScheduler scheduler = new LocalScheduler();
   private final Set<FrozenParameters> todoParameters;
 
 
@@ -81,12 +80,15 @@ public class LearningCurves {
     }
     Schedulers.addAll(scheduler, jobs, null);
     scheduler.runAll();
+    scheduler.dispose();
   }
 
   public static Set<FrozenParameters> toParametersSet(String[] args) {
     Set<FrozenParameters> results = new LinkedHashSet<FrozenParameters>();
     for (String arg : args) {
       String[] components = arg.split("_");
+      if (components.length == 1)
+        continue;
       Parameters parameters = new Parameters();
       parameters.enableFlag(components[0]);
       parameters.enableFlag(components[1]);

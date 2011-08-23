@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ExperimentCounter {
+public class ExperimentCounter implements Cloneable {
   public final File folder;
   private static final String LOGEXTENSION = "logtxt";
   public static final String DefaultFileName = "data";
@@ -16,13 +16,15 @@ public class ExperimentCounter {
   private final List<File> folderPrepared = new ArrayList<File>();
   private String defaultName = DefaultFileName;
 
-  public ExperimentCounter(String folderPath) {
-    this(-1, folderPath);
-  }
-
   public ExperimentCounter(int nbExperiment, String folderPath) {
     counterMax = nbExperiment - 1;
     folder = prepareFolder(folderPath);
+  }
+
+  private ExperimentCounter(int nbExperiment, String folderPath, int counter) {
+    counterMax = nbExperiment - 1;
+    folder = prepareFolder(folderPath);
+    this.counter = counter;
   }
 
   public void setDefaultName(String defaultName) {
@@ -85,5 +87,12 @@ public class ExperimentCounter {
 
   public static Random newRandom(int counter) {
     return new Random(counter);
+  }
+
+  @Override
+  public ExperimentCounter clone() {
+    ExperimentCounter experimentCounter = new ExperimentCounter(-1, folder.getAbsolutePath(), counter);
+    experimentCounter.setDefaultName(defaultName);
+    return experimentCounter;
   }
 }

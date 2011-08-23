@@ -19,7 +19,7 @@ public class LearningCurveJob implements Runnable, Serializable {
   public LearningCurveJob(ContextOnPolicyEvaluation context, Parameters parameters, ExperimentCounter counter) {
     this.context = context;
     this.parameters = parameters;
-    this.counter = counter;
+    this.counter = counter.clone();
   }
 
   protected Listener<RunnerEvent> createRewardListener(final LoggerRow loggerRow) {
