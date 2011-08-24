@@ -23,15 +23,15 @@ public class LearningCurves {
   private final ContextProvider contextProvider;
   private final ExperimentCounter counter;
   private final LocalScheduler scheduler = new LocalScheduler();
-  private final Set<FrozenParameters> todoParameters;
+  private final List<FrozenParameters> todoParameters;
 
 
-  public LearningCurves(Set<FrozenParameters> todoParameters, ParameterSweepProvider provider,
+  public LearningCurves(List<FrozenParameters> todoParameters, ParameterSweepProvider provider,
       ExperimentCounter counter) {
     this(todoParameters, provider, provider, counter);
   }
 
-  public LearningCurves(Set<FrozenParameters> todoParameters, ContextProvider contextProvider,
+  public LearningCurves(List<FrozenParameters> todoParameters, ContextProvider contextProvider,
       ParametersProvider parametersProvider, ExperimentCounter counter) {
     this.contextProvider = contextProvider;
     this.parametersProvider = parametersProvider;
@@ -83,8 +83,8 @@ public class LearningCurves {
     scheduler.dispose();
   }
 
-  public static Set<FrozenParameters> toParametersSet(String[] args) {
-    Set<FrozenParameters> results = new LinkedHashSet<FrozenParameters>();
+  public static List<FrozenParameters> toParametersList(String[] args) {
+    List<FrozenParameters> results = new ArrayList<FrozenParameters>();
     for (String arg : args) {
       String[] components = arg.split("_");
       if (components.length == 1)

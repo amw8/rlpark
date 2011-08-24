@@ -10,7 +10,7 @@ import rltoys.math.vector.BinaryVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
-public class RandomNetworkAdaptive extends RandomNetwork {
+public class AutoRegulatedNetwork extends RandomNetwork {
   private static final long serialVersionUID = 1847556584654367004L;
   public final int minUnitActive;
   public final int maxUnitActive;
@@ -20,7 +20,7 @@ public class RandomNetworkAdaptive extends RandomNetwork {
   private int missingUnit;
   private int overUnit;
 
-  public RandomNetworkAdaptive(Random random, int inputSize, int outputSize, double minDensity, double maxDensity) {
+  public AutoRegulatedNetwork(Random random, int inputSize, int outputSize, double minDensity, double maxDensity) {
     super(inputSize, outputSize);
     this.random = random;
     this.minDensity = minDensity;

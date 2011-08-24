@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
+import rltoys.algorithms.representations.ltu.networks.RandomNetworks;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import zephyr.plugin.core.api.monitoring.annotations.IgnoreMonitor;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
@@ -15,18 +16,19 @@ public class RepresentationDiscovery {
   private final WeightSorter sorter;
   private final LinkedList<Integer> protectedUnits = new LinkedList<Integer>();
   private final int nbProtectedUnits;
-  private final int nbMaxInputForUnit;
   @IgnoreMonitor
   private final LTU prototype;
   private final Random random;
   private int worstUnit;
+  private final int nbInputForUnit;
+
   public RepresentationDiscovery(Random random, RandomNetwork network, WeightSorter sorter, LTU prototype,
-      int nbProtectedUnit, int nbMaxInputForUnit) {
+      int nbProtectedUnit, int nbInputForUnit) {
     this.random = random;
     this.network = network;
     this.sorter = sorter;
-    this.nbMaxInputForUnit = nbMaxInputForUnit;
     this.prototype = prototype;
+    this.nbInputForUnit = nbInputForUnit;
     this.nbProtectedUnits = nbProtectedUnit;
     assert nbProtectedUnits > 0;
   }
@@ -50,14 +52,7 @@ public class RepresentationDiscovery {
   }
 
   private LTU createNewUnit(int ltuIndex) {
-    int nbUnitInput = random.nextInt(nbMaxInputForUnit - 1) + 1;
-    int[] inputs = new int[nbUnitInput];
-    byte[] weights = new byte[nbUnitInput];
-    for (int i = 0; i < weights.length; i++) {
-      inputs[i] = random.nextInt(network.inputSize);
-      weights[i] = (byte) (random.nextBoolean() ? -1 : 1);
-    }
-    return prototype.newLTU(ltuIndex, inputs, weights);
+    return RandomNetworks.newRandomUnit(random, prototype, ltuIndex, nbInputForUnit, network.inputSize);
   }
 
   protected int findWorstUnit() {

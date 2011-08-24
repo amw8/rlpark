@@ -11,7 +11,7 @@ import org.junit.Test;
 import rltoys.algorithms.learning.predictions.LearningAlgorithm;
 import rltoys.algorithms.learning.predictions.supervised.Adaline;
 import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
-import rltoys.algorithms.representations.ltu.networks.RandomNetworkAdaptive;
+import rltoys.algorithms.representations.ltu.networks.AutoRegulatedNetwork;
 import rltoys.algorithms.representations.ltu.networks.RandomNetworks;
 import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
 import rltoys.algorithms.representations.ltu.units.LTUThreshold;
@@ -109,7 +109,7 @@ public class RandomNetworkTest {
   public void testAdaptiveRandomRepresentationWithLMSAndAdaptiveLTUs() {
     BinaryTargetProblem problem = createProblem();
     final LTUAdaptive ltu = new LTUAdaptive(0.2, 0.3, 0.99, .001);
-    RandomNetwork randomNetwork = new RandomNetworkAdaptive(new Random(0), problem.inputSize, 1000, .2, .3);
+    RandomNetwork randomNetwork = new AutoRegulatedNetwork(new Random(0), problem.inputSize, 1000, .2, .3);
     RandomNetworks.fullyConnect(new Random(0), randomNetwork, ltu);
     evaluateRepresentation(problem, randomNetwork, 0.08);
   }

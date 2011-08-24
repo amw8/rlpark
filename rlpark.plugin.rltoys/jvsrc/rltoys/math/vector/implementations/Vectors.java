@@ -10,6 +10,10 @@ import rltoys.utils.Utils;
 
 public class Vectors {
   static public boolean equals(RealVector a, RealVector b) {
+    return equals(a, b, 0);
+  }
+
+  static public boolean equals(RealVector a, RealVector b, double margin) {
     if (a == b)
       return true;
     if (a != null && b == null || a == null && b != null)
@@ -17,7 +21,7 @@ public class Vectors {
     if (a.getDimension() != b.getDimension())
       return false;
     for (int i = 0; i < a.getDimension(); ++i)
-      if (a.getEntry(i) != b.getEntry(i))
+      if (Math.abs(a.getEntry(i) - b.getEntry(i)) > margin)
         return false;
     return true;
   }

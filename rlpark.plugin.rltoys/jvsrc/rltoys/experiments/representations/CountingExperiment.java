@@ -9,7 +9,7 @@ import rltoys.algorithms.representations.ltu.discovery.RecursiveWeightSorter;
 import rltoys.algorithms.representations.ltu.discovery.RepresentationDiscovery;
 import rltoys.algorithms.representations.ltu.discovery.WeightSorter;
 import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
-import rltoys.algorithms.representations.ltu.networks.RandomNetworkAdaptive;
+import rltoys.algorithms.representations.ltu.networks.AutoRegulatedNetwork;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.algorithms.representations.ltu.units.LTUThreshold;
 import rltoys.environments.counting.CountingProblem;
@@ -78,7 +78,7 @@ public class CountingExperiment {
   public static void main(String[] args) {
     Random random = new Random(0);
     CountingProblem problem = new CountingProblem(inputSize, NbLearner);
-    RandomNetwork representation = new RandomNetworkAdaptive(random, outputSize + inputSize + 1, outputSize,
+    RandomNetwork representation = new AutoRegulatedNetwork(random, outputSize + inputSize + 1, outputSize,
                                                              MinDensity, MaxDensity);
     CountingExperiment experiment = new CountingExperiment(problem, representation);
     WeightSorter sorter = new RecursiveWeightSorter(representation, experiment.extractLinearLearners(), NbLearner);

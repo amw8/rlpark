@@ -39,8 +39,8 @@ public class ParametersTest {
     Assert.assertTrue(p01.equals(p01bis));
     Assert.assertEquals(p01.hashCode(), p01bis.hashCode());
     p01bis = createParameter01Bis(new String[] { "Flag01Bis" });
-    Assert.assertFalse(p01.equals(p01bis));
-    Assert.assertTrue(p01.hashCode() != p01bis.hashCode());
+    Assert.assertTrue(p01.equals(p01bis));
+    Assert.assertFalse(p01.hashCode() != p01bis.hashCode());
   }
 
   private FrozenParameters toParameters(String[] flags, Object... objects) {

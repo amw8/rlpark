@@ -13,6 +13,7 @@ import rltoys.algorithms.representations.traces.MaxLengthTraces;
 import rltoys.algorithms.representations.traces.RTraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.MutableVector;
+import rltoys.math.vector.SparseVector;
 import rltoys.math.vector.implementations.PVector;
 import rltoys.math.vector.implementations.SVector;
 
@@ -29,6 +30,10 @@ public class TracesTest extends MountainCarOnPolicyTest {
   private void testTraces(MutableVector prototype) {
     testTraces(new ATraces(prototype));
     testTraces(new AMaxTraces(1.0, prototype));
+    if (prototype instanceof SparseVector) {
+      testTraces(new ATraces(prototype, 100, 0.05));
+      testTraces(new AMaxTraces(1.0, prototype, 100, 0.05));
+    }
   }
 
   @Test

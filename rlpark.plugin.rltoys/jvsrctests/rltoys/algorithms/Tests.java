@@ -29,11 +29,12 @@ import rltoys.algorithms.representations.states.StepDelayTest;
 import rltoys.algorithms.representations.tilescoding.TileCodersHashingTest;
 import rltoys.algorithms.representations.tilescoding.TileCodersNoHashingTest;
 import rltoys.algorithms.representations.tilescoding.hashing.MurmurHash2Test;
+import rltoys.algorithms.representations.traces.ATracesTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ FeatureNetworkTest.class, StepDelayTest.class,
     ConstantPolicyTest.class, LinearCombinationTest.class, ObsHistoryTest.class, FeatureTest.class,
-    TabularActionTest.class, SoftMaxTest.class, TileCodersNoHashingTest.class,
+    TabularActionTest.class, SoftMaxTest.class, TileCodersNoHashingTest.class, ATracesTest.class,
     TileCodersHashingTest.class, MurmurHash2Test.class, AdalineTest.class, IDBDTest.class, K1Test.class, TDTest.class,
     GTDLambdaBetaTest.class, GTDLambdaTest.class, GQTest.class, GQOnPolicyTest.class, SarsaTest.class,
     QLearningTest.class, TracesTest.class, ActorCriticOnPolicyOnStateTest.class,

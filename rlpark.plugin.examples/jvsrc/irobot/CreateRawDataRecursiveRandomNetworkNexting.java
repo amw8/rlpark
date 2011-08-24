@@ -16,7 +16,7 @@ import rltoys.algorithms.representations.ltu.StateUpdate;
 import rltoys.algorithms.representations.ltu.discovery.RepresentationDiscovery;
 import rltoys.algorithms.representations.ltu.discovery.WeightSorter;
 import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
-import rltoys.algorithms.representations.ltu.networks.RandomNetworkAdaptive;
+import rltoys.algorithms.representations.ltu.networks.AutoRegulatedNetwork;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
 import rltoys.algorithms.representations.traces.RTraces;
@@ -57,7 +57,7 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
   double error;
 
   public CreateRawDataRecursiveRandomNetworkNexting() {
-    RandomNetwork representation = new RandomNetworkAdaptive(random, NetworkOutputVectorSize + rawObsVectorSize + 1,
+    RandomNetwork representation = new AutoRegulatedNetwork(random, NetworkOutputVectorSize + rawObsVectorSize + 1,
                                                              NetworkOutputVectorSize, MinDensity, MaxDensity);
     stateUpdate = new StateUpdate(representation, rawObsVectorSize);
     rewardFunctions = createRewardFunctions(environment.legend());

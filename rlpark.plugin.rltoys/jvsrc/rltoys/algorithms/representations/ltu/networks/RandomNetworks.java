@@ -22,22 +22,29 @@ public class RandomNetworks {
   public static void connect(Random random, RandomNetwork randomNetwork, LTU prototype, int nbUnitInputs, int startPos,
       int endPos) {
     int inputSize = randomNetwork.inputSize;
-    for (int i = startPos; i < endPos; i++) {
-      byte[] weights = new byte[nbUnitInputs];
-      int[] inputs = new int[nbUnitInputs];
-      boolean[] choosen = new boolean[inputSize];
-      for (int j = 0; j < nbUnitInputs; j++) {
-        inputs[j] = chooseInput(random, choosen);
-        weights[j] = (byte) (random.nextBoolean() ? +1 : -1);
-      }
-      randomNetwork.addLTU(prototype.newLTU(i, inputs, weights));
+    for (int i = startPos; i < endPos; i++)
+      randomNetwork.addLTU(newRandomUnit(random, prototype, i, nbUnitInputs, inputSize));
+  }
+
+  public static LTU newRandomUnit(Random random, LTU prototype, int unitIndex, int nbUnitInputs, int inputSize) {
+    byte[] weights = new byte[nbUnitInputs];
+    int[] inputs = new int[nbUnitInputs];
+    boolean[] choosen = new boolean[inputSize];
+    for (int j = 0; j < nbUnitInputs; j++) {
+      int inputIndex = chooseInput(random, choosen);
+      assert !choosen[inputIndex];
+      inputs[j] = inputIndex;
+      choosen[inputIndex] = true;
+      weights[j] = (byte) (random.nextBoolean() ? +1 : -1);
     }
+    LTU ltu = prototype.newLTU(unitIndex, inputs, weights);
+    return ltu;
   }
 
   private static int chooseInput(Random random, boolean[] choosen) {
     int result = random.nextInt(choosen.length);
     while (choosen[result])
-      result = (result + 1) % choosen.length;
+      result = random.nextInt(choosen.length);
     return result;
   }
 }
