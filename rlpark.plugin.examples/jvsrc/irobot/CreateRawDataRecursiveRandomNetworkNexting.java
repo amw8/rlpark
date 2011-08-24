@@ -1,5 +1,6 @@
 package irobot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -15,8 +16,8 @@ import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.ltu.StateUpdate;
 import rltoys.algorithms.representations.ltu.discovery.RepresentationDiscovery;
 import rltoys.algorithms.representations.ltu.discovery.WeightSorter;
-import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
 import rltoys.algorithms.representations.ltu.networks.AutoRegulatedNetwork;
+import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
 import rltoys.algorithms.representations.traces.RTraces;
@@ -47,7 +48,8 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
   private final RandomPolicy policy = new RandomPolicy(random, CreateAction.AllActions);
   private final int rawObsVectorSize = environment.observationPacketSize() * 8;
   private final LTU prototype = new LTUAdaptive(MinDensity, MaxDensity, 0.99, .001);
-  private final DemonScheduler demonScheduler;
+  private final DemonScheduler demonScheduler = new DemonScheduler();
+  private final List<PredictionDemon> demons;
   private final RewardObservationFunction[] rewardFunctions;
   private final PredictionDemonVerifier[] verifiers;
   private final StateUpdate stateUpdate;
@@ -58,11 +60,11 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
 
   public CreateRawDataRecursiveRandomNetworkNexting() {
     RandomNetwork representation = new AutoRegulatedNetwork(random, NetworkOutputVectorSize + rawObsVectorSize + 1,
-                                                             NetworkOutputVectorSize, MinDensity, MaxDensity);
+                                                            NetworkOutputVectorSize, MinDensity, MaxDensity);
     stateUpdate = new StateUpdate(representation, rawObsVectorSize);
     rewardFunctions = createRewardFunctions(environment.legend());
     int stateVectorSize = stateUpdate.stateSize();
-    demonScheduler = createNextingDemons(Gammas, MaxDensity * stateVectorSize, stateVectorSize);
+    demons = createNextingDemons(Gammas, MaxDensity * stateVectorSize, stateVectorSize);
     verifiers = createDemonVerifiers();
     WeightSorter sorter = new WeightSorter(extractLinearLearners(), 0, representation.outputSize);
     discovery = new RepresentationDiscovery(random, representation, sorter, prototype, NetworkOutputVectorSize / 10, 5);
@@ -71,17 +73,16 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
   }
 
   private LinearLearner[] extractLinearLearners() {
-    LinearLearner[] learners = new LinearLearner[demonScheduler.nbDemons()];
+    LinearLearner[] learners = new LinearLearner[demons.size()];
     for (int i = 0; i < learners.length; i++)
-      learners[i] = demonScheduler.demons().get(i).learner();
+      learners[i] = demons.get(i).learner();
     return learners;
   }
 
   private PredictionDemonVerifier[] createDemonVerifiers() {
-    PredictionDemonVerifier[] verifiers = new PredictionDemonVerifier[demonScheduler.nbDemons()];
+    PredictionDemonVerifier[] verifiers = new PredictionDemonVerifier[demons.size()];
     for (int i = 0; i < verifiers.length; i++) {
-      PredictionDemon demon = (PredictionDemon) demonScheduler.demons().get(i);
-      verifiers[i] = new PredictionDemonVerifier(demon);
+      verifiers[i] = new PredictionDemonVerifier(demons.get(i));
     }
     return verifiers;
   }
@@ -93,7 +94,7 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
 
   @LabelProvider(ids = { "verifiers", "demons" })
   String labelOf(int demonIndex) {
-    return Labels.label(demonScheduler.demons().get(demonIndex));
+    return Labels.label(demons.get(demonIndex));
   }
 
   private RewardObservationFunction[] createRewardFunctions(Legend legend) {
@@ -104,21 +105,21 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
     return rewardFunctions;
   }
 
-  private DemonScheduler createNextingDemons(double[] gammas, double stateFeatureNorm, int vectorSize) {
-    DemonScheduler demonScheduler = new DemonScheduler();
+  private List<PredictionDemon> createNextingDemons(double[] gammas, double stateFeatureNorm, int vectorSize) {
+    List<PredictionDemon> demons = new ArrayList<PredictionDemon>();
     for (RewardFunction rewardFunction : rewardFunctions) {
       for (double gamma : gammas) {
         double alpha = .1 / stateFeatureNorm;
         int nbFeatures = vectorSize;
         TDLambda td = new TDLambda(.7, gamma, alpha, nbFeatures, new RTraces((int) (stateFeatureNorm * 10), 0.05));
-        demonScheduler.add(new PredictionDemon(rewardFunction, td));
+        demons.add(new PredictionDemon(rewardFunction, td));
       }
     }
-    return demonScheduler;
+    return demons;
   }
 
   protected void updateDemons(RealVector x_t, Action a_t, RealVector x_tp1) {
-    demonScheduler.update(x_t, a_t, x_tp1);
+    demonScheduler.update(demons, x_t, a_t, x_tp1);
     for (PredictionDemonVerifier verifier : verifiers) {
       error = verifier.update(false);
     }

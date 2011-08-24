@@ -1,7 +1,6 @@
 package rltoys.demons;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -11,7 +10,6 @@ import rltoys.algorithms.representations.actions.Action;
 import rltoys.math.MovingAverage;
 import rltoys.math.vector.RealVector;
 import rltoys.utils.Scheduling;
-import rltoys.utils.Utils;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
@@ -39,8 +37,7 @@ public class DemonScheduler implements Serializable {
   transient private DemonUpdater[] updaters;
   transient private Future<?>[] futurs;
   transient private Chrono chrono;
-  @Monitor
-  protected final List<Demon> demons = new ArrayList<Demon>();
+  protected List<? extends Demon> demons;
   protected RealVector x_tp1;
   protected RealVector x_t;
   protected Action a_t;
@@ -49,25 +46,11 @@ public class DemonScheduler implements Serializable {
   private final MovingAverage updateTimeAverage = new MovingAverage(100);
 
   public DemonScheduler() {
-    this(Scheduling.getDefaultNbThreads(), new ArrayList<Demon>());
-  }
-
-  public DemonScheduler(int nbThread, Demon... demons) {
-    this(nbThread, Utils.asList(demons));
-  }
-
-  public DemonScheduler(List<Demon> demons) {
-    this(Scheduling.getDefaultNbThreads(), demons);
+    this(Scheduling.getDefaultNbThreads());
   }
 
   public DemonScheduler(int nbThread) {
-    this(nbThread, new ArrayList<Demon>());
-  }
-
-  public DemonScheduler(int nbThread, List<Demon> demons) {
     this.nbThread = nbThread;
-    if (demons != null)
-      this.demons.addAll(demons);
   }
 
   private void initialize() {
@@ -79,13 +62,14 @@ public class DemonScheduler implements Serializable {
     chrono = new Chrono();
   }
 
-  public void update(RealVector x_t, Action a_t, RealVector x_tp1) {
+  public void update(List<? extends Demon> demons, RealVector x_t, Action a_t, RealVector x_tp1) {
     if (executor == null)
       initialize();
     chrono.start();
     this.x_t = x_t;
     this.a_t = a_t;
     this.x_tp1 = x_tp1;
+    this.demons = demons;
     for (int i = 0; i < updaters.length; i++)
       futurs[i] = executor.submit(updaters[i]);
     try {
@@ -99,23 +83,7 @@ public class DemonScheduler implements Serializable {
     updateTimeAverage.update(chrono.getCurrentMillis());
   }
 
-  public void add(Demon demon) {
-    demons.add(demon);
-  }
-
-  public void remove(Demon demon) {
-    demons.remove(demon);
-  }
-
-  public int nbDemons() {
-    return demons.size();
-  }
-
   public double updateTimeAverage() {
     return updateTimeAverage.average();
-  }
-
-  public List<Demon> demons() {
-    return demons;
   }
 }

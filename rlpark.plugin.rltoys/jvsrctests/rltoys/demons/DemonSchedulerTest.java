@@ -1,5 +1,7 @@
 package rltoys.demons;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -7,6 +9,7 @@ import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.BVector;
+import rltoys.utils.Utils;
 
 @SuppressWarnings("serial")
 public class DemonSchedulerTest {
@@ -31,11 +34,12 @@ public class DemonSchedulerTest {
   @Test
   public void testScheduler() {
     FakeDemon d1 = new FakeDemon(), d2 = new FakeDemon();
-    DemonScheduler scheduler = new DemonScheduler(3, d1, d2);
+    List<FakeDemon> demons = Utils.asList(d1, d2);
+    DemonScheduler scheduler = new DemonScheduler(3);
     RealVector x0 = new BVector(1), x1 = new BVector(1);
     Action a0 = new Action() {
     };
-    scheduler.update(x0, a0, x1);
+    scheduler.update(demons, x0, a0, x1);
     Assert.assertEquals(d1.x_t, x0);
     Assert.assertEquals(d1.a_t, a0);
     Assert.assertEquals(d1.x_tp1, x1);
