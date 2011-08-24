@@ -23,10 +23,10 @@ public class RandomNetworks {
       int endPos) {
     int inputSize = randomNetwork.inputSize;
     for (int i = startPos; i < endPos; i++)
-      randomNetwork.addLTU(newRandomUnit(random, prototype, i, nbUnitInputs, inputSize));
+      randomNetwork.addLTU(newRandomUnit(random, prototype, i, inputSize, nbUnitInputs));
   }
 
-  public static LTU newRandomUnit(Random random, LTU prototype, int unitIndex, int nbUnitInputs, int inputSize) {
+  public static LTU newRandomUnit(Random random, LTU prototype, int unitIndex, int inputSize, int nbUnitInputs) {
     byte[] weights = new byte[nbUnitInputs];
     int[] inputs = new int[nbUnitInputs];
     boolean[] choosen = new boolean[inputSize];

@@ -85,4 +85,12 @@ public class LTUThreshold implements LTUAdaptiveDensity {
   public boolean isActive() {
     return isActive;
   }
+
+  public SVector connections() {
+    return connections;
+  }
+
+  public void setThreshold(double threshold) {
+    this.threshold = threshold;
+  }
 }

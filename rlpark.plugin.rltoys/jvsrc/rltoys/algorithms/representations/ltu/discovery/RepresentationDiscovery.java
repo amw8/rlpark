@@ -1,5 +1,6 @@
 package rltoys.algorithms.representations.ltu.discovery;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -8,9 +9,12 @@ import rltoys.algorithms.representations.ltu.networks.RandomNetworks;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import zephyr.plugin.core.api.monitoring.annotations.IgnoreMonitor;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
+import zephyr.plugin.core.api.signals.Signal;
 
 @Monitor
-public class RepresentationDiscovery {
+public class RepresentationDiscovery implements Serializable {
+  private static final long serialVersionUID = 8579686361420622461L;
+  public final Signal<LTU> onLTUAdded = new Signal<LTU>();
   @IgnoreMonitor
   private final RandomNetwork network;
   private final WeightSorter sorter;
@@ -42,6 +46,7 @@ public class RepresentationDiscovery {
       network.addLTU(ltu);
       sorter.resetWeights(ltu.index());
       addIntoProtectedUnits(worstUnit);
+      onLTUAdded.fire(ltu);
     }
   }
 
@@ -52,7 +57,7 @@ public class RepresentationDiscovery {
   }
 
   private LTU createNewUnit(int ltuIndex) {
-    return RandomNetworks.newRandomUnit(random, prototype, ltuIndex, nbInputForUnit, network.inputSize);
+    return RandomNetworks.newRandomUnit(random, prototype, ltuIndex, network.inputSize, nbInputForUnit);
   }
 
   protected int findWorstUnit() {
@@ -64,9 +69,7 @@ public class RepresentationDiscovery {
   }
 
   public void fillNetwork() {
-    for (int i = 0; i < network.outputSize; i++) {
-      LTU ltu = createNewUnit(i);
-      network.addLTU(ltu);
-    }
+    RandomNetworks.connect(random, network, prototype, nbInputForUnit, sorter.startSortingPosition(),
+                           sorter.endSortingPosition());
   }
 }

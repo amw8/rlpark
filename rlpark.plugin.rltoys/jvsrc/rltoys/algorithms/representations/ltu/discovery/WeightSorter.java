@@ -1,5 +1,6 @@
 package rltoys.algorithms.representations.ltu.discovery;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -9,7 +10,9 @@ import zephyr.plugin.core.api.monitoring.annotations.IgnoreMonitor;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
-public class WeightSorter {
+public class WeightSorter implements Serializable {
+  private static final long serialVersionUID = 3375889959423486133L;
+
   public static class PVectorBasedComparator implements Comparator<Integer> {
     final private double[] data;
 
@@ -63,9 +66,12 @@ public class WeightSorter {
   protected void updateUnitEvaluation() {
     sums.set(0);
     for (LinearLearner learner : learners) {
-      PVector weight = learner.weights();
+      double[] weight = learner.weights().data;
+      double maxWeight = 0.0;
       for (int i = startSorting; i < endSorting; i++)
-        sums.data[i] += Math.abs(weight.data[i]);
+        maxWeight = Math.max(Math.abs(weight[i]), maxWeight);
+      for (int i = startSorting; i < endSorting; i++)
+        sums.data[i] += Math.abs(weight[i]) / maxWeight;
     }
   }
 
@@ -82,5 +88,13 @@ public class WeightSorter {
   public void resetWeights(int index) {
     for (LinearLearner learner : learners)
       learner.resetWeight(index);
+  }
+
+  public int endSortingPosition() {
+    return endSorting;
+  }
+
+  public int startSortingPosition() {
+    return startSorting;
   }
 }

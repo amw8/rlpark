@@ -23,6 +23,7 @@ public class RandomNetwork implements Serializable {
   protected final LTUArray[] connectedLTUs;
   protected int nbConnection = 0;
   protected int nbActive = 0;
+  @IgnoreMonitor
   protected final double[] denseInputVector;
   final LTUUpdated updatedLTUs;
   private final RandomNetworkScheduler scheduler;
@@ -102,5 +103,9 @@ public class RandomNetwork implements Serializable {
 
   public LTU[] parents(int index) {
     return connectedLTUs[index] != null ? connectedLTUs[index].array() : new LTU[] {};
+  }
+
+  public LTU[] ltus() {
+    return ltus;
   }
 }

@@ -14,6 +14,7 @@ import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
 public class RecursiveWeightSorter extends WeightSorter {
+  private static final long serialVersionUID = -654469131883608071L;
   @IgnoreMonitor
   final protected RandomNetwork network;
   private final int nbMaxParents;
