@@ -2,7 +2,7 @@ package rltoys.math.normalization;
 
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-public class IncMeanVarNormalizer implements Normalizer {
+public class IncMeanVarNormalizer implements Normalizer, MeanVar {
   private static final long serialVersionUID = -7117059874975759612L;
   private final int minNbUpdate;
   @Monitor
@@ -40,10 +40,12 @@ public class IncMeanVarNormalizer implements Normalizer {
       var = variance(1);
   }
 
+  @Override
   public double mean() {
     return mean;
   }
 
+  @Override
   public double var() {
     return variance(1);
   }

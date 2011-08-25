@@ -5,7 +5,7 @@ import java.util.Random;
 import org.junit.Assert;
 import org.junit.Test;
 
-import rltoys.algorithms.representations.tilescoding.discretizer.PartitionFactory;
+import rltoys.algorithms.representations.discretizer.partitions.PartitionFactory;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.implementations.PVector;
 import rltoys.math.vector.testing.VectorsTestsUtils;

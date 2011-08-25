@@ -1,5 +1,6 @@
-package rltoys.algorithms.representations.tilescoding.discretizer;
+package rltoys.algorithms.representations.discretizer.partitions;
 
+import rltoys.algorithms.representations.discretizer.Discretizer;
 import rltoys.math.ranges.Range;
 
 public class Partition extends Range implements Discretizer {

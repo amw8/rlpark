@@ -3,8 +3,8 @@ package rltoys.algorithms.representations.tilescoding;
 import java.util.ArrayList;
 import java.util.List;
 
-import rltoys.algorithms.representations.tilescoding.discretizer.DiscretizerFactory;
-import rltoys.algorithms.representations.tilescoding.discretizer.PartitionFactory;
+import rltoys.algorithms.representations.discretizer.DiscretizerFactory;
+import rltoys.algorithms.representations.discretizer.partitions.PartitionFactory;
 import rltoys.algorithms.representations.tilescoding.hashing.Identity;
 import rltoys.math.ranges.Range;
 import rltoys.math.vector.BinaryVector;

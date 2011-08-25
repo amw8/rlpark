@@ -1,7 +1,7 @@
 package rltoys.algorithms.representations.tilescoding;
 
-import rltoys.algorithms.representations.tilescoding.discretizer.DiscretizerFactory;
-import rltoys.algorithms.representations.tilescoding.discretizer.PartitionFactory;
+import rltoys.algorithms.representations.discretizer.DiscretizerFactory;
+import rltoys.algorithms.representations.discretizer.partitions.PartitionFactory;
 import rltoys.algorithms.representations.tilescoding.hashing.Hashing;
 import rltoys.math.ranges.Range;
 import rltoys.math.vector.BinaryVector;

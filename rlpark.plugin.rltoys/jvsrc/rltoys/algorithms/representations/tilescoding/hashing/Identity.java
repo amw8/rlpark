@@ -1,6 +1,6 @@
 package rltoys.algorithms.representations.tilescoding.hashing;
 
-import rltoys.algorithms.representations.tilescoding.discretizer.Discretizer;
+import rltoys.algorithms.representations.discretizer.Discretizer;
 
 public class Identity implements Hashing {
   private static final long serialVersionUID = -3659050449466106614L;

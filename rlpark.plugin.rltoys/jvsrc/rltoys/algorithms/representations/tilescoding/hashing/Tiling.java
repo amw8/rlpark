@@ -2,7 +2,7 @@ package rltoys.algorithms.representations.tilescoding.hashing;
 
 import java.io.Serializable;
 
-import rltoys.algorithms.representations.tilescoding.discretizer.Discretizer;
+import rltoys.algorithms.representations.discretizer.Discretizer;
 import rltoys.utils.Utils;
 
 public class Tiling implements Serializable {

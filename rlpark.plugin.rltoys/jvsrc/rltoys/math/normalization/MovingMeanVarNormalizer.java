@@ -4,7 +4,7 @@ import rltoys.utils.Utils;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
-public class MovingMeanVarNormalizer implements Normalizer {
+public class MovingMeanVarNormalizer implements Normalizer, MeanVar {
   private static final long serialVersionUID = -1340053804929435288L;
   private double mean = 0.0;
   private double var = 1.0;
@@ -32,10 +32,12 @@ public class MovingMeanVarNormalizer implements Normalizer {
     c = c + alpha * (1 - c);
   }
 
+  @Override
   public double mean() {
     return mean;
   }
 
+  @Override
   public double var() {
     return var;
   }

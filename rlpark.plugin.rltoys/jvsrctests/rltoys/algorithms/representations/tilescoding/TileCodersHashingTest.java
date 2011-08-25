@@ -6,8 +6,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import rltoys.algorithms.representations.discretizer.partitions.PartitionFactory;
 import rltoys.algorithms.representations.tilescoding.TileCodersNoHashingTest.TileCodersFactory;
-import rltoys.algorithms.representations.tilescoding.discretizer.PartitionFactory;
 import rltoys.algorithms.representations.tilescoding.hashing.ColisionDetection;
 import rltoys.algorithms.representations.tilescoding.hashing.JavaHashing;
 import rltoys.algorithms.representations.tilescoding.hashing.MurmurHashing;

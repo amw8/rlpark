@@ -1,7 +1,9 @@
-package rltoys.algorithms.representations.tilescoding.discretizer;
+package rltoys.algorithms.representations.discretizer.partitions;
 
 import java.util.Random;
 
+import rltoys.algorithms.representations.discretizer.Discretizer;
+import rltoys.algorithms.representations.discretizer.DiscretizerFactory;
 import rltoys.math.ranges.Range;
 
 public class PartitionFactory implements DiscretizerFactory {
