@@ -2,11 +2,10 @@ package rlpark.plugin.robot.disco.drops;
 
 
 import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
-import rlpark.plugin.robot.disco.datatype.Ranged;
 import rlpark.plugin.robot.disco.datatype.ScalarReader;
 import rltoys.math.ranges.Range;
 
-public class DropBooleanBit extends DropData implements Ranged, ScalarReader {
+public class DropBooleanBit extends DropData implements ScalarReader {
   public DropBooleanBit(String label) {
     this(label, -1);
   }

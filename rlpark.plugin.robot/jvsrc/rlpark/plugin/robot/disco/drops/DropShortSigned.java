@@ -3,12 +3,11 @@ package rlpark.plugin.robot.disco.drops;
 
 import rlpark.plugin.robot.disco.datatype.GrayCodeConverter;
 import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
-import rlpark.plugin.robot.disco.datatype.Ranged;
 import rlpark.plugin.robot.disco.datatype.ScalarReader;
 import rltoys.math.GrayCode;
 import rltoys.math.ranges.Range;
 
-public class DropShortSigned extends DropData implements Ranged, ScalarReader, GrayCodeConverter {
+public class DropShortSigned extends DropData implements ScalarReader, GrayCodeConverter {
   private short value;
 
   public DropShortSigned(String label) {

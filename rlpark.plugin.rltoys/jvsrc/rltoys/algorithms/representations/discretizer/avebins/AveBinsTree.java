@@ -1,10 +1,13 @@
 package rltoys.algorithms.representations.discretizer.avebins;
 
+import java.io.Serializable;
+
 import rltoys.math.normalization.MeanVar;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.implementations.BVector;
 
-public class AveBinsTree {
+public class AveBinsTree implements Serializable {
+  private static final long serialVersionUID = -7079039075980716444L;
   public final int size;
   private final AveBins[] allAveBins;
 

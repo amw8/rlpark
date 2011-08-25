@@ -197,6 +197,7 @@ public class BVector extends AbstractVector implements BinaryVector {
     if (!canAppend(start))
       throw new RuntimeException("cannot append when other indexes are less than already active indexes");
     int[] otherIndexes = other.activeIndexes();
+    assert otherIndexes.length == 0 || otherIndexes[otherIndexes.length - 1] + start < size;
     allocate(nbActive + otherIndexes.length);
     for (int otherIndex : otherIndexes) {
       indexes[nbActive] = otherIndex + start;

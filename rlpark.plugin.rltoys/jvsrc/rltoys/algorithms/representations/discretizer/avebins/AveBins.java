@@ -4,6 +4,7 @@ import rltoys.algorithms.representations.discretizer.Discretizer;
 import rltoys.math.normalization.MeanVar;
 
 public class AveBins implements Discretizer {
+  private static final long serialVersionUID = -782566775380769598L;
   private final MeanVar[] averages;
 
   public AveBins(MeanVar prototype, int nbBins) {

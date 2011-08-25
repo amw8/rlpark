@@ -4,6 +4,7 @@ package rlpark.plugin.robot.disco.drops;
 import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 import rlpark.plugin.robot.disco.datatype.ScalarReader;
 import rlpark.plugin.robot.disco.datatype.ScalarWriter;
+import rltoys.math.ranges.Range;
 
 public class DropInteger extends DropData implements ScalarReader, ScalarWriter {
   protected int value;
@@ -56,5 +57,10 @@ public class DropInteger extends DropData implements ScalarReader, ScalarWriter 
   @Override
   public int size() {
     return IntSize;
+  }
+
+  @Override
+  public Range range() {
+    return new Range(Integer.MIN_VALUE, Integer.MAX_VALUE);
   }
 }

@@ -4,6 +4,7 @@ package rlpark.plugin.robot.disco.drops;
 import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 import rlpark.plugin.robot.disco.datatype.ScalarReader;
 import rlpark.plugin.robot.disco.datatype.ScalarWriter;
+import rltoys.math.ranges.Range;
 
 public class DropFloat extends DropData implements ScalarReader, ScalarWriter {
   protected float value;
@@ -51,5 +52,10 @@ public class DropFloat extends DropData implements ScalarReader, ScalarWriter {
   @Override
   public void setDouble(double value) {
     this.value = (float) value;
+  }
+
+  @Override
+  public Range range() {
+    return new Range(-Float.MAX_VALUE, Float.MAX_VALUE);
   }
 }
