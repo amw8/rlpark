@@ -5,14 +5,16 @@ import java.util.Random;
 import rltoys.math.vector.implementations.SVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-@Monitor
 public class LTUThreshold implements LTUAdaptiveDensity {
   private static final long serialVersionUID = -4100313691365362138L;
   final static public double Beta = .6;
   final public int index;
   protected final SVector connections;
+  @Monitor
   protected double threshold;
+  @Monitor
   private double sum;
+  @Monitor
   private boolean isActive;
 
   public LTUThreshold() {

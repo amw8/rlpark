@@ -2,21 +2,15 @@ package rltoys.experiments.parametersweep.parameters;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class FrozenParameters extends AbstractParameters {
   private static final long serialVersionUID = -1853925775244660996L;
   protected final int hashcode;
 
   public FrozenParameters(Map<String, Double> parameters, Map<String, Double> results) {
-    this(parameters, results, new HashSet<String>());
-  }
-
-  public FrozenParameters(Map<String, Double> parameters, Map<String, Double> results, Set<String> flags) {
-    super(flags);
+    super();
     putAllSorted(parameters, this.parameters);
     putAllSorted(results, this.results);
     hashcode = computeHashcode(parameters);

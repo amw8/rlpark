@@ -1,10 +1,9 @@
 package rltoys.experiments.parametersweep.parameters;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 public abstract class AbstractParameters implements Comparable<AbstractParameters>, Serializable {
   private static final long serialVersionUID = 8135997315567194984L;
@@ -13,16 +12,14 @@ public abstract class AbstractParameters implements Comparable<AbstractParameter
   public static final String Gamma = "gamma";
   protected final Map<String, Double> parameters = new LinkedHashMap<String, Double>();
   protected final Map<String, Double> results = new LinkedHashMap<String, Double>();
-  protected final Set<String> flags = new LinkedHashSet<String>();
 
-  public AbstractParameters(Map<String, Double> parameters, Map<String, Double> results, Set<String> flags) {
-    this.parameters.putAll(parameters);
-    this.results.putAll(results);
-    this.flags.addAll(flags);
+  public AbstractParameters() {
+    this(new HashMap<String, Double>(), new HashMap<String, Double>());
   }
 
-  protected AbstractParameters(Set<String> flags) {
-    this.flags.addAll(flags);
+  public AbstractParameters(Map<String, Double> parameters, Map<String, Double> results) {
+    this.parameters.putAll(parameters);
+    this.results.putAll(results);
   }
 
   public double gamma() {
@@ -45,8 +42,6 @@ public abstract class AbstractParameters implements Comparable<AbstractParameter
     StringBuilder result = new StringBuilder(parameters.toString());
     if (!results.isEmpty())
       result.append("=" + results.toString());
-    if (!flags.isEmpty())
-      result.append(flags.toString());
     return result.toString();
   }
 
@@ -75,7 +70,7 @@ public abstract class AbstractParameters implements Comparable<AbstractParameter
   }
 
   public boolean hasFlag(String flag) {
-    return flags.contains(flag);
+    return parameters.containsKey(flag);
   }
 
   public int maxEpisodeTimeSteps() {

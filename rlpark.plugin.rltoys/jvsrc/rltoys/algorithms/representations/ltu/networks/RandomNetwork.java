@@ -7,10 +7,8 @@ import rltoys.algorithms.representations.ltu.internal.LTUUpdated;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.implementations.BVector;
-import zephyr.plugin.core.api.monitoring.annotations.IgnoreMonitor;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-@Monitor
 public class RandomNetwork implements Serializable {
   private static final long serialVersionUID = 8140259178658376161L;
   final public int outputSize;
@@ -19,11 +17,11 @@ public class RandomNetwork implements Serializable {
   protected final BVector output;
   @Monitor(level = 4)
   protected final LTU[] ltus;
-  @IgnoreMonitor
   protected final LTUArray[] connectedLTUs;
+  @Monitor
   protected int nbConnection = 0;
+  @Monitor
   protected int nbActive = 0;
-  @IgnoreMonitor
   protected final double[] denseInputVector;
   final LTUUpdated updatedLTUs;
   private final RandomNetworkScheduler scheduler;

@@ -2,13 +2,14 @@ package rltoys.algorithms.representations.ltu.units;
 
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-@Monitor
 public class LTUAdaptive extends LTUThreshold {
   private static final long serialVersionUID = 7927007001800685788L;
   public final double minFrequency;
   public final double maxFrequency;
   private final double frequencyLatencySpeed;
+  @Monitor
   private double averageFrequency;
+  @Monitor
   private final double thresholdStepSize;
 
 

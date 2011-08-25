@@ -1,8 +1,6 @@
 package rltoys.experiments.parametersweep.parameters;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Parameters extends AbstractParameters {
@@ -10,11 +8,11 @@ public class Parameters extends AbstractParameters {
   public static final String AverageReward = "averageReward";
 
   public Parameters() {
-    super(new LinkedHashMap<String, Double>(), new LinkedHashMap<String, Double>(), new HashSet<String>());
+    super();
   }
 
   public Parameters(AbstractParameters parameters) {
-    super(parameters.parameters, parameters.results, parameters.flags);
+    super(parameters.parameters, parameters.results);
   }
 
   public void put(String label, double value) {
@@ -22,11 +20,7 @@ public class Parameters extends AbstractParameters {
   }
 
   public void enableFlag(String flag) {
-    flags.add(flag);
-  }
-
-  public boolean disableFlag(String flag) {
-    return flags.remove(flag);
+    parameters.put(flag, 1.0);
   }
 
   public static List<Parameters> combine(List<Parameters> existing, String label, double[] values) {
@@ -54,6 +48,6 @@ public class Parameters extends AbstractParameters {
   }
 
   public FrozenParameters froze() {
-    return new FrozenParameters(parameters, results, flags);
+    return new FrozenParameters(parameters, results);
   }
 }
