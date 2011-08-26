@@ -216,4 +216,9 @@ public class PVector extends AbstractVector implements DenseVector {
         data[entry.index()] += factor * entry.value();
     return this;
   }
+
+  @Override
+  public String toString() {
+    return Arrays.toString(data);
+  }
 }

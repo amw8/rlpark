@@ -164,19 +164,48 @@ public class SVector extends AbstractVector implements SparseRealVector {
   }
 
   public MutableVector addToSelf(BVector other) {
-    int thisPosition = 0;
-    for (int i : other.activeIndexes()) {
-      int position = addEntryToSelf(thisPosition, i, 1);
-      thisPosition = position + 1;
+    int[] thisIndexes = Arrays.copyOf(this.indexes, this.indexes.length);
+    double[] thisValues = Arrays.copyOf(this.values, this.values.length);
+    int[] otherIndexes = other.activeIndexes();
+    int thisNbActive = this.nbActive;
+    int i = 0, j = 0;
+    clear();
+    while (i < thisNbActive || j < otherIndexes.length) {
+      if (j < otherIndexes.length && (i == thisNbActive || thisIndexes[i] > otherIndexes[j])) {
+        insertElementAtPosition(nbActive, otherIndexes[j], 1.0);
+        j++;
+      } else if (j == otherIndexes.length || thisIndexes[i] < otherIndexes[j]) {
+        insertElementAtPosition(nbActive, thisIndexes[i], thisValues[i]);
+        i++;
+      } else {
+        insertElementAtPosition(nbActive, thisIndexes[i], thisValues[i] + 1.0);
+        i++;
+        j++;
+      }
     }
     return this;
   }
 
   public MutableVector addToSelf(SVector other) {
-    int thisPosition = 0;
-    for (int i = 0; i < other.nbActive; i++) {
-      int position = addEntryToSelf(thisPosition, other.indexes[i], other.values[i]);
-      thisPosition = position + 1;
+    int[] thisIndexes = Arrays.copyOf(this.indexes, this.indexes.length);
+    double[] thisValues = Arrays.copyOf(this.values, this.values.length);
+    int[] otherIndexes = other.indexes;
+    double[] otherValues = other.values;
+    int thisNbActive = this.nbActive;
+    int i = 0, j = 0;
+    clear();
+    while (i < thisNbActive || j < other.nbActive) {
+      if (j < otherIndexes.length && (i == thisNbActive || thisIndexes[i] > otherIndexes[j])) {
+        insertElementAtPosition(nbActive, otherIndexes[j], otherValues[j]);
+        j++;
+      } else if (j == otherIndexes.length || thisIndexes[i] < otherIndexes[j]) {
+        insertElementAtPosition(nbActive, thisIndexes[i], thisValues[i]);
+        i++;
+      } else {
+        insertElementAtPosition(nbActive, thisIndexes[i], thisValues[i] + otherValues[j]);
+        i++;
+        j++;
+      }
     }
     return this;
   }
@@ -224,14 +253,18 @@ public class SVector extends AbstractVector implements SparseRealVector {
   }
 
   public MutableVector ebeMultiplyToSelf(SVector other) {
+    int[] thisIndexes = Arrays.copyOf(this.indexes, this.indexes.length);
+    double[] thisValues = Arrays.copyOf(this.values, this.values.length);
+    int thisNbActive = this.nbActive;
     int i = 0, j = 0;
-    while (i < nbActive && j < other.nbActive) {
-      if (indexes[i] > indexes[j])
+    clear();
+    while (i < thisNbActive && j < other.nbActive) {
+      if (thisIndexes[i] > other.indexes[j])
         j++;
-      else if (indexes[i] < indexes[j])
+      else if (thisIndexes[i] < other.indexes[j])
         i++;
       else {
-        values[i] *= other.values[j];
+        insertElementAtPosition(nbActive, thisIndexes[i], thisValues[i] * other.values[j]);
         i++;
         j++;
       }

@@ -1,16 +1,37 @@
 package rltoys.math.vector.testing;
 
-import junit.framework.Assert;
+import java.util.Iterator;
 
+import org.junit.Assert;
 import org.junit.Test;
 
+import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.VectorEntry;
 import rltoys.math.vector.implementations.BVector;
 import rltoys.math.vector.implementations.SVector;
 import rltoys.math.vector.implementations.Vectors;
 
 
 public class SVectorTest extends VectorTest {
+  @Test
+  public void testIteratorRemove() {
+    MutableVector v = a.copyAsMutable();
+    Iterator<VectorEntry> iterator = v.iterator();
+    iterator.next();
+    iterator.remove();
+    iterator.next();
+    iterator = v.iterator();
+    iterator.next();
+    iterator.remove();
+    VectorsTestsUtils.assertEquals(newVector(0.0, 0.0, 0.0, 0.0, 3.0), v);
+  }
+
+  @Test
+  public void testActiveIndexes() {
+    Assert.assertArrayEquals(new int[] { 1, 2, 4 }, ((SVector) a).activeIndexes());
+    Assert.assertArrayEquals(new int[] { 0, 1, 4 }, ((SVector) b).activeIndexes());
+  }
 
   @Test
   public void addBVector() {

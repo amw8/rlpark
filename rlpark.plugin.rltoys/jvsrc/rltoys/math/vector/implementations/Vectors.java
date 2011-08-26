@@ -10,7 +10,7 @@ import rltoys.utils.Utils;
 
 public class Vectors {
   static public boolean equals(RealVector a, RealVector b) {
-    return equals(a, b, 0);
+    return equals(a, b, Float.MIN_VALUE);
   }
 
   static public boolean equals(RealVector a, RealVector b, double margin) {

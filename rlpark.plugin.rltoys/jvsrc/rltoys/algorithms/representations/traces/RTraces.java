@@ -1,5 +1,7 @@
 package rltoys.algorithms.representations.traces;
 
+import java.util.Arrays;
+
 import rltoys.math.vector.BinaryVector;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.SVector;
@@ -31,16 +33,24 @@ public class RTraces extends ATraces {
   @Override
   protected void addToSelf(RealVector phi) {
     SVector svector = (SVector) vector;
-    int tracePosition = 0;
-    for (int vectorIndex : ((BinaryVector) phi).activeIndexes()) {
-      int search = svector.searchFrom(tracePosition, vectorIndex);
-      int position = search;
-      if (position < 0) {
-        position = SVector.notFoundToPosition(search);
-        svector.insertElementAtPosition(position, vectorIndex, 1);
-      } else
-        svector.values[position] = 1;
-      tracePosition = position + 1;
+    int[] thisIndexes = Arrays.copyOf(svector.indexes, svector.indexes.length);
+    double[] thisValues = Arrays.copyOf(svector.values, svector.values.length);
+    int[] otherIndexes = ((BinaryVector) phi).activeIndexes();
+    int thisNbActive = svector.nonZeroElements();
+    int i = 0, j = 0;
+    svector.clear();
+    while (i < thisNbActive || j < otherIndexes.length) {
+      if (j < otherIndexes.length && (i == thisNbActive || thisIndexes[i] > otherIndexes[j])) {
+        svector.insertElementAtPosition(svector.nonZeroElements(), otherIndexes[j], 1.0);
+        j++;
+      } else if (j == otherIndexes.length || thisIndexes[i] < otherIndexes[j]) {
+        svector.insertElementAtPosition(svector.nonZeroElements(), thisIndexes[i], thisValues[i]);
+        i++;
+      } else {
+        svector.insertElementAtPosition(svector.nonZeroElements(), thisIndexes[i], 1.0);
+        i++;
+        j++;
+      }
     }
   }
 }
