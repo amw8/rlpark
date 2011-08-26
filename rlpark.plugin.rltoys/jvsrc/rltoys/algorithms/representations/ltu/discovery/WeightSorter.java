@@ -13,7 +13,8 @@ import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 public class WeightSorter implements Serializable {
   private static final long serialVersionUID = 3375889959423486133L;
 
-  public static class PVectorBasedComparator implements Comparator<Integer> {
+  public static class PVectorBasedComparator implements Comparator<Integer>, Serializable {
+    private static final long serialVersionUID = -2221092563348361745L;
     final private double[] data;
 
     public PVectorBasedComparator(PVector reference) {

@@ -34,6 +34,7 @@ public class RecursiveWeightSorter extends WeightSorter {
   @Override
   protected Comparator<Integer> createComparator() {
     return new PVectorBasedComparator(recursiveSum) {
+      private static final long serialVersionUID = 4220495235775683757L;
       private final int maxSort = network.outputSize;
 
       @Override
