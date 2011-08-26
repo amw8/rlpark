@@ -73,8 +73,6 @@ public class SwingPendulum implements RLProblemBounded {
   @Override
   public TRStep step(Action action) {
     assert !lastTStep.isEpisodeEnding();
-    if (action == null || !Utils.checkValue(((ActionArray) action).actions[0]))
-      return new TRStep(lastTStep, action, null, -Double.MAX_VALUE);
     update((ActionArray) action);
     TRStep tstep;
     if (endOfEpisode())

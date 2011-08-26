@@ -52,8 +52,7 @@ public class MountainCar implements RLProblemBounded {
   @Override
   public TRStep step(Action action) {
     assert position != null;
-    if (action != null)
-      update((ActionArray) action);
+    update((ActionArray) action);
     TRStep tstep;
     if (endOfEpisode()) {
       position = null;

@@ -112,7 +112,7 @@ public class Sweep {
   }
 
   private void submitOneSweep() {
-    List<Context> contexts = contextProvider.provideContexts();
+    List<? extends Context> contexts = contextProvider.provideContexts();
     for (Context context : contexts) {
       String filename = counter.folderFilename(context.folderPath(), context.fileName());
       ParametersLogFile logFile = new ParametersLogFile(filename);

@@ -68,7 +68,7 @@ public class ProviderTest implements ParameterSweepProvider, Context {
   }
 
   @Override
-  public List<Context> provideContexts() {
+  public List<? extends Context> provideContexts() {
     return Utils.asList((Context) this);
   }
 

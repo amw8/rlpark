@@ -5,5 +5,5 @@ dist
 private
 doxygen
 zephyr.jar
-.junittests_parametersweep
+.junittests_*
 .junitdiscofile.bin

@@ -11,10 +11,12 @@ public class ContextOnPolicyEvaluation implements Context {
   private static final long serialVersionUID = -6212106048889219995L;
   private final AgentFactory agentFactory;
   private final ProblemFactory environmentFactory;
+  private final int nbRewardCheckpoint;
 
-  public ContextOnPolicyEvaluation(ProblemFactory environmentFactory, AgentFactory agentFactory) {
+  public ContextOnPolicyEvaluation(ProblemFactory environmentFactory, AgentFactory agentFactory, int nbRewardCheckpoint) {
     this.environmentFactory = environmentFactory;
     this.agentFactory = agentFactory;
+    this.nbRewardCheckpoint = nbRewardCheckpoint;
   }
 
   public Runner createRunner(int counter, Parameters parameters) {
@@ -59,5 +61,9 @@ public class ContextOnPolicyEvaluation implements Context {
     parameters.enableFlag(agentFactory.label());
     parameters.enableFlag(environmentFactory.label());
     return parameters;
+  }
+
+  public RewardMonitor createRewardMonitor(Parameters parameters) {
+    return new RewardMonitor(nbRewardCheckpoint, parameters.maxEpisodeTimeSteps(), parameters.nbEpisode());
   }
 }

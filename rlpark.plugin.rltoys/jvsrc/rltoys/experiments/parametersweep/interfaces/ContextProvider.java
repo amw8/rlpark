@@ -4,5 +4,5 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface ContextProvider extends Serializable {
-  public List<Context> provideContexts();
+  public List<? extends Context> provideContexts();
 }
