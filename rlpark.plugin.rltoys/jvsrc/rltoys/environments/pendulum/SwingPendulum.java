@@ -3,15 +3,16 @@ package rltoys.environments.pendulum;
 import java.util.Random;
 
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.environments.envio.RLProblemBounded;
 import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TRStep;
+import rltoys.environments.envio.problems.ProblemBounded;
+import rltoys.environments.envio.problems.ProblemDiscreteAction;
 import rltoys.math.ranges.Range;
 import rltoys.utils.Utils;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-public class SwingPendulum implements RLProblemBounded {
+public class SwingPendulum implements ProblemBounded, ProblemDiscreteAction {
   public boolean constantEpisodeTime = true;
   public static final double uMax = 2.0;
   public static final Range ActionRange = new Range(-uMax, uMax);
@@ -128,5 +129,10 @@ public class SwingPendulum implements RLProblemBounded {
 
   public double velocity() {
     return velocity;
+  }
+
+  @Override
+  public Action[] actions() {
+    return new Action[] { new ActionArray(-uMax), new ActionArray(0), new ActionArray(uMax) };
   }
 }

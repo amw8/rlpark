@@ -2,10 +2,10 @@ package rltoys.environments.nostate;
 
 import static rltoys.utils.Utils.square;
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.environments.envio.RLProblem;
 import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TRStep;
+import rltoys.environments.envio.problems.RLProblem;
 import rltoys.math.ranges.Range;
 
 public class NoStateProblem implements RLProblem {

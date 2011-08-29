@@ -3,13 +3,14 @@ package rltoys.environments.mountaincar;
 import java.util.Random;
 
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.environments.envio.RLProblemBounded;
 import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TRStep;
+import rltoys.environments.envio.problems.ProblemBounded;
+import rltoys.environments.envio.problems.ProblemDiscreteAction;
 import rltoys.math.ranges.Range;
 
-public class MountainCar implements RLProblemBounded {
+public class MountainCar implements ProblemBounded, ProblemDiscreteAction {
   protected static final ActionArray LEFT = new ActionArray(-1.0);
   protected static final ActionArray RIGHT = new ActionArray(1.0);
   protected static final ActionArray STOP = new ActionArray(0.0);
@@ -85,6 +86,7 @@ public class MountainCar implements RLProblemBounded {
     return legend;
   }
 
+  @Override
   public Action[] actions() {
     return Actions;
   }

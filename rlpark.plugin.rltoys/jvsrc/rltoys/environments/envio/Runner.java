@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.observations.TRStep;
+import rltoys.environments.envio.problems.RLProblem;
 import zephyr.plugin.core.api.signals.Signal;
 
 public class Runner implements Serializable {

@@ -3,10 +3,10 @@ package rltoys.environments.ptarget;
 import java.util.Random;
 
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.environments.envio.RLProblem;
 import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TRStep;
+import rltoys.environments.envio.problems.RLProblem;
 import rltoys.utils.Utils;
 
 public class PTarget implements RLProblem {

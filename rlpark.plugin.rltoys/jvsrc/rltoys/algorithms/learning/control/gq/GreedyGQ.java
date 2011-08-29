@@ -4,11 +4,12 @@ import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.StateToStateAction;
+import rltoys.environments.envio.OffPolicyLearner;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-public class GreedyGQ implements Predictor {
+public class GreedyGQ implements Predictor, OffPolicyLearner {
   private static final long serialVersionUID = -8310145173177914856L;
 
   @Monitor
@@ -53,5 +54,15 @@ public class GreedyGQ implements Predictor {
 
   public Policy targetPolicy() {
     return target;
+  }
+
+  @Override
+  public void learn(RealVector x_t, Action a_t, RealVector x_tp1, Action a_tp1, double reward) {
+    update(x_t, a_t, reward, 0, x_tp1, a_tp1);
+  }
+
+  @Override
+  public Action proposeAction(RealVector x_t) {
+    return target.decide(x_t);
   }
 }

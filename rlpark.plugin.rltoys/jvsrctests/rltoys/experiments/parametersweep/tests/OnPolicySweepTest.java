@@ -13,9 +13,9 @@ import org.junit.Test;
 
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.RLAgent;
-import rltoys.environments.envio.RLProblem;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TRStep;
+import rltoys.environments.envio.problems.RLProblem;
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.SweepAll;
 import rltoys.experiments.parametersweep.interfaces.AgentFactory;

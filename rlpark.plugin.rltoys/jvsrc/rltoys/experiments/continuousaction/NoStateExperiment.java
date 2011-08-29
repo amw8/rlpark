@@ -2,8 +2,8 @@ package rltoys.experiments.continuousaction;
 
 import rltoys.algorithms.learning.control.Control;
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.environments.envio.RLProblem;
 import rltoys.environments.envio.observations.TRStep;
+import rltoys.environments.envio.problems.RLProblem;
 import rltoys.math.normalization.IncMeanVarNormalizer;
 import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;

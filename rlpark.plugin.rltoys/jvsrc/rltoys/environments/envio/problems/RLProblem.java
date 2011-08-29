@@ -1,4 +1,4 @@
-package rltoys.environments.envio;
+package rltoys.environments.envio.problems;
 
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.observations.Legend;

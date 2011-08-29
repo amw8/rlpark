@@ -13,7 +13,7 @@ import rltoys.algorithms.learning.control.actorcritic.policystructure.NormalDist
 import rltoys.algorithms.learning.predictions.td.TD;
 import rltoys.algorithms.learning.predictions.td.TDLambda;
 import rltoys.algorithms.representations.acting.PolicyDistribution;
-import rltoys.environments.envio.RLProblem;
+import rltoys.environments.envio.problems.RLProblem;
 import rltoys.environments.nostate.NoStateProblem;
 import rltoys.environments.nostate.NoStateProblem.RewardFunction;
 import rltoys.experiments.continuousaction.NoStateExperiment;

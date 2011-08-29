@@ -1,10 +1,10 @@
 package rltoys.environments.envio;
 
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.environments.envio.observations.TStep;
+import rltoys.math.vector.RealVector;
 
 public interface OffPolicyLearner {
-  void learn(TStep step, Action a_tp1);
+  void learn(RealVector x_t, Action a_t, RealVector x_tp1, Action a_tp1, double reward);
 
-  Action proposeAction(TStep o_tp1);
+  Action proposeAction(RealVector x_t);
 }
