@@ -31,12 +31,11 @@ public class RewardMonitor implements Listener<RunnerEvent> {
 
   public void putResult(Parameters parameters) {
     for (int i = 0; i < starts.length; i++) {
-      String episodeLabel = nbEpisode > 1 ? "TimeStep" : "Episode";
-      String startLabel = String.format("RewardStart%s%02d", episodeLabel, i);
+      String startLabel = String.format("RewardStart%02d", i);
       parameters.put(startLabel, starts[i]);
-      String rewardLabel = String.format("RewardCumulated%s%02d", episodeLabel, i);
+      String rewardLabel = String.format("RewardCumulated%02d", i);
       parameters.put(rewardLabel, rewards[i]);
-      String sliceLabel = String.format("RewardSlice%s%02d", episodeLabel, i);
+      String sliceLabel = String.format("RewardSlice%02d", i);
       parameters.put(sliceLabel, slices[i]);
     }
   }
