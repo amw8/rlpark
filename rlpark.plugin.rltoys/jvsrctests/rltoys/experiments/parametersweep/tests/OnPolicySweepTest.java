@@ -17,13 +17,14 @@ import rltoys.environments.envio.RLProblem;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.experiments.ExperimentCounter;
-import rltoys.experiments.parametersweep.Sweep;
+import rltoys.experiments.parametersweep.SweepAll;
+import rltoys.experiments.parametersweep.interfaces.AgentFactory;
 import rltoys.experiments.parametersweep.interfaces.Context;
-import rltoys.experiments.parametersweep.interfaces.ParameterSweepProvider;
+import rltoys.experiments.parametersweep.interfaces.ProblemFactory;
+import rltoys.experiments.parametersweep.interfaces.SweepDescriptor;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
-import rltoys.experiments.parametersweep.onpolicy.AgentFactory;
-import rltoys.experiments.parametersweep.onpolicy.ContextOnPolicyEvaluation;
-import rltoys.experiments.parametersweep.onpolicy.ProblemFactory;
+import rltoys.experiments.parametersweep.onpolicy.ContextEvaluation;
+import rltoys.experiments.parametersweep.onpolicy.AbstractContextOnPolicy;
 import rltoys.experiments.parametersweep.parameters.AbstractParameters;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
@@ -38,8 +39,7 @@ public class OnPolicySweepTest {
   static final int NbRewardCheckPoint = 10;
   static final int NbEvalaluations = 100;
 
-  class OnPolicyTestSweep implements ParameterSweepProvider {
-    private static final long serialVersionUID = 4434690676335635087L;
+  class OnPolicyTestSweep implements SweepDescriptor {
     private final int nbTimeSteps;
     private final int nbEpisode;
     private final Action agentAction;
@@ -58,13 +58,12 @@ public class OnPolicySweepTest {
     public List<? extends Context> provideContexts() {
       AgentFactory agentFactory = createAgentFactory(agentAction);
       ProblemFactory problemFactory = createProblemFactory(nbTimeSteps, nbEpisode);
-      return Utils.asList(new ContextOnPolicyEvaluation(problemFactory, agentFactory, NbRewardCheckPoint));
+      return Utils.asList(new ContextEvaluation(problemFactory, agentFactory, NbRewardCheckPoint));
     }
-
 
     @Override
     public List<Parameters> provideParameters(Context context) {
-      return Utils.asList(((ContextOnPolicyEvaluation) context).contextParameters());
+      return Utils.asList(((AbstractContextOnPolicy) context).contextParameters());
     }
   }
 
@@ -160,7 +159,7 @@ public class OnPolicySweepTest {
     LocalScheduler scheduler = new LocalScheduler();
     FileUtils.deleteDirectory(new File(JUnitFolder));
     ExperimentCounter counter = new ExperimentCounter(NbRun, JUnitFolder);
-    Sweep sweep = new Sweep(scheduler, provider, counter);
+    SweepAll sweep = new SweepAll(scheduler, provider, counter);
     sweep.runSweep();
     checkFile(diverged, multiplier);
     scheduler.dispose();

@@ -4,21 +4,23 @@ import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.RLProblem;
 import rltoys.environments.envio.Runner;
 import rltoys.experiments.ExperimentCounter;
-import rltoys.experiments.parametersweep.interfaces.Context;
+import rltoys.experiments.parametersweep.interfaces.AgentFactory;
+import rltoys.experiments.parametersweep.interfaces.ProblemFactory;
+import rltoys.experiments.parametersweep.onpolicy.internal.ContextOnPolicy;
+import rltoys.experiments.parametersweep.onpolicy.internal.RewardMonitor;
 import rltoys.experiments.parametersweep.parameters.Parameters;
 
-public class ContextOnPolicyEvaluation implements Context {
+public abstract class AbstractContextOnPolicy implements ContextOnPolicy {
   private static final long serialVersionUID = -6212106048889219995L;
   private final AgentFactory agentFactory;
   private final ProblemFactory environmentFactory;
-  private final int nbRewardCheckpoint;
 
-  public ContextOnPolicyEvaluation(ProblemFactory environmentFactory, AgentFactory agentFactory, int nbRewardCheckpoint) {
+  public AbstractContextOnPolicy(ProblemFactory environmentFactory, AgentFactory agentFactory) {
     this.environmentFactory = environmentFactory;
     this.agentFactory = agentFactory;
-    this.nbRewardCheckpoint = nbRewardCheckpoint;
   }
 
+  @Override
   public Runner createRunner(int counter, Parameters parameters) {
     RLProblem problem = environmentFactory.createEnvironment(ExperimentCounter.newRandom(counter));
     RLAgent agent = agentFactory.createAgent(problem, parameters, ExperimentCounter.newRandom(counter));
@@ -41,16 +43,6 @@ public class ContextOnPolicyEvaluation implements Context {
     return agentFactory;
   }
 
-  @Override
-  public SweepJob createSweepJob(Parameters parameters, ExperimentCounter counter) {
-    return new SweepJob(this, parameters, counter);
-  }
-
-  @Override
-  public LearningCurveJob createLearningCurveJob(Parameters parameters, ExperimentCounter counter) {
-    return new LearningCurveJob(this, parameters, counter);
-  }
-
   public ProblemFactory problemFactory() {
     return environmentFactory;
   }
@@ -63,7 +55,8 @@ public class ContextOnPolicyEvaluation implements Context {
     return parameters;
   }
 
+  @Override
   public RewardMonitor createRewardMonitor(Parameters parameters) {
-    return new RewardMonitor(nbRewardCheckpoint, parameters.maxEpisodeTimeSteps(), parameters.nbEpisode());
+    return null;
   }
 }

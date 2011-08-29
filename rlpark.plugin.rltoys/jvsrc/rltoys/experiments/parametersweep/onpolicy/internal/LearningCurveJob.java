@@ -1,4 +1,4 @@
-package rltoys.experiments.parametersweep.onpolicy;
+package rltoys.experiments.parametersweep.onpolicy.internal;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,10 +13,10 @@ import zephyr.plugin.core.api.signals.Listener;
 public class LearningCurveJob implements Runnable, Serializable {
   private static final long serialVersionUID = -5212166519929349880L;
   private final Parameters parameters;
-  private final ContextOnPolicyEvaluation context;
+  private final ContextOnPolicy context;
   private final ExperimentCounter counter;
 
-  public LearningCurveJob(ContextOnPolicyEvaluation context, Parameters parameters, ExperimentCounter counter) {
+  public LearningCurveJob(ContextOnPolicy context, Parameters parameters, ExperimentCounter counter) {
     this.context = context;
     this.parameters = parameters;
     this.counter = counter.clone();

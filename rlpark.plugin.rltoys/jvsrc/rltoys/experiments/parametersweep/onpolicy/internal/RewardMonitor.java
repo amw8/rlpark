@@ -1,4 +1,4 @@
-package rltoys.experiments.parametersweep.onpolicy;
+package rltoys.experiments.parametersweep.onpolicy.internal;
 
 import java.util.Arrays;
 

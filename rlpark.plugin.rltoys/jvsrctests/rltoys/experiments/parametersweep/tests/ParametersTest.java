@@ -1,4 +1,4 @@
-package rltoys.experiments.parametersweep.tests.interfaces;
+package rltoys.experiments.parametersweep.tests;
 
 import java.util.HashSet;
 import java.util.Set;

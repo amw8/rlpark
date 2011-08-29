@@ -7,10 +7,8 @@ import java.util.Set;
 
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.interfaces.Context;
-import rltoys.experiments.parametersweep.interfaces.ContextProvider;
 import rltoys.experiments.parametersweep.interfaces.JobWithParameters;
-import rltoys.experiments.parametersweep.interfaces.ParameterSweepProvider;
-import rltoys.experiments.parametersweep.interfaces.ParametersProvider;
+import rltoys.experiments.parametersweep.interfaces.SweepDescriptor;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
@@ -22,39 +20,32 @@ import rltoys.experiments.scheduling.pools.FileJobPool;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import zephyr.plugin.core.api.signals.Listener;
 
-public class Sweep {
+public class SweepAll {
   static private boolean verbose = true;
-  private final ParametersProvider parametersProvider;
-  private final ContextProvider contextProvider;
+  private final SweepDescriptor sweepDescriptor;
   private final ExperimentCounter counter;
   private final Scheduler scheduler;
   int nbJobs;
 
 
-  public Sweep(ParameterSweepProvider provider, ExperimentCounter counter) {
-    this(new LocalScheduler(), provider, counter);
+  public SweepAll(SweepDescriptor sweepDescriptor, ExperimentCounter counter) {
+    this(new LocalScheduler(), sweepDescriptor, counter);
   }
 
-  public Sweep(Scheduler scheduler, ParameterSweepProvider provider, ExperimentCounter counter) {
-    this(scheduler, provider, provider, counter);
-  }
-
-  public Sweep(Scheduler scheduler, ContextProvider contextProvider, ParametersProvider parametersProvider,
-      ExperimentCounter counter) {
-    this.contextProvider = contextProvider;
-    this.parametersProvider = parametersProvider;
+  public SweepAll(Scheduler scheduler, SweepDescriptor sweepDescriptor, ExperimentCounter counter) {
+    this.sweepDescriptor = sweepDescriptor;
     this.counter = counter;
     this.scheduler = scheduler;
   }
 
   private void createAndSubmitRequiredJobs(Context context, ParametersLogFile logFile) {
-    List<Parameters> allParameters = parametersProvider.provideParameters(context);
+    List<Parameters> allParameters = sweepDescriptor.provideParameters(context);
     String[] parameterLabels = allParameters.get(0).labels();
     Set<FrozenParameters> doneParameters = logFile.extractParameters(parameterLabels);
     List<Runnable> todoJobList = new ArrayList<Runnable>();
     for (Parameters parameters : allParameters) {
       if (!doneParameters.contains(parameters.froze()))
-        todoJobList.add(context.createSweepJob(parameters, counter));
+        todoJobList.add(context.createJob(parameters, counter));
     }
     println(String.format("Submitting %d/%d jobs for %s...", todoJobList.size(), allParameters.size(),
                           extractName(logFile)));
@@ -112,16 +103,12 @@ public class Sweep {
   }
 
   private void submitOneSweep() {
-    List<? extends Context> contexts = contextProvider.provideContexts();
+    List<? extends Context> contexts = sweepDescriptor.provideContexts();
     for (Context context : contexts) {
       String filename = counter.folderFilename(context.folderPath(), context.fileName());
       ParametersLogFile logFile = new ParametersLogFile(filename);
       createAndSubmitRequiredJobs(context, logFile);
     }
-  }
-
-  public ContextProvider contextProvider() {
-    return contextProvider;
   }
 
   public int nbJobs() {

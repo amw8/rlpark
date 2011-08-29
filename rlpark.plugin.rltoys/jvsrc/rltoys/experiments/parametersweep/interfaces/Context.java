@@ -10,7 +10,5 @@ public interface Context extends Serializable {
 
   String fileName();
 
-  Runnable createSweepJob(Parameters parameters, ExperimentCounter counter);
-
-  Runnable createLearningCurveJob(Parameters parameters, ExperimentCounter counter);
+  Runnable createJob(Parameters parameters, ExperimentCounter counter);
 }

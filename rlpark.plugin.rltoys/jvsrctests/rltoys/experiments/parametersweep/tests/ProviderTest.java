@@ -1,18 +1,17 @@
 package rltoys.experiments.parametersweep.tests;
 
 
-import java.io.Serializable;
 import java.util.List;
 
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.interfaces.Context;
 import rltoys.experiments.parametersweep.interfaces.JobWithParameters;
-import rltoys.experiments.parametersweep.interfaces.ParameterSweepProvider;
+import rltoys.experiments.parametersweep.interfaces.SweepDescriptor;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
 import rltoys.utils.Utils;
 
-public class ProviderTest implements ParameterSweepProvider, Context {
+public class ProviderTest implements SweepDescriptor, Context {
   private static final String SweepDone = "sweepDone";
   public static final String ParameterName = "ID";
   public static final String ContextPath = "providertest";
@@ -34,27 +33,6 @@ public class ProviderTest implements ParameterSweepProvider, Context {
     }
 
     @Override
-    public Parameters parameters() {
-      return parameters;
-    }
-  }
-
-  static public class LearningCurveJob implements Runnable, Serializable {
-    private static final long serialVersionUID = 6213584778601355711L;
-    private final Parameters parameters;
-    private final ExperimentCounter counter;
-
-    LearningCurveJob(Parameters parameters, ExperimentCounter counter) {
-      this.parameters = parameters;
-      this.counter = counter;
-    }
-
-    @Override
-    public void run() {
-      parameters.putResult(SweepDone, 1);
-      parameters.putResult("counter", counter.currentIndex());
-    }
-
     public Parameters parameters() {
       return parameters;
     }
@@ -91,12 +69,7 @@ public class ProviderTest implements ParameterSweepProvider, Context {
   }
 
   @Override
-  public Runnable createLearningCurveJob(Parameters parameters, ExperimentCounter counter) {
-    return new LearningCurveJob(parameters, counter);
-  }
-
-  @Override
-  public SweepJob createSweepJob(final Parameters parameters, final ExperimentCounter counter) {
+  public Runnable createJob(Parameters parameters, ExperimentCounter counter) {
     return new SweepJob(parameters, counter);
   }
 

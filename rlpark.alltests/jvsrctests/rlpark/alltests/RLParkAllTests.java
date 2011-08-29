@@ -8,6 +8,6 @@ import rltoys.RLToysTests;
 import critterbot.CritterbotTests;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ RLToysTests.class, RobotTests.class, CritterbotTests.class, PackageCycleTest.class })
+@Suite.SuiteClasses({ PackageCycleTest.class, RLToysTests.class, RobotTests.class, CritterbotTests.class })
 public class RLParkAllTests {
 }

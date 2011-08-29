@@ -1,4 +1,4 @@
-package rltoys.experiments.parametersweep.onpolicy;
+package rltoys.experiments.parametersweep.onpolicy.internal;
 
 import rltoys.environments.envio.Runner;
 import rltoys.experiments.ExperimentCounter;
@@ -9,11 +9,11 @@ import zephyr.plugin.core.api.synchronization.Chrono;
 public class SweepJob implements JobWithParameters {
   private static final long serialVersionUID = -1636763888764939471L;
   private final Parameters parameters;
-  private final ContextOnPolicyEvaluation context;
+  private final ContextOnPolicy context;
   private long computationTime;
   private final int counter;
 
-  public SweepJob(ContextOnPolicyEvaluation context, Parameters parameters, ExperimentCounter counter) {
+  public SweepJob(ContextOnPolicy context, Parameters parameters, ExperimentCounter counter) {
     this.context = context;
     this.parameters = parameters;
     this.counter = counter.currentIndex();
