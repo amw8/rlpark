@@ -5,8 +5,6 @@ import java.util.List;
 
 public class Parameters extends AbstractParameters {
   private static final long serialVersionUID = -3022547944186532000L;
-  public static final String AverageReward = "averageReward";
-
   public Parameters() {
     super();
   }

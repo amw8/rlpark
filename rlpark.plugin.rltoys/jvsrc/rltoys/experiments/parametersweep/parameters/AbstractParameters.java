@@ -7,9 +7,6 @@ import java.util.Map;
 
 public abstract class AbstractParameters implements Comparable<AbstractParameters>, Serializable {
   private static final long serialVersionUID = 8135997315567194984L;
-  public static final String MaxEpisodeTimeSteps = "maxEpisodeTimeSteps";
-  public static final String NbEpisode = "nbEpisode";
-  public static final String Gamma = "gamma";
   protected final Map<String, Double> parameters = new LinkedHashMap<String, Double>();
   protected final Map<String, Double> results = new LinkedHashMap<String, Double>();
 
@@ -23,7 +20,7 @@ public abstract class AbstractParameters implements Comparable<AbstractParameter
   }
 
   public double gamma() {
-    return parameters.containsKey(Gamma) ? get(Gamma) : 1.0;
+    return parameters.containsKey(RLParameters.Gamma) ? get(RLParameters.Gamma) : 1.0;
   }
 
   public void putResult(String parameterName, double parameterValue) {
@@ -74,11 +71,11 @@ public abstract class AbstractParameters implements Comparable<AbstractParameter
   }
 
   public int maxEpisodeTimeSteps() {
-    return (int) ((double) parameters.get(MaxEpisodeTimeSteps));
+    return (int) ((double) parameters.get(RLParameters.MaxEpisodeTimeSteps));
   }
 
   public int nbEpisode() {
-    return (int) ((double) parameters.get(NbEpisode));
+    return (int) ((double) parameters.get(RLParameters.NbEpisode));
   }
 
   @Override

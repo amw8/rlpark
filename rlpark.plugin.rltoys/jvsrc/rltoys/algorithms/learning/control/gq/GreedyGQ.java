@@ -41,7 +41,7 @@ public class GreedyGQ implements Predictor, OffPolicyLearner {
   }
 
   public PVector theta() {
-    return gq.theta;
+    return gq.v;
   }
 
   public double gamma() {

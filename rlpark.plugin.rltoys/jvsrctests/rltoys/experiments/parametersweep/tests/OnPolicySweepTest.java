@@ -25,8 +25,8 @@ import rltoys.experiments.parametersweep.interfaces.SweepDescriptor;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
 import rltoys.experiments.parametersweep.onpolicy.ContextEvaluation;
 import rltoys.experiments.parametersweep.onpolicy.AbstractContextOnPolicy;
-import rltoys.experiments.parametersweep.parameters.AbstractParameters;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
+import rltoys.experiments.parametersweep.parameters.RLParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import rltoys.experiments.scheduling.tests.SchedulerTest;
@@ -87,8 +87,8 @@ public class OnPolicySweepTest {
 
       @Override
       public void setExperimentParameters(Parameters parameters) {
-        parameters.put(AbstractParameters.MaxEpisodeTimeSteps, nbTimeSteps);
-        parameters.put(AbstractParameters.NbEpisode, nbEpisode);
+        parameters.put(RLParameters.MaxEpisodeTimeSteps, nbTimeSteps);
+        parameters.put(RLParameters.NbEpisode, nbEpisode);
       }
 
       @Override

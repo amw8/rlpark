@@ -1,0 +1,22 @@
+package rltoys.experiments.parametersweep.parameters;
+
+public class RLParameters {
+  public static final String MaxEpisodeTimeSteps = "maxEpisodeTimeSteps";
+  public static final String NbEpisode = "nbEpisode";
+  public static final String Gamma = "gamma";
+  public static final String AverageReward = "averageReward";
+  public static final String Lambda = "Lambda";
+  public static final String Tau = "Tau";
+  public static final String AveRewardStepSize = "AveRewardStepSize";
+  public static final String ActorStepSize = "ActorStepSize";
+  public static final String ValueFunctionStepSize = "ValueFunctionStepSize";
+  public static final String ValueFunctionSecondStepSize = "ValueFunctionSecondStepSize";
+
+  final static public double[] getTauValues() {
+    return new double[] { 1, 2, 4, 8, 16, 32 };
+  }
+
+  final static public double[] getStepSizeValues() {
+    return new double[] { .0001, .0005, .001, .005, .01, .05, .1, .5, 1. };
+  }
+}
