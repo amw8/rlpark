@@ -38,46 +38,53 @@ public class Runner implements Serializable {
 
 
   public RunnerEvent run() {
-    start();
+    assert runnerEvent.nbTotalTimeSteps == 0;
+    assert runnerEvent.episode == 0;
     while (runnerEvent.episode < nbEpisode)
       runEpisode();
     return runnerEvent;
   }
 
-  private void start() {
-    assert runnerEvent.nbTotalTimeSteps == 0;
-    assert runnerEvent.episode == 0;
-    runnerEvent.step = environment.initialize();
-    assert runnerEvent.step.isEpisodeStarting();
+  private void runEpisode() {
+    assert isEpisodeEnding();
+    do {
+      step();
+    } while (!isEpisodeEnding());
   }
 
-  private void runEpisode() {
-    runnerEvent.step = environment.initialize();
-    assert runnerEvent.step.isEpisodeStarting();
-    while (!isEpisodeEnding()) {
-      onTimeStep.fire(runnerEvent);
-      Action action = agent.getAtp1(runnerEvent.step);
-      runnerEvent.step = environment.step(action);
-      runnerEvent.nbTotalTimeSteps++;
+  public void step() {
+    assert runnerEvent.episode < nbEpisode;
+    // When we have a new episode (i.e the last episode ended)
+    if (isEpisodeEnding()) {
+      runnerEvent.step = environment.initialize();
+      assert runnerEvent.step.isEpisodeStarting();
     }
-    onEpisodeEnd.fire(runnerEvent);
-    runnerEvent.episode += 1;
+    // Normal time step
+    onTimeStep.fire(runnerEvent);
+    Action action = agent.getAtp1(runnerEvent.step);
+    runnerEvent.step = environment.step(action);
+    runnerEvent.nbTotalTimeSteps++;
+    // Maximum number of steps in the episode reached
+    if (maxEpisodeTimeSteps > 0 && runnerEvent.step.time >= maxEpisodeTimeSteps)
+      runnerEvent.step = runnerEvent.step.createEndingStep();
+    // When an episode is ending
+    if (isEpisodeEnding()) {
+      onEpisodeEnd.fire(runnerEvent);
+      runnerEvent.episode += 1;
+    }
   }
 
 
   protected boolean isEpisodeEnding() {
-    if (runnerEvent.step.isEpisodeEnding())
-      return true;
-    if (maxEpisodeTimeSteps <= 0)
-      return false;
-    if (runnerEvent.step.time < maxEpisodeTimeSteps)
-      return false;
-    runnerEvent.step = runnerEvent.step.createEndingStep();
-    return true;
+    return runnerEvent.step == null || runnerEvent.step.isEpisodeEnding();
   }
 
 
   public RunnerEvent runnerEvent() {
     return runnerEvent;
+  }
+
+  public RLAgent agent() {
+    return agent;
   }
 }

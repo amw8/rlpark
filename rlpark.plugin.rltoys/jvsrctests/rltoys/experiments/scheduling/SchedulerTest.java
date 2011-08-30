@@ -1,4 +1,4 @@
-package rltoys.experiments.scheduling.tests;
+package rltoys.experiments.scheduling;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,14 +9,14 @@ import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import rltoys.experiments.scheduling.SchedulerTestsUtils.Job;
+import rltoys.experiments.scheduling.SchedulerTestsUtils.JobDoneListener;
 import rltoys.experiments.scheduling.internal.messages.ClassLoading;
 import rltoys.experiments.scheduling.internal.messages.Messages;
 import rltoys.experiments.scheduling.internal.queue.LocalQueue;
 import rltoys.experiments.scheduling.network.NetworkClient;
 import rltoys.experiments.scheduling.network.ServerScheduler;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
-import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.Job;
-import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.JobDoneListener;
 import rltoys.utils.Command;
 
 public class SchedulerTest {

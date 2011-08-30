@@ -1,4 +1,4 @@
-package rltoys.experiments.scheduling.tests;
+package rltoys.experiments.scheduling;
 
 import java.io.Serializable;
 import java.util.ArrayList;

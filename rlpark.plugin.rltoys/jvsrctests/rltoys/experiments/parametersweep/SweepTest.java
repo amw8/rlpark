@@ -1,4 +1,4 @@
-package rltoys.experiments.parametersweep.tests;
+package rltoys.experiments.parametersweep;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,11 +13,11 @@ import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.SweepAll;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
+import rltoys.experiments.scheduling.SchedulerTest;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.network.NetworkClient;
 import rltoys.experiments.scheduling.network.ServerScheduler;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
-import rltoys.experiments.scheduling.tests.SchedulerTest;
 
 public class SweepTest {
   private static final String JUnitFolder = ".junittests_parametersweep";

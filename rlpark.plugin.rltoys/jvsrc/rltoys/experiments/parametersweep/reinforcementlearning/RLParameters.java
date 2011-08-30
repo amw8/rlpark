@@ -1,4 +1,4 @@
-package rltoys.experiments.parametersweep.parameters;
+package rltoys.experiments.parametersweep.reinforcementlearning;
 
 public class RLParameters {
   public static final String MaxEpisodeTimeSteps = "maxEpisodeTimeSteps";

@@ -1,4 +1,4 @@
-package rltoys.experiments.scheduling.tests;
+package rltoys.experiments.scheduling;
 
 import java.util.List;
 
@@ -6,14 +6,14 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import rltoys.experiments.scheduling.SchedulerTestsUtils.Job;
+import rltoys.experiments.scheduling.SchedulerTestsUtils.JobDoneListener;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobPool;
 import rltoys.experiments.scheduling.interfaces.JobPool.JobPoolListener;
 import rltoys.experiments.scheduling.pools.FileJobPool;
 import rltoys.experiments.scheduling.pools.MemoryJobPool;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
-import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.Job;
-import rltoys.experiments.scheduling.tests.SchedulerTestsUtils.JobDoneListener;
 import zephyr.plugin.core.api.signals.Listener;
 
 public class JobPoolTest {

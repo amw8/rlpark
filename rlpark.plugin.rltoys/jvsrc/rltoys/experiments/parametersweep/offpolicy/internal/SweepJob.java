@@ -1,4 +1,4 @@
-package rltoys.experiments.parametersweep.onpolicy.internal;
+package rltoys.experiments.parametersweep.offpolicy.internal;
 
 import rltoys.environments.envio.Runner;
 import rltoys.experiments.ExperimentCounter;
@@ -8,13 +8,13 @@ import rltoys.experiments.parametersweep.reinforcementlearning.RewardMonitor;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class SweepJob implements JobWithParameters {
-  private static final long serialVersionUID = -1636763888764939471L;
+  private static final long serialVersionUID = -563211383079107807L;
   private final Parameters parameters;
-  private final OnPolicyEvaluationContext context;
+  private final OffPolicyEvaluationContext context;
   private long computationTime;
   private final int counter;
 
-  public SweepJob(OnPolicyEvaluationContext context, Parameters parameters, ExperimentCounter counter) {
+  public SweepJob(OffPolicyEvaluationContext context, Parameters parameters, ExperimentCounter counter) {
     this.context = context;
     this.parameters = parameters;
     this.counter = counter.currentIndex();
@@ -23,18 +23,20 @@ public class SweepJob implements JobWithParameters {
   @Override
   public void run() {
     Runner runner = context.createRunner(counter, parameters);
-    RewardMonitor rewardMonitor = context.createRewardMonitor(parameters);
-    runner.onTimeStep.connect(rewardMonitor);
+    RewardMonitor behaviourRewardMonitor = context.connectBehaviourRewardMonitor(runner, parameters);
+    RewardMonitor targetRewardMonitor = context.connectTargetRewardMonitor(counter, runner, parameters);
     Chrono chrono = new Chrono();
     boolean diverged = false;
     try {
       runner.run();
     } catch (Throwable e) {
-      rewardMonitor.worstResultUntilEnd();
+      behaviourRewardMonitor.worstResultUntilEnd();
+      targetRewardMonitor.worstResultUntilEnd();
       diverged = true;
     }
     computationTime = chrono.getCurrentMillis();
-    rewardMonitor.putResult(parameters);
+    behaviourRewardMonitor.putResult(parameters);
+    targetRewardMonitor.putResult(parameters);
     parameters.putResult("computationTime", diverged ? -1 : computationTime);
     parameters.putResult("totalTimeStep", runner.runnerEvent().nbTotalTimeSteps);
   }

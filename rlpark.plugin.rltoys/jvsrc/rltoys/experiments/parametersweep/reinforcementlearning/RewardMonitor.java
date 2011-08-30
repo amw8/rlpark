@@ -1,6 +1,4 @@
-package rltoys.experiments.parametersweep.onpolicy.internal;
-
-import java.util.Arrays;
+package rltoys.experiments.parametersweep.reinforcementlearning;
 
 import rltoys.environments.envio.Runner.RunnerEvent;
 import rltoys.experiments.parametersweep.parameters.Parameters;
@@ -12,8 +10,15 @@ public class RewardMonitor implements Listener<RunnerEvent> {
   private final double[] slices;
   private final int nbEpisode;
   private final int sliceSize;
+  private int currentSlice;
+  private final String prefix;
 
   public RewardMonitor(int nbRewardCheckpoint, int nbTimeSteps, int nbEpisode) {
+    this("", nbRewardCheckpoint, nbTimeSteps, nbEpisode);
+  }
+
+  public RewardMonitor(String prefix, int nbRewardCheckpoint, int nbTimeSteps, int nbEpisode) {
+    this.prefix = prefix;
     this.nbEpisode = nbEpisode;
     int nbMeasurements = nbEpisode > 1 ? nbEpisode : nbTimeSteps;
     sliceSize = nbMeasurements / nbRewardCheckpoint;
@@ -31,11 +36,11 @@ public class RewardMonitor implements Listener<RunnerEvent> {
 
   public void putResult(Parameters parameters) {
     for (int i = 0; i < starts.length; i++) {
-      String startLabel = String.format("RewardStart%02d", i);
+      String startLabel = String.format("%sRewardStart%02d", prefix, i);
       parameters.put(startLabel, starts[i]);
-      String rewardLabel = String.format("RewardCumulated%02d", i);
+      String rewardLabel = String.format("%sRewardCumulated%02d", prefix, i);
       parameters.put(rewardLabel, rewards[i]);
-      String sliceLabel = String.format("RewardSlice%02d", i);
+      String sliceLabel = String.format("%sRewardSlice%02d", prefix, i);
       parameters.put(sliceLabel, slices[i]);
     }
   }
@@ -44,7 +49,8 @@ public class RewardMonitor implements Listener<RunnerEvent> {
   public void listen(RunnerEvent eventInfo) {
     double reward = eventInfo.step.r_tp1;
     long current = nbEpisode > 1 ? eventInfo.episode : eventInfo.step.time;
-    slices[(int) (current / sliceSize)] += reward;
+    currentSlice = (int) (current / sliceSize);
+    slices[currentSlice] += reward;
     for (int i = 0; i < starts.length; i++) {
       if (starts[i] > current)
         break;
@@ -52,8 +58,10 @@ public class RewardMonitor implements Listener<RunnerEvent> {
     }
   }
 
-  public void worstResult() {
-    Arrays.fill(rewards, -Float.MAX_VALUE);
-    Arrays.fill(slices, -Float.MAX_VALUE);
+  public void worstResultUntilEnd() {
+    for (int i = 0; i < rewards.length; i++)
+      rewards[i] = -Float.MAX_VALUE;
+    for (int i = currentSlice; i < rewards.length; i++)
+      slices[i] = -Float.MAX_VALUE;
   }
 }

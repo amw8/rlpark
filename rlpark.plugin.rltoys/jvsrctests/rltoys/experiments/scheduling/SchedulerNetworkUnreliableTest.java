@@ -1,6 +1,6 @@
-package rltoys.experiments.scheduling.tests;
+package rltoys.experiments.scheduling;
 
-import static rltoys.experiments.scheduling.tests.SchedulerTestsUtils.testServerScheduler;
+import static rltoys.experiments.scheduling.SchedulerTestsUtils.testServerScheduler;
 
 import java.io.IOException;
 import java.net.UnknownHostException;

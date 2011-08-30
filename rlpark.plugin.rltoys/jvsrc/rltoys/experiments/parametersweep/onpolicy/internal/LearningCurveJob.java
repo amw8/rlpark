@@ -7,16 +7,17 @@ import rltoys.environments.envio.Runner;
 import rltoys.environments.envio.Runner.RunnerEvent;
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.reinforcementlearning.ReinforcementLearningContext;
 import zephyr.plugin.core.api.monitoring.fileloggers.LoggerRow;
 import zephyr.plugin.core.api.signals.Listener;
 
 public class LearningCurveJob implements Runnable, Serializable {
   private static final long serialVersionUID = -5212166519929349880L;
   private final Parameters parameters;
-  private final ContextOnPolicy context;
+  private final ReinforcementLearningContext context;
   private final ExperimentCounter counter;
 
-  public LearningCurveJob(ContextOnPolicy context, Parameters parameters, ExperimentCounter counter) {
+  public LearningCurveJob(ReinforcementLearningContext context, Parameters parameters, ExperimentCounter counter) {
     this.context = context;
     this.parameters = parameters;
     this.counter = counter.clone();

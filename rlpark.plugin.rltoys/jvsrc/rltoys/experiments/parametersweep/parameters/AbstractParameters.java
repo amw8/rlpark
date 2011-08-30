@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import rltoys.experiments.parametersweep.reinforcementlearning.RLParameters;
+
 public abstract class AbstractParameters implements Comparable<AbstractParameters>, Serializable {
   private static final long serialVersionUID = 8135997315567194984L;
   protected final Map<String, Double> parameters = new LinkedHashMap<String, Double>();
