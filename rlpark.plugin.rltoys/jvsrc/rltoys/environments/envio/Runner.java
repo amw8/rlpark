@@ -36,7 +36,6 @@ public class Runner implements Serializable {
     this.maxEpisodeTimeSteps = maxEpisodeTimeSteps;
   }
 
-
   public RunnerEvent run() {
     assert runnerEvent.nbTotalTimeSteps == 0;
     assert runnerEvent.episode == 0;
@@ -45,7 +44,7 @@ public class Runner implements Serializable {
     return runnerEvent;
   }
 
-  private void runEpisode() {
+  public void runEpisode() {
     assert runnerEvent.step == null;
     do {
       step();

@@ -44,19 +44,19 @@ public class OnPolicySweepTest extends RLSweepTest {
 
   @Test
   public void testSweepOneEpisode() {
-    testSweep(new OnPolicyTestSweep(Integer.MAX_VALUE, NbEvalaluations, 1));
+    testSweep(new OnPolicyTestSweep(Integer.MAX_VALUE, NbEvaluations, 1));
     checkFile(ResultFolderTest, 1, Integer.MAX_VALUE);
   }
 
   @Test
   public void testSweepMultipleEpisode() {
-    testSweep(new OnPolicyTestSweep(Integer.MAX_VALUE, 100, NbEvalaluations));
+    testSweep(new OnPolicyTestSweep(Integer.MAX_VALUE, 100, NbEvaluations));
     checkFile(ResultFolderTest, 100, Integer.MAX_VALUE);
   }
 
   @Test
   public void testSweepWithBadAgent() {
-    testSweep(new OnPolicyTestSweep(50, NbEvalaluations, 1));
+    testSweep(new OnPolicyTestSweep(50, NbEvaluations, 1));
     checkFile(ResultFolderTest, 1, 5);
   }
 
@@ -66,7 +66,7 @@ public class OnPolicySweepTest extends RLSweepTest {
       int checkPoint = 0;
       if (label.contains("Reward"))
         checkPoint = Integer.parseInt(label.substring(label.length() - 2, label.length()));
-      int sliceSize = NbEvalaluations / NbRewardCheckPoint;
+      int sliceSize = NbEvaluations / NbRewardCheckPoint;
       if (label.contains("Start"))
         Assert.assertEquals(checkPoint * sliceSize, (int) parameters.get(label));
       if (label.contains("Slice"))

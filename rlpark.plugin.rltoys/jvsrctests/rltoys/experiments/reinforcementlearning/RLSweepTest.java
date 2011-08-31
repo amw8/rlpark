@@ -22,7 +22,7 @@ public abstract class RLSweepTest {
   protected static final String JUnitFolder = ".junittests_rlparametersweep";
   protected static final int NbRun = 4;
   protected static final int NbRewardCheckPoint = 10;
-  protected static final int NbEvalaluations = 100;
+  protected static final int NbEvaluations = 100;
   protected SweepAll sweep = null;
 
   @Before
