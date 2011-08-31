@@ -31,7 +31,7 @@ public abstract class AbstractContextOffPolicy implements ReinforcementLearningC
   public Runner createRunner(int counter, Parameters parameters) {
     RLProblem problem = environmentFactory.createEnvironment(ExperimentCounter.newRandom(counter));
     Projector projector = projectorFactory.createProjector(problem);
-    RLAgent agent = agentFactory.createAgent(projector, parameters, ExperimentCounter.newRandom(counter));
+    RLAgent agent = agentFactory.createAgent(problem, projector, parameters, ExperimentCounter.newRandom(counter));
     int nbEpisode = parameters.nbEpisode();
     int maxEpisodeTimeSteps = parameters.maxEpisodeTimeSteps();
     return new Runner(problem, agent, nbEpisode, maxEpisodeTimeSteps);

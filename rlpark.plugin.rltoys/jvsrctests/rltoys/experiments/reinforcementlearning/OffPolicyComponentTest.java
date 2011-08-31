@@ -47,7 +47,7 @@ public class OffPolicyComponentTest {
     }
 
     @Override
-    public OffPolicyAgent createAgent(Projector projector, Parameters parameters, Random random) {
+    public OffPolicyAgent createAgent(RLProblem problem, Projector projector, Parameters parameters, Random random) {
       OffPolicyLearner learner = new OffPolicyLearnerTest();
       Policy behaviour = new RandomPolicy(random, new Action[] { RLProblemFactoryTest.Action01 });
       return new OffPolicyAgent(projector, behaviour, learner);
