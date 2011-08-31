@@ -3,7 +3,6 @@ package critterbot.crtrlog;
 import java.io.File;
 
 import rltoys.environments.envio.observations.Legend;
-import rltoys.environments.envio.observations.TStep;
 import rltoys.math.ranges.Range;
 import rltoys.utils.Utils;
 import critterbot.environment.CritterbotDrops;
@@ -17,10 +16,7 @@ public class LogFiles {
     nbSamples = 0;
     nbSkipSamples = 0;
     while (logFile.hasNextStep()) {
-      TStep step = logFile.step();
-      if (step.isEpisodeEnding())
-        break;
-      double[] o_tp1 = step.o_tp1;
+      double[] o_tp1 = logFile.step();
       if (errorFlagIndex != -1 && o_tp1[errorFlagIndex] != 0 && o_tp1[errorFlagIndex] != 32768) {
         nbSkipSamples++;
         continue;

@@ -4,7 +4,7 @@ import rltoys.environments.envio.Runner;
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.interfaces.JobWithParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
-import rltoys.experiments.parametersweep.reinforcementlearning.RewardMonitor;
+import rltoys.experiments.parametersweep.reinforcementlearning.internal.RewardMonitor;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class SweepJob implements JobWithParameters {

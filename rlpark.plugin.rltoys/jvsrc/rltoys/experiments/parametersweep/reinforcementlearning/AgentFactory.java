@@ -1,4 +1,4 @@
-package rltoys.experiments.parametersweep.interfaces;
+package rltoys.experiments.parametersweep.reinforcementlearning;
 
 import java.io.Serializable;
 import java.util.Random;

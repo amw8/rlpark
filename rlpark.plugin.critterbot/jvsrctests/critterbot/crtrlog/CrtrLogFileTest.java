@@ -1,21 +1,13 @@
 package critterbot.crtrlog;
 
-import java.io.File;
-import java.util.Map;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
 
-import rltoys.algorithms.representations.features.envio.ObservationFeature;
-import rltoys.algorithms.representations.featuresnetwork.ObservationAgentState;
-import rltoys.environments.envio.observations.Legend;
-import rltoys.environments.envio.observations.TStep;
 import rltoys.math.ranges.Range;
 import rltoys.math.vector.implementations.PVector;
 import rltoys.math.vector.testing.VectorsTestsUtils;
 import rltoys.utils.Paths;
-import rltoys.utils.Utils;
 
 public class CrtrLogFileTest {
 
@@ -37,35 +29,16 @@ public class CrtrLogFileTest {
   @Test
   public void testLogFileToFeatures() {
     CrtrLogFile logFile = new CrtrLogFile(Paths.getDataPath("rlpark.plugin.critterbot", "unittesting01.crtrlog"));
-    ObservationFeature[] inputFeatures = createObservationFeatures(logFile.legend());
-    compareWithExpected(logFile, inputFeatures, inputExpected01);
-    Assert.assertEquals(inputExpected01.length, logFile.nbSteps());
+    compareWithExpected(logFile, inputExpected01);
   }
 
-  static public void compareWithExpected(CrtrLogFile logFile, ObservationFeature[] testedFeatures, double[][] expected) {
-    ObservationAgentState agentState = new ObservationAgentState(0, testedFeatures);
-    agentState.addObservationsToState();
+  static public void compareWithExpected(CrtrLogFile logFile, double[][] expected) {
     int timeIndex = 0;
     while (logFile.hasNextStep()) {
-      TStep step = logFile.step();
-      agentState.update(step);
-      PVector featureValues = agentState.currentState();
-      if (expected[timeIndex] == null)
-        Assert.assertNull(featureValues);
-      else
-        VectorsTestsUtils.assertEquals(new PVector(expected[timeIndex]), featureValues);
+      double[] step = logFile.step();
+      VectorsTestsUtils.assertEquals(new PVector(expected[timeIndex]), new PVector(step));
       timeIndex += 1;
     }
     Assert.assertEquals(timeIndex, expected.length);
-    File tmpFile = Utils.createTempFile("junit");
-    Utils.save(agentState, tmpFile);
-    Utils.load(tmpFile);
-  }
-
-  static private ObservationFeature[] createObservationFeatures(Legend legend) {
-    ObservationFeature[] features = new ObservationFeature[legend.nbLabels()];
-    for (Map.Entry<String, Integer> entry : legend.legend().entrySet())
-      features[entry.getValue()] = new ObservationFeature(entry.getKey(), entry.getValue());
-    return features;
   }
 }

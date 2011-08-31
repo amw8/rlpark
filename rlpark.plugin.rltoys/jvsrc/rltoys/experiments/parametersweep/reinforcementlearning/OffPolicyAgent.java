@@ -32,8 +32,4 @@ public class OffPolicyAgent implements RLAgent {
   public OffPolicyLearner offpolicyLearner() {
     return learner;
   }
-
-  public Projector projector() {
-    return projector;
-  }
 }

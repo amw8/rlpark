@@ -6,8 +6,8 @@ import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.environments.envio.problems.RLProblem;
-import rltoys.experiments.parametersweep.interfaces.AgentFactory;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.reinforcementlearning.AgentFactory;
 
 class RLAgentFactoryTest implements AgentFactory {
   final Action agentAction;

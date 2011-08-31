@@ -1,10 +1,11 @@
-package rltoys.experiments.parametersweep.reinforcementlearning;
+package rltoys.experiments.parametersweep.reinforcementlearning.internal;
 
 import rltoys.environments.envio.Runner.RunnerEvent;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.reinforcementlearning.AgentEvaluator;
 import zephyr.plugin.core.api.signals.Listener;
 
-public class RewardMonitor implements Listener<RunnerEvent> {
+public class RewardMonitor implements Listener<RunnerEvent>, AgentEvaluator {
   private final int[] starts;
   private final double[] rewards;
   private final double[] slices;
@@ -34,6 +35,7 @@ public class RewardMonitor implements Listener<RunnerEvent> {
     return starts;
   }
 
+  @Override
   public void putResult(Parameters parameters) {
     for (int i = 0; i < starts.length; i++) {
       String startLabel = String.format("%sRewardStart%02d", prefix, i);
@@ -47,8 +49,10 @@ public class RewardMonitor implements Listener<RunnerEvent> {
 
   @Override
   public void listen(RunnerEvent eventInfo) {
+    if (eventInfo.step.time == 0)
+      return;
     double reward = eventInfo.step.r_tp1;
-    long current = nbEpisode > 1 ? eventInfo.episode : eventInfo.step.time;
+    long current = nbEpisode > 1 ? eventInfo.episode : eventInfo.step.time - 1;
     currentSlice = (int) (current / sliceSize);
     slices[currentSlice] += reward;
     for (int i = 0; i < starts.length; i++) {
@@ -58,6 +62,7 @@ public class RewardMonitor implements Listener<RunnerEvent> {
     }
   }
 
+  @Override
   public void worstResultUntilEnd() {
     for (int i = 0; i < rewards.length; i++)
       rewards[i] = -Float.MAX_VALUE;

@@ -5,21 +5,13 @@ import java.util.Arrays;
 import rltoys.algorithms.representations.actions.Action;
 
 public class TStep {
+  // Time of o_tp1
   final public long time;
   final public double[] o_t;
   final public Action a_t;
   final public double[] o_tp1;
 
-  public TStep(TStep step_t, Action a_t, double[] o_tp1) {
-    this(step_t == null ? 0 : step_t.time + 1,
-         step_t == null || step_t.o_tp1 == null ? null : step_t.o_tp1, a_t, o_tp1);
-  }
-
-  public TStep(long time, TStep step_t, Action a_t, double[] o_tp1) {
-    this(time, step_t == null ? null : step_t.o_tp1, step_t == null ? null : a_t, o_tp1);
-  }
-
-  public TStep(long time, double[] o_t, Action a_t, double[] o_tp1) {
+  TStep(long time, double[] o_t, Action a_t, double[] o_tp1) {
     this.time = time;
     this.o_t = o_t == null ? null : o_t.clone();
     this.a_t = a_t;

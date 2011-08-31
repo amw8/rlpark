@@ -10,7 +10,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import rltoys.experiments.ExperimentCounter;
-import rltoys.experiments.parametersweep.SweepAll;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.scheduling.SchedulerTest;
@@ -74,8 +73,8 @@ public class SweepTest {
   private int runFullSweep(Scheduler scheduler, int nbParameters) {
     ProviderTest provider = new ProviderTest(nbParameters);
     ExperimentCounter counter = new ExperimentCounter(NbRun, JUnitFolder);
-    SweepAll sweep = new SweepAll(scheduler, provider, counter);
-    sweep.runSweep();
+    SweepAll sweep = new SweepAll(scheduler);
+    sweep.runSweep(provider, counter);
     return sweep.nbJobs();
   }
 }

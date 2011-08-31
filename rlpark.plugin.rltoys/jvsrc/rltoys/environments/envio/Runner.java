@@ -46,39 +46,33 @@ public class Runner implements Serializable {
   }
 
   private void runEpisode() {
-    assert isEpisodeEnding();
+    assert runnerEvent.step == null;
     do {
       step();
-    } while (!isEpisodeEnding());
+    } while (runnerEvent.step != null);
   }
 
   public void step() {
     assert runnerEvent.episode < nbEpisode;
-    // When we have a new episode (i.e the last episode ended)
-    if (isEpisodeEnding()) {
+    // When we start a new episode
+    if (runnerEvent.step == null) {
       runnerEvent.step = environment.initialize();
       assert runnerEvent.step.isEpisodeStarting();
     }
-    // Normal time step
+    // Fire the time step event
     onTimeStep.fire(runnerEvent);
     Action action = agent.getAtp1(runnerEvent.step);
-    runnerEvent.step = environment.step(action);
-    runnerEvent.nbTotalTimeSteps++;
-    // Maximum number of steps in the episode reached
-    if (maxEpisodeTimeSteps > 0 && runnerEvent.step.time >= maxEpisodeTimeSteps)
-      runnerEvent.step = runnerEvent.step.createEndingStep();
-    // When an episode is ending
-    if (isEpisodeEnding()) {
+    // Fire the end of an episode
+    if (runnerEvent.step.isEpisodeEnding()) {
       onEpisodeEnd.fire(runnerEvent);
       runnerEvent.episode += 1;
     }
+    runnerEvent.step = !runnerEvent.step.isEpisodeEnding() ? environment.step(action) : null;
+    runnerEvent.nbTotalTimeSteps++;
+    // Maximum number of steps in the episode reached
+    if (runnerEvent.step != null && runnerEvent.step.time == maxEpisodeTimeSteps)
+      runnerEvent.step = runnerEvent.step.createEndingStep();
   }
-
-
-  protected boolean isEpisodeEnding() {
-    return runnerEvent.step == null || runnerEvent.step.isEpisodeEnding();
-  }
-
 
   public RunnerEvent runnerEvent() {
     return runnerEvent;

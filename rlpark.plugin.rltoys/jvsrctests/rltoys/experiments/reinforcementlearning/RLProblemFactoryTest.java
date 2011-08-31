@@ -7,8 +7,8 @@ import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.environments.envio.problems.RLProblem;
-import rltoys.experiments.parametersweep.interfaces.ProblemFactory;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.RLParameters;
 
 @SuppressWarnings("serial")

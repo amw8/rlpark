@@ -2,7 +2,6 @@ package rltoys.agents;
 
 import rltoys.algorithms.learning.control.Control;
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.algorithms.representations.featuresnetwork.ObservationAgentState;
 import rltoys.algorithms.representations.tilescoding.TileCoders;
 import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.observations.TRStep;
@@ -14,23 +13,19 @@ public class StateTiledCodedAgent implements RLAgent {
   private final Control control;
   @Monitor
   private final TileCoders tilesCoder;
-  @Monitor
-  private final ObservationAgentState agentState;
-  private RealVector phi_t;
+  private RealVector x_t;
 
-  public StateTiledCodedAgent(Control control, TileCoders tilesCoder, ObservationAgentState agentState) {
+  public StateTiledCodedAgent(Control control, TileCoders tilesCoder) {
     this.control = control;
     this.tilesCoder = tilesCoder;
-    this.agentState = agentState;
   }
 
   @Override
   public Action getAtp1(TRStep step) {
     double r_tp1 = step.r_tp1;
-    agentState.update(step);
-    RealVector phi_tp1 = tilesCoder.project(agentState.currentState().data);
-    Action a_tp1 = control.step(phi_t, step.a_t, phi_tp1, r_tp1);
-    phi_t = phi_tp1;
+    RealVector x_tp1 = tilesCoder.project(step.o_tp1);
+    Action a_tp1 = control.step(x_t, step.a_t, x_tp1, r_tp1);
+    x_t = x_tp1;
     return a_tp1;
   }
 

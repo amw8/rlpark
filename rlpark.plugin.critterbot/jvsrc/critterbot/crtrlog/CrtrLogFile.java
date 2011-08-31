@@ -3,9 +3,7 @@ package critterbot.crtrlog;
 import java.util.ArrayList;
 import java.util.List;
 
-import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.observations.Legend;
-import rltoys.environments.envio.observations.TStep;
 import zephyr.plugin.core.api.logfiles.LogFile;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.synchronization.Clock;
@@ -17,15 +15,11 @@ public class CrtrLogFile implements CritterbotProblem, Timed {
   public final String filepath;
   @Monitor(emptyLabel = true)
   private final LogFile logfile;
-  private TStep step = null;
+  private double[] current = null;
 
   public CrtrLogFile(String filepath) {
     logfile = LogFile.load(filepath);
     this.filepath = filepath;
-  }
-
-  public TStep currentStep() {
-    return step;
   }
 
   @Override
@@ -41,13 +35,10 @@ public class CrtrLogFile implements CritterbotProblem, Timed {
     return new Legend(labels);
   }
 
-  public TStep step() {
+  public double[] step() {
     logfile.step();
-    if (step == null)
-      step = new TStep(0, (double[]) null, null, logfile.currentLine());
-    else
-      step = new TStep(step, Action.ActionUndef, logfile.currentLine());
-    return step;
+    current = logfile.currentLine();
+    return current;
   }
 
   public boolean hasNextStep() {
@@ -72,17 +63,13 @@ public class CrtrLogFile implements CritterbotProblem, Timed {
     return new CrtrLogFile(filepath);
   }
 
-  public long nbSteps() {
-    return step.time + 1;
-  }
-
   @Override
   public CritterbotAction lastAction() {
-    return (CritterbotAction) (step != null ? step.a_t : null);
+    return null;
   }
 
   @Override
   public double[] lastReceivedObs() {
-    return step != null ? step.o_tp1 : null;
+    return current;
   }
 }

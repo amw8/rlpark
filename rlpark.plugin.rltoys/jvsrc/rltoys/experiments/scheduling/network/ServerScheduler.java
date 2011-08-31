@@ -119,10 +119,11 @@ public class ServerScheduler implements Scheduler {
     Collection<Runnable> pendingJobs = client.pendingJobs();
     for (Runnable pendingJob : pendingJobs)
       localQueue.requestCancel(pendingJob);
-    printConnectionInfo(String.format("%s disconnected. Canceling %d job%s", client.clientName(),
-                                      pendingJobs.size(), pendingJobs.size() > 1 ? "s" : ""));
+    printConnectionInfo(String.format("%s disconnected. Canceling %d job%s", client.clientName(), pendingJobs.size(),
+                                      pendingJobs.size() > 1 ? "s" : ""));
   }
 
+  @Override
   public void dispose() {
     try {
       serverSocket.close();

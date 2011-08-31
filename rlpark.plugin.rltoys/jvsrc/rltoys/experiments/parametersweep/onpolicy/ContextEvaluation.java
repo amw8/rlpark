@@ -1,12 +1,12 @@
 package rltoys.experiments.parametersweep.onpolicy;
 
 import rltoys.experiments.ExperimentCounter;
-import rltoys.experiments.parametersweep.interfaces.AgentFactory;
-import rltoys.experiments.parametersweep.interfaces.ProblemFactory;
 import rltoys.experiments.parametersweep.onpolicy.internal.OnPolicyEvaluationContext;
 import rltoys.experiments.parametersweep.onpolicy.internal.SweepJob;
 import rltoys.experiments.parametersweep.parameters.Parameters;
-import rltoys.experiments.parametersweep.reinforcementlearning.RewardMonitor;
+import rltoys.experiments.parametersweep.reinforcementlearning.AgentFactory;
+import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
+import rltoys.experiments.parametersweep.reinforcementlearning.internal.RewardMonitor;
 
 public class ContextEvaluation extends AbstractContextOnPolicy implements OnPolicyEvaluationContext {
   private static final long serialVersionUID = -5926779335932073094L;

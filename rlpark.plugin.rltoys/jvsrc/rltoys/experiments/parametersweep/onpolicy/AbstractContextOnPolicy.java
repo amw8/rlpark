@@ -4,9 +4,9 @@ import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.Runner;
 import rltoys.environments.envio.problems.RLProblem;
 import rltoys.experiments.ExperimentCounter;
-import rltoys.experiments.parametersweep.interfaces.AgentFactory;
-import rltoys.experiments.parametersweep.interfaces.ProblemFactory;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.reinforcementlearning.AgentFactory;
+import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.ReinforcementLearningContext;
 
 public abstract class AbstractContextOnPolicy implements ReinforcementLearningContext {

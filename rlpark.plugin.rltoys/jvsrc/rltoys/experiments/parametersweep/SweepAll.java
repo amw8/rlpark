@@ -22,23 +22,20 @@ import zephyr.plugin.core.api.signals.Listener;
 
 public class SweepAll {
   static private boolean verbose = true;
-  private final SweepDescriptor sweepDescriptor;
-  private final ExperimentCounter counter;
   private final Scheduler scheduler;
   int nbJobs;
 
 
-  public SweepAll(SweepDescriptor sweepDescriptor, ExperimentCounter counter) {
-    this(new LocalScheduler(), sweepDescriptor, counter);
+  public SweepAll() {
+    this(new LocalScheduler());
   }
 
-  public SweepAll(Scheduler scheduler, SweepDescriptor sweepDescriptor, ExperimentCounter counter) {
-    this.sweepDescriptor = sweepDescriptor;
-    this.counter = counter;
+  public SweepAll(Scheduler scheduler) {
     this.scheduler = scheduler;
   }
 
-  private void createAndSubmitRequiredJobs(Context context, ParametersLogFile logFile) {
+  private void createAndSubmitRequiredJobs(SweepDescriptor sweepDescriptor, ExperimentCounter counter, Context context,
+      ParametersLogFile logFile) {
     List<Parameters> allParameters = sweepDescriptor.provideParameters(context);
     String[] parameterLabels = allParameters.get(0).labels();
     Set<FrozenParameters> doneParameters = logFile.extractParameters(parameterLabels);
@@ -94,20 +91,28 @@ public class SweepAll {
     System.out.println(message);
   }
 
-  public void runSweep() {
-    while (counter.hasNext()) {
-      counter.nextExperiment();
-      submitOneSweep();
-    }
+  public void runSweep(SweepDescriptor sweepDescriptor, ExperimentCounter counter) {
+    submitSweep(sweepDescriptor, counter);
+    runAll();
+  }
+
+  public void runAll() {
     scheduler.runAll();
   }
 
-  private void submitOneSweep() {
+  public void submitSweep(SweepDescriptor sweepDescriptor, ExperimentCounter counter) {
+    while (counter.hasNext()) {
+      counter.nextExperiment();
+      submitOneSweep(sweepDescriptor, counter);
+    }
+  }
+
+  private void submitOneSweep(SweepDescriptor sweepDescriptor, ExperimentCounter counter) {
     List<? extends Context> contexts = sweepDescriptor.provideContexts();
     for (Context context : contexts) {
       String filename = counter.folderFilename(context.folderPath(), context.fileName());
       ParametersLogFile logFile = new ParametersLogFile(filename);
-      createAndSubmitRequiredJobs(context, logFile);
+      createAndSubmitRequiredJobs(sweepDescriptor, counter, context, logFile);
     }
   }
 
@@ -117,5 +122,9 @@ public class SweepAll {
 
   static public void disableVerbose() {
     verbose = false;
+  }
+
+  public Scheduler scheduler() {
+    return scheduler;
   }
 }

@@ -89,6 +89,7 @@ public class LocalScheduler implements Scheduler {
     return chrono.getCurrentNano();
   }
 
+  @Override
   synchronized public void dispose() {
     executor.shutdown();
   }

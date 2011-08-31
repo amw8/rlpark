@@ -4,7 +4,7 @@ import rltoys.environments.envio.Runner;
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.interfaces.JobWithParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
-import rltoys.experiments.parametersweep.reinforcementlearning.RewardMonitor;
+import rltoys.experiments.parametersweep.reinforcementlearning.AgentEvaluator;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class SweepJob implements JobWithParameters {
@@ -23,8 +23,8 @@ public class SweepJob implements JobWithParameters {
   @Override
   public void run() {
     Runner runner = context.createRunner(counter, parameters);
-    RewardMonitor behaviourRewardMonitor = context.connectBehaviourRewardMonitor(runner, parameters);
-    RewardMonitor targetRewardMonitor = context.connectTargetRewardMonitor(counter, runner, parameters);
+    AgentEvaluator behaviourRewardMonitor = context.connectBehaviourRewardMonitor(runner, parameters);
+    AgentEvaluator targetRewardMonitor = context.connectTargetRewardMonitor(counter, runner, parameters);
     Chrono chrono = new Chrono();
     boolean diverged = false;
     try {
