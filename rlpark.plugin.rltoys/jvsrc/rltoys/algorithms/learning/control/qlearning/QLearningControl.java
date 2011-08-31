@@ -1,12 +1,12 @@
 package rltoys.algorithms.learning.control.qlearning;
 
 import rltoys.algorithms.learning.control.Control;
-import rltoys.algorithms.learning.control.OffPolicyControl;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
+import rltoys.environments.envio.OffPolicyLearner;
 import rltoys.math.vector.RealVector;
 
-public class QLearningControl implements Control, OffPolicyControl {
+public class QLearningControl implements Control, OffPolicyLearner {
   private static final long serialVersionUID = 5784749108581105369L;
   private final QLearning qlearning;
   private final Policy acting;
@@ -24,7 +24,7 @@ public class QLearningControl implements Control, OffPolicyControl {
   }
 
   @Override
-  public void learn(RealVector x_t, Action a_t, RealVector x_tp1, double r_tp1, Action a_tp1) {
+  public void learn(RealVector x_t, Action a_t, RealVector x_tp1, Action a_tp1, double r_tp1) {
     qlearning.update(x_t, a_t, x_tp1, a_tp1, r_tp1);
   }
 
