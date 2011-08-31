@@ -19,13 +19,13 @@ public class GQOffPolicyControl implements Control, OffPolicyControl {
   }
 
   @Override
-  public void learn(RealVector s_t, Action a_t, RealVector s_tp1, double r_tp1, Action a_tp1) {
-    gq.update(s_t, a_t, r_tp1, 0.0, s_tp1, a_tp1);
+  public void learn(RealVector x_t, Action a_t, RealVector x_tp1, double r_tp1, Action a_tp1) {
+    gq.update(x_t, a_t, r_tp1, 0.0, x_tp1, a_tp1);
   }
 
   @Override
-  public Action proposeAction(RealVector s_t) {
-    return acting().decide(s_t);
+  public Action proposeAction(RealVector x_t) {
+    return acting().decide(x_t);
   }
 
   @Override

@@ -24,8 +24,8 @@ public class QLearningControl implements Control, OffPolicyControl {
   }
 
   @Override
-  public void learn(RealVector s_t, Action a_t, RealVector s_tp1, double r_tp1, Action a_tp1) {
-    qlearning.update(s_t, a_t, s_tp1, a_tp1, r_tp1);
+  public void learn(RealVector x_t, Action a_t, RealVector x_tp1, double r_tp1, Action a_tp1) {
+    qlearning.update(x_t, a_t, x_tp1, a_tp1, r_tp1);
   }
 
   @Override

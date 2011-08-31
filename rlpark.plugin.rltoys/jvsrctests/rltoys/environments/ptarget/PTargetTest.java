@@ -11,6 +11,7 @@ import rltoys.environments.envio.Runner;
 import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.TRStep;
 
+@SuppressWarnings("serial")
 public class PTargetTest {
   private final Random random = new Random(0);
   public final static int nbTarget = 5;

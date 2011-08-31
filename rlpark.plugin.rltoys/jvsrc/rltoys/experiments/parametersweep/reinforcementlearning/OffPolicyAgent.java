@@ -9,6 +9,7 @@ import rltoys.environments.envio.observations.TRStep;
 import rltoys.math.vector.RealVector;
 
 public class OffPolicyAgent implements RLAgent {
+  private static final long serialVersionUID = -3161971141054100394L;
   private final Projector projector;
   private RealVector x_t;
   private final OffPolicyLearner learner;

@@ -3,7 +3,7 @@ package rltoys.algorithms.learning.control.mountaincar;
 import java.io.File;
 import java.util.Random;
 
-import rltoys.agents.TileCodingAgent;
+import rltoys.agents.AgentFA;
 import rltoys.algorithms.learning.control.Control;
 import rltoys.algorithms.representations.tilescoding.TileCoders;
 import rltoys.algorithms.representations.tilescoding.TileCodersNoHashing;
@@ -41,7 +41,7 @@ public abstract class MountainCarOnPolicyTest {
     TileCoders tilesCoder = tileCodersFactory.create(mountainCar.getObservationRanges());
     tilesCoder.addFullTilings(9, 10);
     Control control = controlFactory.createControl(mountainCar, tilesCoder);
-    TileCodingAgent agent = new TileCodingAgent(control, tilesCoder);
+    AgentFA agent = new AgentFA(control, tilesCoder);
     Runner runner = new Runner(mountainCar, agent, nbEpisode, maxNbTimeSteps);
     runner.run();
     File tempFile = Utils.createTempFile("junit");

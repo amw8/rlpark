@@ -21,10 +21,6 @@ public abstract class AbstractParameters implements Comparable<AbstractParameter
     this.results.putAll(results);
   }
 
-  public double gamma() {
-    return parameters.containsKey(RLParameters.Gamma) ? get(RLParameters.Gamma) : 1.0;
-  }
-
   public void putResult(String parameterName, double parameterValue) {
     results.put(parameterName, parameterValue);
   }
