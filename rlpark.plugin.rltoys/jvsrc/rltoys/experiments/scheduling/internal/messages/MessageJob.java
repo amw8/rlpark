@@ -1,71 +1,65 @@
 package rltoys.experiments.scheduling.internal.messages;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.util.List;
 
 import rltoys.experiments.scheduling.internal.messages.Messages.MessageType;
 
 public class MessageJob extends Message {
-  private final Serializable job;
-  private final int jobId;
+  private Runnable[] jobs = new Runnable[] {};
+  private int[] jobIds = new int[] {};
 
-  public MessageJob(int jobId, Runnable job) {
+  public MessageJob(int jobId, Runnable done) {
     super(MessageType.Job);
-    this.job = (Serializable) job;
-    this.jobId = jobId;
+    jobIds = new int[] { jobId };
+    jobs = new Runnable[] { done };
+  }
+
+  public MessageJob(List<Runnable> jobs, List<Integer> jobIds) {
+    super(MessageType.Job);
+    assert jobIds.size() == jobs.size();
+    this.jobIds = new int[jobIds.size()];
+    for (int i = 0; i < jobIds.size(); i++)
+      this.jobIds[i] = jobIds.get(i);
+    this.jobs = new Runnable[jobs.size()];
+    jobs.toArray(this.jobs);
   }
 
   protected MessageJob(MessageBinary message, ClassLoader classLoader) throws IOException {
     super(message);
-    InputStream in = message.contentInputStream();
-    jobId = readJobId(in);
-    job = !isJobNull() ? readJob(in, classLoader) : null;
-  }
-
-  private boolean isJobNull() {
-    return jobId < 0;
+    readContent(message.contentInputStream(), classLoader);
   }
 
   @Override
   protected void writeContentBuffer(ByteArrayOutputStream out) throws IOException {
-    DataOutputStream dataOut = new DataOutputStream(out);
-    dataOut.writeInt(jobId);
-    if (isJobNull())
-      return;
     ObjectOutputStream objOut = new ObjectOutputStream(out);
-    objOut.writeObject(job);
+    objOut.writeObject(jobIds);
+    objOut.writeObject(jobs);
   }
 
-  private int readJobId(InputStream in) throws IOException {
-    return new DataInputStream(in).readInt();
-  }
-
-  private Serializable readJob(InputStream in, ClassLoader classLoader) throws IOException {
+  private void readContent(InputStream in, ClassLoader classLoader) throws IOException {
     ObjectInputStream objIn = ClassLoading.createObjectInputStream(in, classLoader);
-    Serializable job = null;
     try {
-      job = (Serializable) objIn.readObject();
+      jobIds = (int[]) objIn.readObject();
+      jobs = (Runnable[]) objIn.readObject();
     } catch (ClassNotFoundException e) {
       throw new RuntimeException(e);
     }
-    return job;
   }
 
-  public Runnable job() {
-    return (Runnable) job;
+  public int[] jobIds() {
+    return jobIds;
   }
 
-  public int id() {
-    return jobId;
+  public Runnable[] jobs() {
+    return jobs;
   }
 
-  public static Message nullJob() {
-    return new MessageJob(-1, null);
+  public int nbJobs() {
+    return jobs.length;
   }
 }

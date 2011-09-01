@@ -3,6 +3,7 @@ package rltoys.experiments.scheduling.internal.queue;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ import zephyr.plugin.core.api.signals.Signal;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class NetworkJobQueue implements JobQueue {
-  private static final double MessagePeriod = 10;
+  private static final double MessagePeriod = 1800;
   public Signal<JobQueue> onJobReceived = new Signal<JobQueue>();
   private final SyncSocket syncSocket;
   private final Map<Runnable, Integer> jobToId = new HashMap<Runnable, Integer>();
@@ -25,6 +26,7 @@ public class NetworkJobQueue implements JobQueue {
   private final Signal<JobDoneEvent> onJobDone = new Signal<JobDoneEvent>();
   private int nbJobsSinceLastMessage = 0;
   private boolean denyNewJobRequest = false;
+  private final LocalQueue localQueue = new LocalQueue();
 
   public NetworkJobQueue(String serverHostName, int port) throws UnknownHostException, IOException {
     syncSocket = new SyncSocket(new Socket(serverHostName, port));
@@ -32,30 +34,40 @@ public class NetworkJobQueue implements JobQueue {
     classLoader = NetworkClassLoader.newClassLoader(syncSocket);
   }
 
+  private void requestJobsToServer() {
+    MessageJob messageJobTodo = syncSocket.jobTransaction(classLoader, jobToId.isEmpty());
+    if (messageJobTodo == null)
+      return;
+    Runnable[] jobs = messageJobTodo.jobs();
+    int[] ids = messageJobTodo.jobIds();
+    ArrayList<Runnable> newJobs = new ArrayList<Runnable>();
+    for (int i = 0; i < jobs.length; i++) {
+      jobToId.put(jobs[i], ids[i]);
+      newJobs.add(jobs[i]);
+    }
+    localQueue.add(newJobs.iterator(), null);
+    if (messageJobTodo.nbJobs() > 0)
+      onJobReceived.fire(this);
+  }
+
   @Override
   synchronized public Runnable request() {
     if (denyNewJobRequest)
       return null;
-    Runnable job = null;
-    MessageJob messageJobTodo = syncSocket.jobTransaction(classLoader, jobToId.isEmpty());
-    if (messageJobTodo == null)
-      return null;
-    job = messageJobTodo.job();
+    Runnable job = localQueue.request();
     if (job != null)
-      jobToId.put(job, messageJobTodo.id());
-    if (job != null)
-      onJobReceived.fire(this);
-    return job;
+      return job;
+    requestJobsToServer();
+    return localQueue.request();
   }
 
   @Override
   synchronized public void done(Runnable todo, Runnable done) {
     Integer jobId = jobToId.remove(todo);
-    MessageJob messageJobTodo = new MessageJob(jobId, done);
-    syncSocket.write(messageJobTodo);
+    syncSocket.write(new MessageJob(jobId, done));
     nbJobsSinceLastMessage += 1;
     if (chrono.getCurrentChrono() > MessagePeriod) {
-      Messages.println(nbJobsSinceLastMessage + " done in " + chrono.toString());
+      Messages.println(nbJobsSinceLastMessage / chrono.getCurrentChrono() + " jobs per seconds");
       chrono.start();
       nbJobsSinceLastMessage = 0;
     }
@@ -63,6 +75,7 @@ public class NetworkJobQueue implements JobQueue {
   }
 
   public void close() {
+    classLoader.dispose();
     syncSocket.close();
   }
 

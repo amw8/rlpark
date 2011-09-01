@@ -84,6 +84,7 @@ public class ServerScheduler implements Scheduler {
     clients.add(client);
     client.onClosed.connect(clientClosedListener);
     printConnectionInfo(client.clientName() + " connected");
+    SocketClient.nbJobSendPerRequest(Math.max(1, clients.size()));
   }
 
   protected void printConnectionInfo(String news) {

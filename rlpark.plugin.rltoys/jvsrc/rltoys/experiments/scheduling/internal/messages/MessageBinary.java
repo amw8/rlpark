@@ -8,9 +8,15 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import rltoys.experiments.scheduling.internal.messages.Messages.MessageType;
+
 public class MessageBinary extends Message {
   private int fullSizeRead;
   private byte[] content;
+
+  public MessageBinary() {
+    super(MessageType.Error);
+  }
 
   private void throwAlignmentError() {
     throw new RuntimeException("Alignment error");

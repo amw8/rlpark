@@ -1,8 +1,10 @@
 package rltoys.experiments.scheduling.internal.network;
 
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import rltoys.experiments.scheduling.interfaces.JobQueue;
@@ -16,6 +18,7 @@ import rltoys.experiments.scheduling.internal.messages.Messages.MessageType;
 import zephyr.plugin.core.api.signals.Signal;
 
 public class SocketClient {
+  static private volatile int nbJobSendPerRequest;
   static public final Signal<String> onClassRequested = new Signal<String>();
   public final Signal<SocketClient> onClosed = new Signal<SocketClient>();
   private final Runnable clientRunnable = new Runnable() {
@@ -61,7 +64,7 @@ public class SocketClient {
         break;
       switch (message.type()) {
       case RequestJob:
-        requestJob(((MessageRequestJob) message).blocking());
+        sendJob(((MessageRequestJob) message).blocking());
         break;
       case Job:
         jobDone((MessageJob) message);
@@ -83,27 +86,29 @@ public class SocketClient {
   }
 
   synchronized private void jobDone(MessageJob message) {
-    Runnable todo = idtoJob.remove(message.id());
-    jobQueue.done(todo, message.job());
-  }
-
-  synchronized private void requestJob(boolean blocking) {
-    waitingForJob = waitingForJob || blocking;
-    Runnable todo = jobQueue.request();
-    if (todo == null && blocking)
-      return;
-    sendJob(todo);
-  }
-
-  synchronized private void sendJob(Runnable todo) {
-    if (todo == null) {
-      clientSocket.write(MessageJob.nullJob());
-      return;
+    for (int i = 0; i < message.nbJobs(); i++) {
+      Runnable todo = idtoJob.remove(message.jobIds()[i]);
+      jobQueue.done(todo, message.jobs()[i]);
     }
-    int jobId = newId();
-    idtoJob.put(jobId, todo);
-    clientSocket.write(new MessageJob(jobId, todo));
-    waitingForJob = false;
+  }
+
+  synchronized private void sendJob(boolean blocking) {
+    List<Runnable> jobs = new ArrayList<Runnable>();
+    List<Integer> jobIds = new ArrayList<Integer>();
+    for (int i = 0; i < nbJobSendPerRequest; i++) {
+      Runnable todo = jobQueue.request();
+      if (todo == null)
+        break;
+      int jobId = newId();
+      idtoJob.put(jobId, todo);
+      jobs.add(todo);
+      jobIds.add(jobId);
+    }
+    MessageJob messageJob = new MessageJob(jobs, jobIds);
+    waitingForJob = messageJob.nbJobs() == 0;
+    if (messageJob.nbJobs() == 0 && blocking)
+      return;
+    clientSocket.write(messageJob);
   }
 
   private int newId() {
@@ -116,10 +121,7 @@ public class SocketClient {
   synchronized public void wakeUp() {
     if (!waitingForJob)
       return;
-    Runnable todo = jobQueue.request();
-    if (todo == null)
-      return;
-    sendJob(todo);
+    sendJob(true);
   }
 
   public void close() {
@@ -133,5 +135,9 @@ public class SocketClient {
 
   public Collection<Runnable> pendingJobs() {
     return idtoJob.values();
+  }
+
+  public static void nbJobSendPerRequest(int nbJobSendPerRequest) {
+    SocketClient.nbJobSendPerRequest = nbJobSendPerRequest;
   }
 }

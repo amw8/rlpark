@@ -11,9 +11,6 @@ import rltoys.experiments.scheduling.internal.messages.Messages.MessageType;
 public class Message {
   protected MessageType type = MessageType.Error;
 
-  protected Message() {
-  }
-
   protected Message(MessageType type) {
     this.type = type;
   }
