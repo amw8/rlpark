@@ -32,7 +32,7 @@ public class ServerScheduler implements Scheduler {
         return;
       lastChronoValue = chrono.getCurrentChrono();
       double nbJobPerSecond = localQueue.nbJobsDone() / lastChronoValue;
-      System.out.printf("%f jobs/minutes. ", nbJobPerSecond * 60);
+      System.out.printf("%f jobs per second. ", nbJobPerSecond);
       System.out.println();
     }
   }
@@ -84,7 +84,7 @@ public class ServerScheduler implements Scheduler {
     clients.add(client);
     client.onClosed.connect(clientClosedListener);
     printConnectionInfo(client.clientName() + " connected");
-    SocketClient.nbJobSendPerRequest(Math.max(1, clients.size()));
+    SocketClient.nbJobSendPerRequest(clients.size());
   }
 
   protected void printConnectionInfo(String news) {

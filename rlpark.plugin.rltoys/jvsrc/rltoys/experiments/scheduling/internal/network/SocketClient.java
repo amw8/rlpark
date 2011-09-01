@@ -138,6 +138,6 @@ public class SocketClient {
   }
 
   public static void nbJobSendPerRequest(int nbJobSendPerRequest) {
-    SocketClient.nbJobSendPerRequest = nbJobSendPerRequest;
+    SocketClient.nbJobSendPerRequest = Math.max(1, nbJobSendPerRequest);
   }
 }

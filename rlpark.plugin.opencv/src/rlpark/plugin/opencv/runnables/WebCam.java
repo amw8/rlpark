@@ -19,32 +19,20 @@ public class WebCam implements Runnable, ImageProvider {
 
   @Override
   public void run() {
-    OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(0);
     try {
-      grabber.start();
-    } catch (Exception e) {
-      e.printStackTrace();
-      return;
-    }
-    while (clock.tick()) {
-      currentFrame = getFrame(grabber);
-      if (currentFrame == null)
-        return;
-    }
-    try {
-      grabber.stop();
+      protectedRun();
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  public IplImage getFrame(OpenCVFrameGrabber grabber) {
-    try {
-      return grabber.grab();
-    } catch (Exception e) {
-      e.printStackTrace();
+  protected void protectedRun() throws Exception {
+    OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(0);
+    grabber.start();
+    while (clock.tick()) {
+      grabber.grab();
     }
-    return null;
+    grabber.stop();
   }
 
   @Override

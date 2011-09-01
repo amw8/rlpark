@@ -29,7 +29,7 @@ public class SchedulerTestsUtils {
     @Override
     public void run() {
       try {
-        Thread.sleep((long) (Math.random() * 5));
+        Thread.sleep((long) (Math.random() * 2));
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
@@ -66,27 +66,26 @@ public class SchedulerTestsUtils {
       Assert.assertEquals(isDone, ((Job) job).done);
   }
 
-  static public void testServerScheduler(ServerScheduler scheduler) {
+  static public void testServerScheduler(ServerScheduler scheduler, int nbJobs) {
     if (scheduler.isLocalSchedulingEnabled()) {
-      testScheduler(scheduler);
+      testScheduler(scheduler, nbJobs);
       return;
     }
     ClassResolutionListener listener = new ClassResolutionListener();
     SocketClient.onClassRequested.connect(listener);
-    testScheduler(scheduler);
+    testScheduler(scheduler, nbJobs);
     SocketClient.onClassRequested.disconnect(listener);
     Assert.assertTrue(listener.names.contains(Job.class.getName()));
   }
 
-  static public void testScheduler(Scheduler scheduler) {
-    final int NbJobs = 100;
+  static public void testScheduler(Scheduler scheduler, int nbJobs) {
     for (int i = 0; i < 2; i++) {
-      List<Job> jobs = SchedulerTestsUtils.createJobs(NbJobs);
+      List<Job> jobs = SchedulerTestsUtils.createJobs(nbJobs);
       SchedulerTestsUtils.assertAreDone(jobs, false);
       JobDoneListener listener = createListener();
       Schedulers.addAll(scheduler, jobs, listener);
       scheduler.runAll();
-      Assert.assertEquals(NbJobs, listener.nbJobDone());
+      Assert.assertEquals(nbJobs, listener.nbJobDone());
       SchedulerTestsUtils.assertAreDone(listener.jobDone(), true);
     }
   }

@@ -49,7 +49,7 @@ public class SchedulerNetworkUnreliableTest {
     startUnreliableClients();
     NetworkClient reliableClient = new NetworkClient(1, Localhost, Port);
     reliableClient.start();
-    testServerScheduler(scheduler);
+    testServerScheduler(scheduler, 1000);
     reliableClient.dispose();
     scheduler.dispose();
   }
