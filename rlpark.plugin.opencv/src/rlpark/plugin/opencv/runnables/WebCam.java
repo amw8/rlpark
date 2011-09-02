@@ -2,9 +2,9 @@ package rlpark.plugin.opencv.runnables;
 
 import java.awt.image.BufferedImage;
 
-import rlpark.plugin.video.ImageProvider;
 import zephyr.plugin.core.api.Zephyr;
 import zephyr.plugin.core.api.synchronization.Clock;
+import zephyr.plugin.core.api.video.ImageProvider;
 
 import com.googlecode.javacv.OpenCVFrameGrabber;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;

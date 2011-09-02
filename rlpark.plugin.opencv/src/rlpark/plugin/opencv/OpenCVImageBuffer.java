@@ -2,7 +2,7 @@ package rlpark.plugin.opencv;
 
 import java.awt.image.BufferedImage;
 
-import rlpark.plugin.video.ImageProvider;
+import zephyr.plugin.core.api.video.ImageProvider;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;

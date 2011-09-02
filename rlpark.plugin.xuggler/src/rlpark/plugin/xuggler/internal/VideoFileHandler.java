@@ -1,4 +1,4 @@
-package rlpark.plugin.videoview.internal;
+package rlpark.plugin.xuggler.internal;
 
 import java.io.IOException;
 import java.util.List;
