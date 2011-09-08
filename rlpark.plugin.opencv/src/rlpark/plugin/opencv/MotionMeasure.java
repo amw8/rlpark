@@ -12,9 +12,11 @@ public class MotionMeasure {
   private final OpenCVImageBuffer buffer = new OpenCVImageBuffer(DEPTH, 1);
   private final OpenCVImageBuffer current = new OpenCVImageBuffer(DEPTH, 1);
   private final OpenCVImageBuffer background = new OpenCVImageBuffer(DEPTH, 1);
+  private final OpenCVImageBuffer backgroundBuffer = new OpenCVImageBuffer(DEPTH, 1);
   private final OpenCVImageBuffer difference = new OpenCVImageBuffer(DEPTH, 1);
   private double area;
   private final double lambda;
+  private double d;
   private double measure;
 
   public MotionMeasure(double lambda) {
@@ -25,13 +27,16 @@ public class MotionMeasure {
     current.update(currentFrame);
     if (background.im() == null) {
       background.update(currentFrame);
+      backgroundBuffer.update(currentFrame);
       buffer.update(currentFrame);
       difference.update(currentFrame);
       area = currentFrame.height() * currentFrame.width();
     }
-    opencv_core.cvScale(background.im(), background.im(), lambda, 0.0);
+    d = lambda * d + (1 - lambda);
+    opencv_core.cvScale(backgroundBuffer.im(), backgroundBuffer.im(), lambda, 0.0);
     opencv_core.cvScale(current.im(), buffer.im(), 1.0 - lambda, 0.0);
-    opencv_core.cvAdd(background.im(), buffer.im(), background.im(), null);
+    opencv_core.cvAdd(backgroundBuffer.im(), buffer.im(), backgroundBuffer.im(), null);
+    opencv_core.cvScale(backgroundBuffer.im(), background.im(), 1.0 / d, 0.0);
     opencv_core.cvAbsDiff(background.im(), current.im(), difference.im());
 
     measure = toValue(opencv_core.cvSum(difference.im()));
@@ -45,7 +50,7 @@ public class MotionMeasure {
   public void dispose() {
     buffer.dispose();
     current.dispose();
-    background.dispose();
+    backgroundBuffer.dispose();
     difference.dispose();
   }
 }

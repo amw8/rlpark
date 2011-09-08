@@ -44,8 +44,9 @@ public class SweepAll {
       if (!doneParameters.contains(parameters.froze()))
         todoJobList.add(context.createJob(parameters, counter));
     }
-    println(String.format("Submitting %d/%d jobs for %s...", todoJobList.size(), allParameters.size(),
-                          extractName(logFile)));
+    if (todoJobList.size() > 0)
+      println(String.format("Submitting %d/%d jobs for %s...", todoJobList.size(), allParameters.size(),
+                            extractName(logFile)));
     submitRequiredJob(logFile, parameterLabels, todoJobList);
   }
 

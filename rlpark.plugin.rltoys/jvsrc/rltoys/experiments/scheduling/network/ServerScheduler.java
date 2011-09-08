@@ -80,7 +80,7 @@ public class ServerScheduler implements Scheduler {
     localScheduler = nbLocalThread > 0 ? new LocalScheduler(nbLocalThread, localQueue) : null;
   }
 
-  protected void addClient(SocketClient client) {
+  synchronized protected void addClient(SocketClient client) {
     clients.add(client);
     client.onClosed.connect(clientClosedListener);
     printConnectionInfo(client.clientName() + " connected");
@@ -105,7 +105,7 @@ public class ServerScheduler implements Scheduler {
     localQueue.onJobDone().disconnect(listener);
   }
 
-  public void start() {
+  synchronized public void start() {
     if (!serverThread.isAlive())
       serverThread.start();
     if (localScheduler != null)
@@ -114,9 +114,9 @@ public class ServerScheduler implements Scheduler {
       clientScheduler.wakeUp();
   }
 
-  void removeClient(SocketClient client) {
-    client.onClosed.disconnect(clientClosedListener);
+  synchronized void removeClient(SocketClient client) {
     clients.remove(client);
+    client.onClosed.disconnect(clientClosedListener);
     Collection<Runnable> pendingJobs = client.pendingJobs();
     for (Runnable pendingJob : pendingJobs)
       localQueue.requestCancel(pendingJob);
@@ -125,7 +125,9 @@ public class ServerScheduler implements Scheduler {
   }
 
   @Override
-  public void dispose() {
+  synchronized public void dispose() {
+    for (SocketClient client : new ArrayList<SocketClient>(clients))
+      removeClient(client);
     try {
       serverSocket.close();
     } catch (IOException e) {
