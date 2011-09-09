@@ -20,7 +20,7 @@ import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class ServerScheduler implements Scheduler {
-  static final public double StatPeriod = 3600 * 2;
+  static final public double StatPeriod = 3600;
 
   class JobStatListener implements Listener<JobDoneEvent> {
     private final Chrono chrono = new Chrono();
@@ -34,6 +34,7 @@ public class ServerScheduler implements Scheduler {
       double nbJobPerSecond = localQueue.nbJobsDone() / lastChronoValue;
       System.out.printf("%f jobs per second. ", nbJobPerSecond);
       System.out.println();
+      chrono.start();
     }
   }
 

@@ -7,5 +7,5 @@ import rltoys.math.vector.RealVector;
 public interface StateToStateAction extends Serializable {
   RealVector stateAction(RealVector s, Action a);
 
-  int actionStateFeatureSize();
+  int vectorSize();
 }

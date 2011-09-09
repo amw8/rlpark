@@ -11,8 +11,6 @@ import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class NetworkClient {
-  private static final int SleepWhenPersitentSeconds = 600;
-  static private boolean persistentClient = false;
   static private double maximumMinutesTime = -1;
   static private String serverHost = "";
   static private int serverPort = ServerScheduler.DefaultPort;
@@ -84,9 +82,6 @@ public class NetworkClient {
     case 't':
       maximumMinutesTime = Double.parseDouble(arg.substring(2));
       break;
-    case 'p':
-      persistentClient = Boolean.parseBoolean(arg.substring(2));
-      break;
     case 'c':
       nbCore = Integer.parseInt(arg.substring(2));
       break;
@@ -102,14 +97,6 @@ public class NetworkClient {
       serverPort = Integer.parseInt(arg.substring(portSeparator));
   }
 
-  private static void sleep() {
-    try {
-      Thread.sleep(SleepWhenPersitentSeconds * 1000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-  }
-
   private static void startScheduler() throws UnknownHostException, IOException {
     NetworkClient scheduler = new NetworkClient(nbCore, serverHost, serverPort);
     if (maximumMinutesTime > 0)
@@ -119,30 +106,21 @@ public class NetworkClient {
   }
 
   private static void printParams() {
-    System.out.println("persistentClient: " + String.valueOf(persistentClient));
     System.out.println("maximumMinutesTime: " + String.valueOf(maximumMinutesTime));
     System.out.println("nbCore: " + String.valueOf(nbCore));
   }
 
   public static void main(String[] args) {
     if (args.length < 1) {
-      System.err
-          .println("Usage: java -jar <jarfile.jar> -t<max time: 30,60,... mins> -p<persistent: 0 or 1> -c<nb cores> <hostname:port>");
+      System.err.println("Usage: java -jar <jarfile.jar> -t<max time: 30,60,... mins> -c<nb cores> <hostname:port>");
       System.exit(1);
     }
     readParams(args);
     printParams();
-    do {
-      try {
-        startScheduler();
-      } catch (Exception e) {
-        if (!persistentClient)
-          e.printStackTrace();
-      }
-      if (maximumMinutesTime > 0)
-        break;
-      if (persistentClient)
-        sleep();
-    } while (persistentClient);
+    try {
+      startScheduler();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }

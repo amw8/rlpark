@@ -69,7 +69,7 @@ public class GQTest {
     ConstantPolicy targetPolicy = RandomWalk.newPolicy(random, targetLeftProbability);
     RandomWalk problem = new RandomWalk(behaviourPolicy);
     FSGAgentState agentState = new FSGAgentState(problem);
-    GQ gq = new GQ(alpha_theta, alpha_w, beta, lambda, agentState.actionStateFeatureSize());
+    GQ gq = new GQ(alpha_theta, alpha_w, beta, lambda, agentState.vectorSize());
     GreedyGQ controlGQ = gqControlFactory.createGQControl(gq, agentState.graph().actions(), agentState, targetPolicy,
                                                           behaviourPolicy);
     int nbEpisode = 0;

@@ -72,7 +72,7 @@ public class BoltzmannDistribution extends StochasticPolicy implements PolicyDis
 
   @Override
   public PVector[] createParameters(int nbFeatures) {
-    u = new PVector(toStateAction.actionStateFeatureSize());
+    u = new PVector(toStateAction.vectorSize());
     return new PVector[] { u };
   }
 

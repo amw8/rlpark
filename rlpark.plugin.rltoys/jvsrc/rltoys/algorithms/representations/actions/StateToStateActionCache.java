@@ -39,7 +39,7 @@ public class StateToStateActionCache implements StateToStateAction {
   }
 
   @Override
-  public int actionStateFeatureSize() {
-    return toStateAction.actionStateFeatureSize();
+  public int vectorSize() {
+    return toStateAction.vectorSize();
   }
 }
