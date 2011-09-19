@@ -2,7 +2,7 @@ package rltoys.experiments.parametersweep;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
@@ -12,15 +12,16 @@ import org.junit.Test;
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.internal.ParametersLogFile;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
+import rltoys.experiments.parametersweep.parameters.Parameters;
 import rltoys.experiments.scheduling.SchedulerTest;
+import rltoys.experiments.scheduling.UnreliableNetworkClientTest;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
-import rltoys.experiments.scheduling.network.NetworkClient;
 import rltoys.experiments.scheduling.network.ServerScheduler;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 
 public class SweepTest {
   private static final String JUnitFolder = ".junittests_parametersweep";
-  private static final int NbRun = 4;
+  private static final int NbRun = 3;
   private static final int Port = 5000;
 
   @BeforeClass
@@ -39,39 +40,52 @@ public class SweepTest {
   @Test(timeout = SchedulerTest.Timeout)
   public void testSweepNetworkScheduler() throws IOException {
     ServerScheduler scheduler = new ServerScheduler(Port, 0);
-    new NetworkClient(2, "localhost", Port).start();
+    UnreliableNetworkClientTest.startUnreliableClients(5);
     testSweep(scheduler);
     scheduler.dispose();
   }
 
   private void testSweep(Scheduler scheduler) throws IOException {
+    int nbParameters = 4;
+    int nbValuesFirstSweep = 5;
+    int nbValuesSecondSweep = 6;
     FileUtils.deleteDirectory(new File(JUnitFolder));
-    Assert.assertFalse(checkFile(-1));
-    int nbJobs = runFullSweep(scheduler, 5);
-    Assert.assertEquals(5 * NbRun, nbJobs);
-    nbJobs = runFullSweep(scheduler, 7);
-    Assert.assertEquals((7 - 5) * NbRun, nbJobs);
-    nbJobs = runFullSweep(scheduler, 7);
+    Assert.assertFalse(checkFile(nbValuesSecondSweep, nbParameters));
+    int nbJobs = runFullSweep(scheduler, nbValuesFirstSweep, nbParameters);
+    Assert.assertEquals((int) Math.pow(nbValuesFirstSweep, nbParameters) * NbRun, nbJobs);
+    nbJobs = runFullSweep(scheduler, nbValuesSecondSweep, nbParameters);
+    final int nbJobsPerRun = (int) (Math.pow(nbValuesSecondSweep, nbParameters) - Math.pow(nbValuesFirstSweep,
+                                                                                           nbParameters));
+    Assert.assertEquals(nbJobsPerRun * NbRun, nbJobs);
+    nbJobs = runFullSweep(scheduler, nbValuesSecondSweep, nbParameters);
     Assert.assertEquals(0, nbJobs);
-    Assert.assertTrue(checkFile(7));
+    Assert.assertTrue(checkFile(nbValuesSecondSweep, nbParameters));
   }
 
-  private boolean checkFile(int nbTotalParameters) {
-    File dataFile = new File(JUnitFolder + "/" + ProviderTest.ContextPath + "/data00.logtxt");
-    if (!dataFile.canRead())
-      return false;
-    ParametersLogFile logFile = new ParametersLogFile(dataFile.getAbsolutePath());
-    Set<FrozenParameters> parametersList = logFile.extractParameters(ProviderTest.ParameterName);
-    if (nbTotalParameters > 0 && parametersList.size() != nbTotalParameters)
-      return false;
-    for (FrozenParameters parameters : parametersList)
-      if (!ProviderTest.parametersHasBeenDone(parameters))
+  private boolean checkFile(int nbValues, int nbParameters) {
+    for (int runIndex = 0; runIndex < NbRun; runIndex++) {
+      File dataFile = new File(String.format(JUnitFolder + "/" + ProviderTest.ContextPath + "/data%02d.logtxt",
+                                             runIndex));
+      if (!dataFile.canRead())
         return false;
+      ParametersLogFile logFile = new ParametersLogFile(dataFile.getAbsolutePath());
+      List<FrozenParameters> doneParameters = logFile.extractParameters(ProviderTest.ParameterName);
+      List<Parameters> todoParameters = ProviderTest.createParameters(nbValues, nbParameters);
+      if (doneParameters.size() != todoParameters.size())
+        return false;
+      for (int i = 0; i < todoParameters.size(); i++) {
+        FrozenParameters doneParameter = doneParameters.get(i);
+        Parameters todoParameter = todoParameters.get(i);
+        Assert.assertTrue(todoParameter.compareTo(doneParameter) == 0);
+        if (!ProviderTest.parametersHasBeenDone(doneParameter))
+          return false;
+      }
+    }
     return true;
   }
 
-  private int runFullSweep(Scheduler scheduler, int nbParameters) {
-    ProviderTest provider = new ProviderTest(nbParameters);
+  private int runFullSweep(Scheduler scheduler, int nbValues, int nbParameters) {
+    ProviderTest provider = new ProviderTest(nbValues, nbParameters);
     ExperimentCounter counter = new ExperimentCounter(NbRun, JUnitFolder);
     SweepAll sweep = new SweepAll(scheduler);
     sweep.runSweep(provider, counter);

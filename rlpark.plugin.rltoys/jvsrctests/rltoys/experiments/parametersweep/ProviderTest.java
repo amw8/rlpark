@@ -13,7 +13,7 @@ import rltoys.utils.Utils;
 
 public class ProviderTest implements SweepDescriptor, Context {
   private static final String SweepDone = "sweepDone";
-  public static final String ParameterName = "ID";
+  public static final String ParameterName = "Param";
   public static final String ContextPath = "providertest";
 
   static public class SweepJob implements JobWithParameters {
@@ -40,9 +40,11 @@ public class ProviderTest implements SweepDescriptor, Context {
 
   private static final long serialVersionUID = 7141220137708536488L;
   private final int nbParameters;
+  private final int nbValues;
 
-  public ProviderTest(int nbParameters) {
+  public ProviderTest(int nbValues, int nbParameters) {
     this.nbParameters = nbParameters;
+    this.nbValues = nbValues;
   }
 
   @Override
@@ -52,10 +54,7 @@ public class ProviderTest implements SweepDescriptor, Context {
 
   @Override
   public List<Parameters> provideParameters(Context context) {
-    double[] result = new double[nbParameters];
-    for (int i = 0; i < result.length; i++)
-      result[i] = i;
-    return Parameters.combine(null, ParameterName, result);
+    return createParameters(nbValues, nbParameters);
   }
 
   @Override
@@ -75,5 +74,15 @@ public class ProviderTest implements SweepDescriptor, Context {
 
   public static boolean parametersHasBeenDone(FrozenParameters parameters) {
     return parameters.get(SweepDone) == 1;
+  }
+
+  public static List<Parameters> createParameters(int nbValues, int nbParameters) {
+    double[] parameterValues = new double[nbValues];
+    for (int i = 0; i < parameterValues.length; i++)
+      parameterValues[i] = i;
+    List<Parameters> result = null;
+    for (int i = 0; i < nbParameters; i++)
+      result = Parameters.combine(result, ParameterName + i, parameterValues);
+    return result;
   }
 }

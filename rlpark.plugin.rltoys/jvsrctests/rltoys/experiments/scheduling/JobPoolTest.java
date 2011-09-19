@@ -24,6 +24,10 @@ public class JobPoolTest {
     public void listen(JobPool pool) {
       poolDone++;
     }
+
+    public int nbPoolDone() {
+      return poolDone;
+    }
   }
 
   interface PoolFactory {

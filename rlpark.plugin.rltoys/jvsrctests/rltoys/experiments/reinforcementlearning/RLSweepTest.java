@@ -2,7 +2,7 @@ package rltoys.experiments.reinforcementlearning;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -57,7 +57,7 @@ public abstract class RLSweepTest {
       if (!dataFile.canRead())
         Assert.fail("Cannot read " + dataFile.getAbsolutePath());
       ParametersLogFile logFile = new ParametersLogFile(dataFile.getAbsolutePath());
-      Set<FrozenParameters> parametersList = logFile.extractParameters(ProviderTest.ParameterName);
+      List<FrozenParameters> parametersList = logFile.extractParameters(ProviderTest.ParameterName);
       for (FrozenParameters parameters : parametersList)
         checkParameters(divergedOnSlice, parameters, multiplier);
     }
