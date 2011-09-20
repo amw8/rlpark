@@ -10,7 +10,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import rltoys.experiments.scheduling.internal.messages.ClassLoading;
-import rltoys.experiments.scheduling.internal.messages.Messages;
 import rltoys.experiments.scheduling.internal.queue.NetworkJobQueue;
 import rltoys.experiments.scheduling.network.NetworkClient;
 import rltoys.experiments.scheduling.network.ServerScheduler;
@@ -48,7 +47,7 @@ public class UnreliableNetworkClientTest {
   @BeforeClass
   static public void junitMode() {
     ClassLoading.enableForceNetworkClassResolution();
-    Messages.disableVerbose();
+    // Messages.disableVerbose();
     // Messages.enableDebug();
   }
 

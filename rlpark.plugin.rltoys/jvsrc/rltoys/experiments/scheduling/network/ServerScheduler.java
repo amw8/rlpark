@@ -89,7 +89,7 @@ public class ServerScheduler implements Scheduler {
   }
 
   protected void printConnectionInfo(String news) {
-    Messages.println(String.format("%s. %d client%s.", news, clients.size(), clients.size() > 1 ? "s" : ""));
+    Messages.println(String.format("%s %d client%s.", news, clients.size(), clients.size() > 1 ? "s" : ""));
   }
 
   @Override
@@ -121,8 +121,9 @@ public class ServerScheduler implements Scheduler {
     Collection<Runnable> pendingJobs = client.pendingJobs();
     for (Runnable pendingJob : pendingJobs)
       localQueue.requestCancel(pendingJob);
-    printConnectionInfo(String.format("%s disconnected. Canceling %d job%s", client.clientName(), pendingJobs.size(),
-                                      pendingJobs.size() > 1 ? "s" : ""));
+    printConnectionInfo(String.format("%s disconnected. Canceling %d job%s. Did %d job%s.", client.clientName(),
+                                      pendingJobs.size(), pendingJobs.size() > 1 ? "s" : "", client.nbJobDone(),
+                                      client.nbJobDone() > 1 ? "s" : ""));
   }
 
   @Override

@@ -34,6 +34,7 @@ public class SocketClient {
   private int id;
   private String clientName;
   private final JobQueue jobQueue;
+  private int nbJobDone = 0;
 
   public SocketClient(JobQueue jobQueue, Socket clientSocket) {
     this.jobQueue = jobQueue;
@@ -89,6 +90,7 @@ public class SocketClient {
     for (int i = 0; i < message.nbJobs(); i++) {
       Runnable todo = idtoJob.remove(message.jobIds()[i]);
       jobQueue.done(todo, message.jobs()[i]);
+      nbJobDone++;
     }
   }
 
@@ -139,5 +141,9 @@ public class SocketClient {
 
   public static void nbJobSendPerRequest(int nbJobSendPerRequest) {
     SocketClient.nbJobSendPerRequest = Math.min(Math.max(1, nbJobSendPerRequest), 20);
+  }
+
+  public int nbJobDone() {
+    return nbJobDone;
   }
 }
