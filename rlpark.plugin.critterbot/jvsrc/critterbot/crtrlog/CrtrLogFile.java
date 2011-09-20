@@ -3,6 +3,9 @@ package critterbot.crtrlog;
 import java.util.ArrayList;
 import java.util.List;
 
+import rlpark.plugin.robot.RobotProblem;
+import rlpark.plugin.robot.Robots;
+import rlpark.plugin.robot.sync.ObservationVersatile;
 import rltoys.environments.envio.observations.Legend;
 import zephyr.plugin.core.api.logfiles.LogFile;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
@@ -11,14 +14,17 @@ import zephyr.plugin.core.api.synchronization.Timed;
 import critterbot.CritterbotProblem;
 import critterbot.actions.CritterbotAction;
 
-public class CrtrLogFile implements CritterbotProblem, Timed {
+public class CrtrLogFile implements CritterbotProblem, RobotProblem, Timed {
   public final String filepath;
   @Monitor(emptyLabel = true)
   private final LogFile logfile;
   private double[] current = null;
+  private ObservationVersatile nextObservation;
+  private ObservationVersatile currentObservation;
 
   public CrtrLogFile(String filepath) {
     logfile = LogFile.load(filepath);
+    step();
     this.filepath = filepath;
   }
 
@@ -36,8 +42,10 @@ public class CrtrLogFile implements CritterbotProblem, Timed {
   }
 
   public double[] step() {
+    currentObservation = nextObservation;
     logfile.step();
     current = logfile.currentLine();
+    nextObservation = new ObservationVersatile(logfile.clock.timeStep(), Robots.toByteArray(current), current);
     return current;
   }
 
@@ -72,4 +80,23 @@ public class CrtrLogFile implements CritterbotProblem, Timed {
   public double[] lastReceivedObs() {
     return current;
   }
+
+  @Override
+  public int observationPacketSize() {
+    return logfile.labels().length * 4;
+  }
+
+  @Override
+  public ObservationVersatile[] waitNewRawObs() {
+    step();
+    return lastReceivedRawObs();
+  }
+
+  @Override
+  public ObservationVersatile[] lastReceivedRawObs() {
+    if (currentObservation == null)
+      return null;
+    return new ObservationVersatile[] { currentObservation };
+  }
+
 }
