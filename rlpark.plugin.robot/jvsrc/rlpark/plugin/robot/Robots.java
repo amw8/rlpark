@@ -33,30 +33,6 @@ public class Robots {
     return BVector.toBinary(last.rawData());
   }
 
-  // ---
-  public static byte[] toByta(long data) {
-
-    return new byte[] { (byte) ((data >> 56) & 0xff), (byte) ((data >> 48) & 0xff), (byte) ((data >> 40) & 0xff),
-        (byte) ((data >> 32) & 0xff), (byte) ((data >> 24) & 0xff), (byte) ((data >> 16) & 0xff),
-        (byte) ((data >> 8) & 0xff), (byte) ((data >> 0) & 0xff), };
-  }
-
-  public static byte[] toByta(double data) {
-    return toByta(Double.doubleToRawLongBits(data));
-  }
-
-  public static byte[] toByta(double[] data) {
-    if (data == null)
-      return null;
-    // ----------
-    byte[] byts = new byte[data.length * 8];
-    for (int i = 0; i < data.length; i++)
-      System.arraycopy(toByta(data[i]), 0, byts, i * 8, 8);
-    return byts;
-  }
-
-  // --
-
   public static BinaryVector toGrayCodeBinary(ObservationVersatile[] obs) {
     ObservationVersatile last = last(obs);
     if (last == null)
@@ -85,60 +61,29 @@ public class Robots {
     }
   }
 
-  public static byte[] toByteArray(double[] current) {
-    int srcLength = current.length;
-    byte[] dst = new byte[srcLength << 2];
-
+  public static byte[] doubleArrayToByteArray(double[] current) {
+    byte[] result = new byte[current.length << 2];
     int j = 0;
-    for (int i = 0; i < srcLength; i++) {
+    for (int i = 0; i < current.length; i++) {
       int x = (int) current[i];
       byte[] b = new byte[] { (byte) (x >>> 24), (byte) (x >>> 16), (byte) (x >>> 8), (byte) x };
-      System.arraycopy(b, 0, dst, j, 4);
+      System.arraycopy(b, 0, result, j, 4);
       j += 4;
     }
-    return dst;
+    return result;
   }
 
-  public static double[] byteArrayToDoubleArray(byte[] b) {
-    double[] ret = new double[b.length / 4];
-
+  public static double[] byteArrayToDoubleArray(byte[] current) {
+    double[] result = new double[current.length / 4];
     int j = 0;
-    for (int i = 0; i < ret.length; i++) {
-      ret[i] = byteArrayToInt(Arrays.copyOfRange(b, j, j + 4));
+    for (int i = 0; i < result.length; i++) {
+      result[i] = byteArrayToInt(Arrays.copyOfRange(current, j, j + 4));
       j += 4;
     }
-    return ret;
+    return result;
   }
 
-  public static final int byteArrayToInt(byte[] b) {
-    return (b[0] << 24) + ((b[1] & 0xFF) << 16) + ((b[2] & 0xFF) << 8) + (b[3] & 0xFF);
+  public static final int byteArrayToInt(byte[] current) {
+    return (current[0] << 24) + ((current[1] & 0xFF) << 16) + ((current[2] & 0xFF) << 8) + (current[3] & 0xFF);
   }
-
-  public static void main(String[] args) {
-    int noMatch = 0;
-    int numTests = 100;
-    int numDim = 54;
-
-    System.out.println("Test converting int[] to byte[] and back. Testing " + numTests + " arrays of length " + numDim);
-    for (int i = 0; i < numTests; i++) {
-      double[] num = new double[numDim];
-      for (int j = 0; j < numDim; j++)
-        num[j] = (int) (Math.random() * 256);
-
-      byte[] ba = toByteArray(num);
-      double[] newNum = byteArrayToDoubleArray(ba);
-
-      if (!Arrays.equals(num, newNum))
-        noMatch++;
-
-    }
-
-    if (noMatch > 0)
-      System.out.println(noMatch + " errors in Conversion");
-    else
-      System.out.println("No errors in test");
-
-  }
-
-
 }

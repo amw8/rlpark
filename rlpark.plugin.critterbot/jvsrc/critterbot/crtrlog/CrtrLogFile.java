@@ -3,7 +3,7 @@ package critterbot.crtrlog;
 import java.util.ArrayList;
 import java.util.List;
 
-import rlpark.plugin.robot.RobotProblem;
+import rlpark.plugin.robot.RobotLog;
 import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.sync.ObservationVersatile;
 import rltoys.environments.envio.observations.Legend;
@@ -14,7 +14,7 @@ import zephyr.plugin.core.api.synchronization.Timed;
 import critterbot.CritterbotProblem;
 import critterbot.actions.CritterbotAction;
 
-public class CrtrLogFile implements CritterbotProblem, RobotProblem, Timed {
+public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
   public final String filepath;
   @Monitor(emptyLabel = true)
   private final LogFile logfile;
@@ -45,10 +45,12 @@ public class CrtrLogFile implements CritterbotProblem, RobotProblem, Timed {
     currentObservation = nextObservation;
     logfile.step();
     current = logfile.currentLine();
-    nextObservation = new ObservationVersatile(logfile.clock.timeStep(), Robots.toByteArray(current), current);
+    nextObservation = new ObservationVersatile(logfile.clock.timeStep(), Robots.doubleArrayToByteArray(current),
+                                               current);
     return current;
   }
 
+  @Override
   public boolean hasNextStep() {
     return !logfile.eof();
   }
@@ -99,4 +101,8 @@ public class CrtrLogFile implements CritterbotProblem, RobotProblem, Timed {
     return new ObservationVersatile[] { currentObservation };
   }
 
+  @Override
+  public ObservationVersatile getNewRawObs() {
+    return Robots.last(waitNewRawObs());
+  }
 }
