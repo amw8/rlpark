@@ -5,28 +5,38 @@ import org.junit.Test;
 
 import rltoys.experiments.parametersweep.offpolicy.evaluation.ContinuousOffPolicyEvaluation;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
-import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
+import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyProblemFactory;
+import rltoys.experiments.reinforcementlearning.OffPolicyComponentTest.OffPolicyRLProblemFactoryTest;
 import rltoys.experiments.reinforcementlearning.OffPolicyComponentTest.OffPolicySweepDescriptor;
 
-public class OffPolicyContinuousEvaluationSweepTest extends RLSweepTest {
+public class OffPolicyContinuousEvaluationSweepTest extends AbstractOffPolicyRLSweepTest {
   @Test
   public void testSweepOneEpisode() {
-    ProblemFactory problemFactory = new RLProblemFactoryTest(1, NbEvaluations);
+    OffPolicyProblemFactory problemFactory = new OffPolicyRLProblemFactoryTest(1, NbEvaluations);
     ContinuousOffPolicyEvaluation evaluation = new ContinuousOffPolicyEvaluation(10);
     testSweep(new OffPolicySweepDescriptor(problemFactory, evaluation));
-    checkFile("Problem/OffPolicyAgent", 1, Integer.MAX_VALUE);
+    checkFile("Problem/Action01", 1, Integer.MAX_VALUE);
+    checkFile("Problem/Action02", 1, Integer.MAX_VALUE);
+    Assert.assertTrue(isBehaviourPerformanceChecked());
   }
 
   @Override
-  protected void checkParameters(int divergedOnSlice, FrozenParameters parameters, int multiplier) {
+  protected void checkParameters(String testFolder, String filename, int divergedOnSlice, FrozenParameters parameters,
+      int multiplier) {
     for (String label : parameters.labels()) {
       int checkPoint = 0;
       if (label.contains("Reward"))
         checkPoint = Integer.parseInt(label.substring(label.length() - 2, label.length()));
       int sliceSize = NbEvaluations / NbRewardCheckPoint;
-      if (label.contains("Start"))
+      if (label.contains("Start")) {
         Assert.assertEquals(checkPoint * sliceSize, (int) parameters.get(label));
-      int multiplierAdjusted = adjustMultiplier(label, multiplier);
+        continue;
+      }
+      if (label.contains("Behaviour")) {
+        checkBehaviourPerformance(testFolder, filename, label, sliceSize, checkPoint, parameters.get(label));
+        continue;
+      }
+      int multiplierAdjusted = Integer.parseInt(testFolder.substring(testFolder.length() - 2));
       if (label.contains("Slice"))
         assertValue(checkPoint >= divergedOnSlice, sliceSize * multiplierAdjusted, parameters.get(label));
       if (label.contains("Cumulated"))
@@ -35,11 +45,13 @@ public class OffPolicyContinuousEvaluationSweepTest extends RLSweepTest {
     }
   }
 
-  private int adjustMultiplier(String label, int multiplier) {
-    if (label.contains("Target"))
-      return multiplier * 2;
-    if (label.contains("Behaviour"))
-      return multiplier;
-    return 0;
+  private void checkBehaviourPerformance(String testFolder, String filename, String label, int sliceSize,
+      int checkPoint, double value) {
+    double adjustedValue;
+    if (label.contains("Slice"))
+      adjustedValue = value / sliceSize;
+    else
+      adjustedValue = value / (NbRewardCheckPoint - checkPoint) / sliceSize;
+    checkBehaviourPerformanceValue(filename, label, value, adjustedValue);
   }
 }

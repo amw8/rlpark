@@ -3,12 +3,12 @@ package rltoys.experiments.scheduling.schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import rltoys.experiments.scheduling.interfaces.JobQueue;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.internal.queue.LocalQueue;
+import rltoys.utils.Scheduling;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class LocalScheduler implements Scheduler {
@@ -60,7 +60,7 @@ public class LocalScheduler implements Scheduler {
     for (int i = 0; i < nbThread; i++)
       updaters.add(new RunnableProcessor());
     futurs = new Future<?>[nbThread];
-    executor = Executors.newFixedThreadPool(nbThread);
+    executor = Scheduling.newFixedThreadPool("LocalScheduler", nbThread);
   }
 
   synchronized public void start() {

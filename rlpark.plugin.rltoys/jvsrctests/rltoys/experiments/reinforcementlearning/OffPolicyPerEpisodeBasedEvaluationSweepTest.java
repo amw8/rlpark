@@ -6,10 +6,11 @@ import org.junit.Test;
 import rltoys.experiments.parametersweep.offpolicy.evaluation.EpisodeBasedOffPolicyEvaluation;
 import rltoys.experiments.parametersweep.offpolicy.evaluation.OffPolicyEvaluation;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
-import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
+import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyProblemFactory;
+import rltoys.experiments.reinforcementlearning.OffPolicyComponentTest.OffPolicyRLProblemFactoryTest;
 import rltoys.experiments.reinforcementlearning.OffPolicyComponentTest.OffPolicySweepDescriptor;
 
-public class OffPolicyPerEpisodeBasedEvaluationSweepTest extends RLSweepTest {
+public class OffPolicyPerEpisodeBasedEvaluationSweepTest extends AbstractOffPolicyRLSweepTest {
   final static private int NbEpisode = 100;
   final static private int NbTimeSteps = 100;
   final static private int NbBehaviourRewardCheckpoint = 10;
@@ -20,41 +21,49 @@ public class OffPolicyPerEpisodeBasedEvaluationSweepTest extends RLSweepTest {
   public void testSweepEvaluationPerEpisode() {
     OffPolicyEvaluation evaluation = new EpisodeBasedOffPolicyEvaluation(NbBehaviourRewardCheckpoint, NbEvaluation,
                                                                          NbTimeStepsPerEvaluation);
-    ProblemFactory problemFactory = new RLProblemFactoryTest(NbEpisode, NbTimeSteps);
+    OffPolicyProblemFactory problemFactory = new OffPolicyRLProblemFactoryTest(NbEpisode, NbTimeSteps);
     testSweep(new OffPolicySweepDescriptor(problemFactory, evaluation));
-    checkFile("Problem/OffPolicyAgent", 1, Integer.MAX_VALUE);
+    checkFile("Problem/Action01", 1, Integer.MAX_VALUE);
+    checkFile("Problem/Action02", 1, Integer.MAX_VALUE);
+    Assert.assertTrue(isBehaviourPerformanceChecked());
   }
 
   @Override
-  protected void checkParameters(int divergedOnSlice, FrozenParameters parameters, int multiplier) {
+  protected void checkParameters(String testFolder, String filename, int divergedOnSlice, FrozenParameters parameters,
+      int multiplier) {
     for (String label : parameters.labels()) {
       if (!label.contains("Reward"))
         continue;
       int checkPoint = Integer.parseInt(label.substring(label.length() - 2, label.length()));
       if (label.contains("Behaviour"))
-        checkBehaviourParameter(checkPoint, label, (int) parameters.get(label));
+        checkBehaviourParameter(filename, checkPoint, label, (int) parameters.get(label));
       if (label.contains("Target"))
-        checkTargetParameter(checkPoint, label, (int) parameters.get(label));
+        checkTargetParameter(testFolder, checkPoint, label, (int) parameters.get(label));
     }
   }
 
-  private void checkBehaviourParameter(int checkPoint, String label, int value) {
+  private void checkBehaviourParameter(String filename, int checkPoint, String label, double value) {
     int sliceSize = NbEpisode / NbRewardCheckPoint;
-    if (label.contains("Start"))
-      Assert.assertEquals(checkPoint * sliceSize, value);
+    if (label.contains("Start")) {
+      Assert.assertEquals(checkPoint * sliceSize, (int) value);
+      return;
+    }
+    double adjustedValue = 0.0;
     if (label.contains("Slice"))
-      Assert.assertEquals(sliceSize * NbTimeSteps, value);
+      adjustedValue = value / (sliceSize * NbTimeSteps);
     if (label.contains("Cumulated"))
-      Assert.assertEquals((NbRewardCheckPoint - checkPoint) * sliceSize * NbTimeSteps, value);
+      adjustedValue = value / ((NbRewardCheckPoint - checkPoint) * sliceSize * NbTimeSteps);
+    checkBehaviourPerformanceValue(filename, label, value, adjustedValue);
   }
 
-  private void checkTargetParameter(int checkPoint, String label, int value) {
+  private void checkTargetParameter(String testFolder, int checkPoint, String label, int value) {
+    int multiplier = Integer.parseInt(testFolder.substring(testFolder.length() - 2));
     Assert.assertTrue(checkPoint < NbEvaluation);
     if (label.contains("Start"))
       Assert.assertEquals(checkPoint, value);
     if (label.contains("Slice"))
-      Assert.assertEquals(NbTimeStepsPerEvaluation * 2, value);
+      Assert.assertEquals(NbTimeStepsPerEvaluation * multiplier, value);
     if (label.contains("Cumulated"))
-      Assert.assertEquals((NbEvaluation - checkPoint) * NbTimeStepsPerEvaluation * 2, value);
+      Assert.assertEquals((NbEvaluation - checkPoint) * NbTimeStepsPerEvaluation * multiplier, value);
   }
 }

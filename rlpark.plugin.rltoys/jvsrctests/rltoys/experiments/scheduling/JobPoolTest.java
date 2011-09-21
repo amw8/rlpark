@@ -69,6 +69,7 @@ public class JobPoolTest {
     Assert.assertEquals(NbPool, poolListener.poolDone);
     Assert.assertEquals(NbJobs * NbPool, jobListener.nbJobDone());
     SchedulerTestsUtils.assertAreDone(jobListener.jobDone(), true);
+    scheduler.dispose();
   }
 
   private JobPool preparePool(PoolFactory poolFactory, JobPoolListenerTest poolListener,

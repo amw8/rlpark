@@ -126,4 +126,9 @@ public class RandomNetworkScheduler implements Serializable {
   synchronized final void setOutputOn(int index) {
     output.setOn(index);
   }
+
+  public void dispose() {
+    executor.shutdown();
+    executor = null;
+  }
 }

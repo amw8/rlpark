@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import rltoys.algorithms.learning.predictions.LearningAlgorithm;
 import rltoys.algorithms.learning.predictions.supervised.Adaline;
-import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
 import rltoys.algorithms.representations.ltu.networks.AutoRegulatedNetwork;
+import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
 import rltoys.algorithms.representations.ltu.networks.RandomNetworks;
 import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
 import rltoys.algorithms.representations.ltu.units.LTUThreshold;
@@ -33,6 +33,7 @@ public class RandomNetworkTest {
     Assert.assertEquals(1, (int) projected.getEntry(15));
     projected = randomNetwork.project(toBVector(inputSize, new int[] { 0, 2 }));
     Assert.assertEquals(0, (int) projected.getEntry(15));
+    randomNetwork.dispose();
   }
 
   private BinaryTargetProblem createProblem() {
@@ -94,6 +95,7 @@ public class RandomNetworkTest {
     RandomNetwork randomNetwork = new RandomNetwork(problem.inputSize, 1000);
     RandomNetworks.fullyConnect(new Random(0), randomNetwork, new LTUThreshold());
     evaluateRepresentation(problem, randomNetwork, 0.09);
+    randomNetwork.dispose();
   }
 
   @Test
@@ -103,6 +105,7 @@ public class RandomNetworkTest {
     RandomNetwork randomNetwork = new RandomNetwork(problem.inputSize, 1000);
     RandomNetworks.fullyConnect(new Random(0), randomNetwork, ltu);
     evaluateRepresentation(problem, randomNetwork, 0.08);
+    randomNetwork.dispose();
   }
 
   @Test
@@ -112,6 +115,7 @@ public class RandomNetworkTest {
     RandomNetwork randomNetwork = new AutoRegulatedNetwork(new Random(0), problem.inputSize, 1000, .2, .3);
     RandomNetworks.fullyConnect(new Random(0), randomNetwork, ltu);
     evaluateRepresentation(problem, randomNetwork, 0.08);
+    randomNetwork.dispose();
   }
 
 }
