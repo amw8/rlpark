@@ -8,9 +8,9 @@ import rltoys.math.vector.RealVector;
 
 public class GQOffPolicyControl implements Control, OffPolicyLearner {
   private static final long serialVersionUID = -1080045423180429474L;
-  private final ExpectedGQ gq;
+  private final GreedyGQ gq;
 
-  public GQOffPolicyControl(ExpectedGQ gq) {
+  public GQOffPolicyControl(GreedyGQ gq) {
     this.gq = gq;
   }
 

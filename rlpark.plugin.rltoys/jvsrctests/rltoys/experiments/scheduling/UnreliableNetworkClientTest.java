@@ -35,7 +35,7 @@ public class UnreliableNetworkClientTest {
       if (terminated)
         return null;
       Runnable runnable = super.request();
-      if (runnable != null && random.nextFloat() < .2) {
+      if (runnable != null && random.nextFloat() < .1) {
         terminated = true;
         onClose.fire(this);
         return null;

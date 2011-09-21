@@ -7,11 +7,11 @@ import rltoys.algorithms.representations.actions.StateToStateAction;
 import rltoys.environments.envio.OffPolicyLearner;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.PVector;
+import rltoys.math.vector.implementations.SVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 public class GreedyGQ implements Predictor, OffPolicyLearner {
-  private static final long serialVersionUID = -8310145173177914856L;
-
+  private static final long serialVersionUID = 7017521530598253457L;
   @Monitor
   protected final GQ gq;
   @Monitor
@@ -20,19 +20,32 @@ public class GreedyGQ implements Predictor, OffPolicyLearner {
   protected final StateToStateAction toStateAction;
   @Monitor
   public double rho_t;
+  private final Action[] actions;
 
-  public GreedyGQ(GQ gq, StateToStateAction toStateAction, Policy target, Policy behaviour) {
+
+  public GreedyGQ(GQ gq, Action[] actions, StateToStateAction toStateAction, Policy target, Policy behaviour) {
     this.gq = gq;
     this.target = target;
     this.behaviour = behaviour;
     this.toStateAction = toStateAction;
+    this.actions = actions;
+
   }
 
   public double update(RealVector s_t, Action a_t, double r_tp1, double z_tp1, RealVector s_tp1, Action a_tp1) {
-    rho_t = a_t != null ? target.pi(s_t, a_t) / behaviour.pi(s_t, a_t) : 0;
-    RealVector sa_t = toStateAction.stateAction(s_t, a_t);
-    RealVector sa_tp1 = toStateAction.stateAction(s_tp1, a_tp1);
-    return gq.update(sa_t, rho_t, r_tp1, sa_tp1, z_tp1);
+    rho_t = 0.0;
+    if (a_t != null)
+      rho_t = target.pi(s_t, a_t) / behaviour.pi(s_t, a_t);
+    SVector sa_bar_tp1 = null;
+    if (s_t != null && s_tp1 != null) {
+      sa_bar_tp1 = new SVector(gq.v.size);
+      for (Action a : actions) {
+        RealVector sa_tp1 = toStateAction.stateAction(s_tp1, a);
+        sa_bar_tp1.addToSelf(sa_tp1.mapMultiply(target.pi(s_tp1, a)));
+      }
+    }
+    RealVector phi_stat = toStateAction.stateAction(s_t, a_t);
+    return gq.update(phi_stat, rho_t, r_tp1, sa_bar_tp1, z_tp1);
   }
 
   @Override

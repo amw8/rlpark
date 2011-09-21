@@ -25,18 +25,11 @@ public class GQTest {
     GreedyGQ createGQControl(GQ gq, Action[] actions, StateToStateAction toStateAction, Policy target, Policy behaviour);
   }
 
-  private final GQControlFactory otherGQFactory = new GQControlFactory() {
-    @Override
-    public GreedyGQ createGQControl(GQ gq, Action[] actions, StateToStateAction toStateAction, Policy target,
-        Policy behaviour) {
-      return new GreedyGQ(gq, toStateAction, target, behaviour);
-    }
-  };
   private final GQControlFactory defaultGQFactory = new GQControlFactory() {
     @Override
     public GreedyGQ createGQControl(GQ gq, Action[] actions, StateToStateAction toStateAction, Policy target,
         Policy behaviour) {
-      return new ExpectedGQ(gq, actions, toStateAction, target, behaviour);
+      return new GreedyGQ(gq, actions, toStateAction, target, behaviour);
     }
   };
 
@@ -46,7 +39,6 @@ public class GQTest {
     testGQOnRandomWalk(0.1, 0.01, 0.0, 0.0, 0.5, 0.5);
     testGQOnRandomWalk(0.1, 0.01, 0.0, 0.1, 0.5, 0.5);
     testGQOnRandomWalk(0.1, 0.01, 0.5, 0.1, 0.5, 0.5);
-    testGQOnRandomWalk(0.1, 0.01, 0.5, 0.1, 0.5, 0.5, otherGQFactory);
   }
 
   @Test
