@@ -6,13 +6,20 @@ import java.util.List;
 
 import junit.framework.Assert;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
+import rltoys.experiments.scheduling.interfaces.JobPool;
+import rltoys.experiments.scheduling.interfaces.JobPool.JobPoolListener;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.internal.network.SocketClient;
 import rltoys.experiments.scheduling.network.ServerScheduler;
+import rltoys.experiments.scheduling.pools.FileJobPool;
 import rltoys.experiments.scheduling.schedulers.Schedulers;
 import zephyr.plugin.core.api.signals.Listener;
 
 public class SchedulerTestsUtils {
+  static final String Localhost = "localhost";
+  static final int Port = 5000;
+  public static final int Timeout = 1000000;
+
   static class ClassResolutionListener implements Listener<String> {
     final List<String> names = new ArrayList<String>();
 
@@ -28,11 +35,6 @@ public class SchedulerTestsUtils {
 
     @Override
     public void run() {
-      try {
-        Thread.sleep((long) (Math.random() * 5));
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
       done = true;
     }
   }
@@ -66,32 +68,48 @@ public class SchedulerTestsUtils {
       Assert.assertEquals(isDone, ((Job) job).done);
   }
 
-  static public void testServerScheduler(ServerScheduler scheduler) {
+  static public void testServerScheduler(ServerScheduler scheduler, int nbJobs) {
     if (scheduler.isLocalSchedulingEnabled()) {
-      testScheduler(scheduler);
+      testScheduler(scheduler, nbJobs);
       return;
     }
     ClassResolutionListener listener = new ClassResolutionListener();
     SocketClient.onClassRequested.connect(listener);
-    testScheduler(scheduler);
+    testScheduler(scheduler, nbJobs);
     SocketClient.onClassRequested.disconnect(listener);
     Assert.assertTrue(listener.names.contains(Job.class.getName()));
   }
 
-  static public void testScheduler(Scheduler scheduler) {
-    final int NbJobs = 100;
+  static public void testScheduler(Scheduler scheduler, int nbJobs) {
     for (int i = 0; i < 2; i++) {
-      List<Job> jobs = SchedulerTestsUtils.createJobs(NbJobs);
+      List<Job> jobs = SchedulerTestsUtils.createJobs(nbJobs);
       SchedulerTestsUtils.assertAreDone(jobs, false);
       JobDoneListener listener = createListener();
       Schedulers.addAll(scheduler, jobs, listener);
       scheduler.runAll();
-      Assert.assertEquals(NbJobs, listener.nbJobDone());
+      Assert.assertEquals(nbJobs, listener.nbJobDone());
       SchedulerTestsUtils.assertAreDone(listener.jobDone(), true);
     }
   }
 
   static public JobDoneListener createListener() {
     return new JobDoneListener();
+  }
+
+  static private JobPool[] createPools(List<Job> jobs, JobDoneListener jobListener, int nbPools,
+      JobPoolListener poolListener) {
+    JobPool[] pools = new FileJobPool[nbPools];
+    for (int i = 0; i < pools.length; i++)
+      pools[i] = new FileJobPool(poolListener, jobListener);
+    for (int i = 0; i < jobs.size(); i++)
+      pools[i % pools.length].add(jobs.get(i));
+    return pools;
+  }
+
+  static public void submitJobsInPool(ServerScheduler scheduler, List<Job> jobs, JobDoneListener jobListener,
+      JobPoolListener poolListener, int nbPool) {
+    JobPool[] pools = createPools(jobs, jobListener, nbPool, poolListener);
+    for (JobPool pool : pools)
+      pool.submitTo(scheduler);
   }
 }

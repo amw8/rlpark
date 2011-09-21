@@ -9,6 +9,7 @@ import rltoys.environments.envio.problems.RLProblem;
 import rltoys.experiments.parametersweep.parameters.Parameters;
 import rltoys.experiments.parametersweep.reinforcementlearning.AgentFactory;
 
+@SuppressWarnings("serial")
 class RLAgentFactoryTest implements AgentFactory {
   final Action agentAction;
   final int divergeAfter;

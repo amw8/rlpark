@@ -7,6 +7,7 @@ import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.observations.TRStep;
 
 public class EvaluatedOffPolicyLearner implements RLAgent {
+  private static final long serialVersionUID = 1863728076381568361L;
   private final OffPolicyLearner learner;
   private final Projector projector;
 

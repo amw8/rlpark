@@ -12,13 +12,23 @@ import rltoys.experiments.scheduling.internal.messages.MessageClassData;
 public class NetworkClassLoader extends ClassLoader implements NetworkFindClass {
   private final SyncSocket socket;
   private final Map<String, Class<?>> cache = new HashMap<String, Class<?>>();
+  private boolean isDisposed = false;
 
   public NetworkClassLoader(SyncSocket socket) {
     this.socket = socket;
   }
 
   @Override
+  protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+    if (isDisposed)
+      return null;
+    return super.loadClass(name, resolve);
+  }
+
+  @Override
   public Class<?> findClass(String name) {
+    if (isDisposed)
+      return null;
     Class<?> result = cache.get(name);
     if (result != null)
       return result;
@@ -32,6 +42,10 @@ public class NetworkClassLoader extends ClassLoader implements NetworkFindClass 
       e.printStackTrace();
     }
     return null;
+  }
+
+  public void dispose() {
+    isDisposed = true;
   }
 
   static public NetworkClassLoader newClassLoader(final SyncSocket socket) {

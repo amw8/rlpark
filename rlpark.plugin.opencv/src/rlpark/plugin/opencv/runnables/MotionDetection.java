@@ -13,7 +13,7 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 public class MotionDetection implements Runnable {
   private final Clock clock = new Clock();
   private final OpenCVImageProvider webcam = new OpenCVImageProvider();
-  private final MotionMeasure motionMeasure = new MotionMeasure();
+  private final MotionMeasure motionMeasure = new MotionMeasure(.99);
 
   public MotionDetection() {
     Zephyr.advertise(clock, this);

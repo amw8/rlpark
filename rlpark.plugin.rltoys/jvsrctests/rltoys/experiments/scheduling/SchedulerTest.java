@@ -34,7 +34,7 @@ public class SchedulerTest {
   @Test(timeout = Timeout)
   public void testJobScheduler() {
     LocalScheduler scheduler = new LocalScheduler(10);
-    SchedulerTestsUtils.testScheduler(scheduler);
+    SchedulerTestsUtils.testScheduler(scheduler, 100000);
     scheduler.dispose();
   }
 
@@ -61,7 +61,7 @@ public class SchedulerTest {
   @Test(timeout = Timeout)
   public void testServerScheduler() throws IOException {
     ServerScheduler scheduler = new ServerScheduler(Port, 10);
-    SchedulerTestsUtils.testServerScheduler(scheduler);
+    SchedulerTestsUtils.testServerScheduler(scheduler, 10000);
     scheduler.dispose();
   }
 
@@ -70,7 +70,7 @@ public class SchedulerTest {
     ServerScheduler scheduler = new ServerScheduler(Port, 0);
     NetworkClient client01 = new NetworkClient(1, Localhost, Port);
     client01.start();
-    SchedulerTestsUtils.testServerScheduler(scheduler);
+    SchedulerTestsUtils.testServerScheduler(scheduler, 1000);
     client01.dispose();
     scheduler.dispose();
   }
@@ -80,7 +80,7 @@ public class SchedulerTest {
     ServerScheduler scheduler = new ServerScheduler(Port, 0);
     NetworkClient client01 = new NetworkClient(2, Localhost, Port);
     client01.start();
-    SchedulerTestsUtils.testServerScheduler(scheduler);
+    SchedulerTestsUtils.testServerScheduler(scheduler, 10000);
     scheduler.dispose();
     client01.dispose();
   }
@@ -92,7 +92,7 @@ public class SchedulerTest {
     NetworkClient client02 = new NetworkClient(10, Localhost, Port);
     client01.start();
     client02.start();
-    SchedulerTestsUtils.testServerScheduler(scheduler);
+    SchedulerTestsUtils.testServerScheduler(scheduler, 50000);
     scheduler.dispose();
     client01.dispose();
     client02.dispose();
@@ -102,7 +102,7 @@ public class SchedulerTest {
     ServerScheduler scheduler = new ServerScheduler(Port, 0);
     Command command = new Command("jar client", "/usr/bin/java", "-jar", "rltoys-client.jar", "localhost");
     command.start();
-    SchedulerTestsUtils.testServerScheduler(scheduler);
+    SchedulerTestsUtils.testServerScheduler(scheduler, 1000);
     scheduler.dispose();
     command.kill();
   }

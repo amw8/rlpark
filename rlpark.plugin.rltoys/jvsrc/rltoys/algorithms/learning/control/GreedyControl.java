@@ -16,8 +16,8 @@ public class GreedyControl implements Control, Predictor {
   }
 
   @Override
-  public Action step(RealVector s_t, Action a_t, RealVector s_tp1, double r_tp1) {
-    return acting.decide(s_tp1);
+  public Action step(RealVector x_t, Action a_t, RealVector x_tp1, double r_tp1) {
+    return acting.decide(x_tp1);
   }
 
   @Override

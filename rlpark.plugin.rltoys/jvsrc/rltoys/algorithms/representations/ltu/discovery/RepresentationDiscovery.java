@@ -7,20 +7,17 @@ import java.util.Random;
 import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
 import rltoys.algorithms.representations.ltu.networks.RandomNetworks;
 import rltoys.algorithms.representations.ltu.units.LTU;
-import zephyr.plugin.core.api.monitoring.annotations.IgnoreMonitor;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.signals.Signal;
 
-@Monitor
 public class RepresentationDiscovery implements Serializable {
   private static final long serialVersionUID = 8579686361420622461L;
   public final Signal<LTU> onLTUAdded = new Signal<LTU>();
-  @IgnoreMonitor
   private final RandomNetwork network;
+  @Monitor
   private final WeightSorter sorter;
   private final LinkedList<Integer> protectedUnits = new LinkedList<Integer>();
   private final int nbProtectedUnits;
-  @IgnoreMonitor
   private final LTU prototype;
   private final Random random;
   private int worstUnit;

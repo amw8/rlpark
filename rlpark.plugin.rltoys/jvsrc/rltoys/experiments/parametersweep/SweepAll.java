@@ -3,7 +3,6 @@ package rltoys.experiments.parametersweep;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.interfaces.Context;
@@ -38,14 +37,15 @@ public class SweepAll {
       ParametersLogFile logFile) {
     List<Parameters> allParameters = sweepDescriptor.provideParameters(context);
     String[] parameterLabels = allParameters.get(0).labels();
-    Set<FrozenParameters> doneParameters = logFile.extractParameters(parameterLabels);
+    List<FrozenParameters> doneParameters = logFile.extractParameters(parameterLabels);
     List<Runnable> todoJobList = new ArrayList<Runnable>();
     for (Parameters parameters : allParameters) {
       if (!doneParameters.contains(parameters.froze()))
         todoJobList.add(context.createJob(parameters, counter));
     }
-    println(String.format("Submitting %d/%d jobs for %s...", todoJobList.size(), allParameters.size(),
-                          extractName(logFile)));
+    if (todoJobList.size() > 0)
+      println(String.format("Submitting %d/%d jobs for %s...", todoJobList.size(), allParameters.size(),
+                            extractName(logFile)));
     submitRequiredJob(logFile, parameterLabels, todoJobList);
   }
 

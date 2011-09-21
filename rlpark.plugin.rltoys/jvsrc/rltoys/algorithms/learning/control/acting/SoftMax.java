@@ -23,7 +23,7 @@ public class SoftMax extends StochasticPolicy implements MonitorContainer {
   private final Predictor predictor;
   private final Action[] availableActions;
 
-  public SoftMax(Random random, Action[] actions, Predictor predictor, StateToStateAction toStateAction, double tau) {
+  public SoftMax(Random random, Predictor predictor, Action[] actions, StateToStateAction toStateAction, double tau) {
     super(random);
     this.toStateAction = toStateAction;
     this.tau = tau;
@@ -31,8 +31,8 @@ public class SoftMax extends StochasticPolicy implements MonitorContainer {
     availableActions = actions;
   }
 
-  public SoftMax(Random random, Action[] actions, Predictor predictor, StateToStateAction toStateAction) {
-    this(random, actions, predictor, toStateAction, 1);
+  public SoftMax(Random random, Predictor predictor, Action[] actions, StateToStateAction toStateAction) {
+    this(random, predictor, actions, toStateAction, 1);
   }
 
   @Override

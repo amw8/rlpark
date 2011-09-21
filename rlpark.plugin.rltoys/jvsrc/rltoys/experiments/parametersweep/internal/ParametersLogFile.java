@@ -10,7 +10,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,9 +52,9 @@ public class ParametersLogFile {
     return new FrozenParameters(parameterMap, resultMap);
   }
 
-  public Set<FrozenParameters> extractParameters(String... parameterLabelsArray) {
+  public List<FrozenParameters> extractParameters(String... parameterLabelsArray) {
     Set<String> parameterLabels = Utils.asSet(parameterLabelsArray);
-    Set<FrozenParameters> result = new LinkedHashSet<FrozenParameters>();
+    List<FrozenParameters> result = new ArrayList<FrozenParameters>();
     if (!canRead())
       return result;
     FileInputStream in = null;
@@ -86,7 +85,7 @@ public class ParametersLogFile {
     return new File(filepath).canRead();
   }
 
-  public void writeParameters(Set<FrozenParameters> unsortedResultingParameters) {
+  public void writeParameters(List<FrozenParameters> unsortedResultingParameters) {
     try {
       List<FrozenParameters> resultingParameters = new ArrayList<FrozenParameters>(unsortedResultingParameters);
       Collections.sort(resultingParameters);
@@ -116,7 +115,7 @@ public class ParametersLogFile {
   }
 
   public void reorganizeLogFile(String... parameterLabelsArray) {
-    Set<FrozenParameters> logFileData = extractParameters(parameterLabelsArray);
+    List<FrozenParameters> logFileData = extractParameters(parameterLabelsArray);
     writeParameters(logFileData);
   }
 }

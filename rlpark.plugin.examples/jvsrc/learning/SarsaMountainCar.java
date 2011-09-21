@@ -24,7 +24,7 @@ public class SarsaMountainCar {
     double alpha = .2 / tileCoders.nbActive();
     double gamma = 0.99;
     double lambda = .3;
-    Sarsa sarsa = new Sarsa(alpha, gamma, lambda, toStateAction.actionStateFeatureSize(), new AMaxTraces());
+    Sarsa sarsa = new Sarsa(alpha, gamma, lambda, toStateAction.vectorSize(), new AMaxTraces());
     double epsilon = 0.01;
     Policy acting = new EpsilonGreedy(new Random(0), problem.actions(), toStateAction, sarsa, epsilon);
     SarsaControl control = new SarsaControl(acting, toStateAction, sarsa);

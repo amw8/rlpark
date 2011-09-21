@@ -2,12 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="zephyr.filehandler">
-      <client
-            class="rlpark.plugin.videoview.internal.VideoFileHandler">
-      </client>
-   </extension>
-   <extension
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"

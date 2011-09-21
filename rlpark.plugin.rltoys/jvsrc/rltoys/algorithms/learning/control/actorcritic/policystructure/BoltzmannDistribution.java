@@ -8,6 +8,7 @@ import rltoys.algorithms.representations.acting.PolicyDistribution;
 import rltoys.algorithms.representations.acting.StochasticPolicy;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.StateToStateAction;
+import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
@@ -22,7 +23,7 @@ public class BoltzmannDistribution extends StochasticPolicy implements PolicyDis
   @Monitor(level = 4)
   private PVector u;
   private RealVector lastS;
-  private PVector averagePhi;
+  private MutableVector averagePhi;
   private final Action[] actions;
   private final StateToStateAction toStateAction;
 
@@ -43,7 +44,7 @@ public class BoltzmannDistribution extends StochasticPolicy implements PolicyDis
       return;
     lastS = s;
     double normalizeSum = 0;
-    averagePhi = new PVector(u.size);
+    averagePhi = s.newInstance(u.size);
     for (int a_i = 0; a_i < actions.length; a_i++) {
       RealVector phi_sa = toStateAction.stateAction(s, actions[a_i]);
       double probabilityNotNormalized = Math.exp(u.dotProduct(phi_sa));
@@ -72,7 +73,7 @@ public class BoltzmannDistribution extends StochasticPolicy implements PolicyDis
 
   @Override
   public PVector[] createParameters(int nbFeatures) {
-    u = new PVector(toStateAction.actionStateFeatureSize());
+    u = new PVector(toStateAction.vectorSize());
     return new PVector[] { u };
   }
 

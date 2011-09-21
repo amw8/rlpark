@@ -3,7 +3,7 @@ package rlpark.plugin.irobot.logfiles;
 import java.io.IOException;
 
 import rlpark.plugin.irobot.data.IRobotDrops;
-import rlpark.plugin.robot.RobotProblem;
+import rlpark.plugin.robot.RobotLog;
 import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.disco.datagroup.DropScalarGroup;
 import rlpark.plugin.robot.disco.drops.Drop;
@@ -14,7 +14,7 @@ import rltoys.environments.envio.observations.Legend;
 import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
 import zephyr.plugin.core.api.monitoring.abstracts.MonitorContainer;
 
-public class CreateBinaryLogfile implements MonitorContainer, RobotProblem {
+public class CreateBinaryLogfile implements MonitorContainer, RobotLog {
   public static final String Extension = "crtbin";
   private final static Drop sensorDrop = IRobotDrops.newCreateSensorDrop();
   private final static DropScalarGroup sensorGroup = new DropScalarGroup(sensorDrop);
@@ -41,6 +41,7 @@ public class CreateBinaryLogfile implements MonitorContainer, RobotProblem {
     return sensorGroup.legend();
   }
 
+  @Override
   public boolean hasNextStep() {
     return nextObservation != null;
   }
@@ -48,6 +49,11 @@ public class CreateBinaryLogfile implements MonitorContainer, RobotProblem {
   public void step() {
     currentObservation = nextObservation;
     nextObservation = readNextObservation();
+  }
+
+  @Override
+  public ObservationVersatile getNewRawObs() {
+    return Robots.last(waitNewRawObs());
   }
 
   @Override

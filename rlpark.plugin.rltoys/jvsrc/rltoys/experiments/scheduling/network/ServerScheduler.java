@@ -20,7 +20,7 @@ import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class ServerScheduler implements Scheduler {
-  static final public double StatPeriod = 3600 * 2;
+  static final public double StatPeriod = 3600;
 
   class JobStatListener implements Listener<JobDoneEvent> {
     private final Chrono chrono = new Chrono();
@@ -32,8 +32,9 @@ public class ServerScheduler implements Scheduler {
         return;
       lastChronoValue = chrono.getCurrentChrono();
       double nbJobPerSecond = localQueue.nbJobsDone() / lastChronoValue;
-      System.out.printf("%f jobs/minutes. ", nbJobPerSecond * 60);
+      System.out.printf("%f jobs per second. ", nbJobPerSecond);
       System.out.println();
+      chrono.start();
     }
   }
 
@@ -80,14 +81,15 @@ public class ServerScheduler implements Scheduler {
     localScheduler = nbLocalThread > 0 ? new LocalScheduler(nbLocalThread, localQueue) : null;
   }
 
-  protected void addClient(SocketClient client) {
+  synchronized protected void addClient(SocketClient client) {
     clients.add(client);
     client.onClosed.connect(clientClosedListener);
     printConnectionInfo(client.clientName() + " connected");
+    SocketClient.nbJobSendPerRequest(clients.size());
   }
 
   protected void printConnectionInfo(String news) {
-    Messages.println(String.format("%s. %d client%s.", news, clients.size(), clients.size() > 1 ? "s" : ""));
+    Messages.println(String.format("%s %d client%s.", news, clients.size(), clients.size() > 1 ? "s" : ""));
   }
 
   @Override
@@ -104,7 +106,7 @@ public class ServerScheduler implements Scheduler {
     localQueue.onJobDone().disconnect(listener);
   }
 
-  public void start() {
+  synchronized public void start() {
     if (!serverThread.isAlive())
       serverThread.start();
     if (localScheduler != null)
@@ -113,18 +115,21 @@ public class ServerScheduler implements Scheduler {
       clientScheduler.wakeUp();
   }
 
-  void removeClient(SocketClient client) {
-    client.onClosed.disconnect(clientClosedListener);
+  synchronized void removeClient(SocketClient client) {
     clients.remove(client);
+    client.onClosed.disconnect(clientClosedListener);
     Collection<Runnable> pendingJobs = client.pendingJobs();
     for (Runnable pendingJob : pendingJobs)
       localQueue.requestCancel(pendingJob);
-    printConnectionInfo(String.format("%s disconnected. Canceling %d job%s", client.clientName(), pendingJobs.size(),
-                                      pendingJobs.size() > 1 ? "s" : ""));
+    printConnectionInfo(String.format("%s disconnected. Canceling %d job%s. Did %d job%s.", client.clientName(),
+                                      pendingJobs.size(), pendingJobs.size() > 1 ? "s" : "", client.nbJobDone(),
+                                      client.nbJobDone() > 1 ? "s" : ""));
   }
 
   @Override
-  public void dispose() {
+  synchronized public void dispose() {
+    for (SocketClient client : new ArrayList<SocketClient>(clients))
+      removeClient(client);
     try {
       serverSocket.close();
     } catch (IOException e) {

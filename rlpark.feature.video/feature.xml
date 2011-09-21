@@ -108,20 +108,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
          version="1.0.0.qualifier"/>
 
    <plugin
-         id="rlpark.plugin.video"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="rlpark.plugin.videoview"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="rlpark.plugin.opencv"
          download-size="0"
          install-size="0"

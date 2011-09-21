@@ -8,8 +8,8 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
-import rlpark.plugin.video.ImageProvider;
 import zephyr.plugin.core.api.synchronization.Clock;
+import zephyr.plugin.core.api.video.ImageProvider;
 
 import com.xuggle.xuggler.Global;
 import com.xuggle.xuggler.IAudioSamples;

@@ -1,30 +1,30 @@
 package rltoys.agents;
 
 import rltoys.algorithms.learning.control.Control;
+import rltoys.algorithms.representations.Projector;
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.algorithms.representations.tilescoding.TileCoders;
 import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-public class StateTiledCodedAgent implements RLAgent {
+public class AgentFA implements RLAgent {
+  private static final long serialVersionUID = -8694734303900854141L;
   @Monitor
-  private final Control control;
+  protected final Control control;
   @Monitor
-  private final TileCoders tilesCoder;
-  private RealVector x_t;
+  protected final Projector projector;
+  protected RealVector x_t;
 
-  public StateTiledCodedAgent(Control control, TileCoders tilesCoder) {
+  public AgentFA(Control control, Projector projector) {
     this.control = control;
-    this.tilesCoder = tilesCoder;
+    this.projector = projector;
   }
 
   @Override
   public Action getAtp1(TRStep step) {
-    double r_tp1 = step.r_tp1;
-    RealVector x_tp1 = tilesCoder.project(step.o_tp1);
-    Action a_tp1 = control.step(x_t, step.a_t, x_tp1, r_tp1);
+    RealVector x_tp1 = projector.project(step.o_tp1);
+    Action a_tp1 = control.step(x_t, step.a_t, x_tp1, step.r_tp1);
     x_t = x_tp1;
     return a_tp1;
   }
@@ -33,7 +33,7 @@ public class StateTiledCodedAgent implements RLAgent {
     return control;
   }
 
-  public TileCoders tileCoder() {
-    return tilesCoder;
+  public Projector projector() {
+    return projector;
   }
 }

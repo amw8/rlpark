@@ -17,7 +17,7 @@ public class TabularAction implements StateToStateAction {
   }
 
   @Override
-  public int actionStateFeatureSize() {
+  public int vectorSize() {
     return stateFeatureSize * actions.length;
   }
 
@@ -27,7 +27,7 @@ public class TabularAction implements StateToStateAction {
       return null;
     if (s instanceof BinaryVector)
       return stateAction((BinaryVector) s, a);
-    MutableVector phi_sa = s.newInstance(actionStateFeatureSize());
+    MutableVector phi_sa = s.newInstance(vectorSize());
     for (int i = 0; i < actions.length; i++)
       if (actions[i] == a) {
         int offset = stateFeatureSize * i;
@@ -39,7 +39,7 @@ public class TabularAction implements StateToStateAction {
   }
 
   private RealVector stateAction(BinaryVector s, Action a) {
-    BVector phi_sa = new BVector(actionStateFeatureSize(), s.nonZeroElements());
+    BVector phi_sa = new BVector(vectorSize(), s.nonZeroElements());
     phi_sa.setOrderedIndexes(s.activeIndexes());
     for (int i = 0; i < actions.length; i++)
       if (actions[i] == a) {

@@ -11,6 +11,7 @@ import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.TRStep;
 
+@SuppressWarnings("serial")
 public class SwingPendulumTest {
   private TRStep runProblem(SwingPendulum problem, RLAgent agent) {
     TRStep step = problem.initialize();

@@ -20,7 +20,7 @@ public class OffPolicyPerEpisodeBasedEvaluationSweepTest extends RLSweepTest {
   public void testSweepEvaluationPerEpisode() {
     OffPolicyEvaluation evaluation = new EpisodeBasedOffPolicyEvaluation(NbBehaviourRewardCheckpoint, NbEvaluation,
                                                                          NbTimeStepsPerEvaluation);
-    ProblemFactory problemFactory = new RLProblemFactoryTest(100, 100);
+    ProblemFactory problemFactory = new RLProblemFactoryTest(NbEpisode, NbTimeSteps);
     testSweep(new OffPolicySweepDescriptor(problemFactory, evaluation));
     checkFile("Problem/OffPolicyAgent", 1, Integer.MAX_VALUE);
   }

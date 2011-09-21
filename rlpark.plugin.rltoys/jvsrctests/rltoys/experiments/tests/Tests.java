@@ -10,12 +10,13 @@ import rltoys.experiments.reinforcementlearning.OffPolicyContinuousEvaluationSwe
 import rltoys.experiments.reinforcementlearning.OffPolicyPerEpisodeBasedEvaluationSweepTest;
 import rltoys.experiments.reinforcementlearning.OnPolicySweepTest;
 import rltoys.experiments.scheduling.JobPoolTest;
-import rltoys.experiments.scheduling.SchedulerNetworkUnreliableTest;
 import rltoys.experiments.scheduling.SchedulerTest;
+import rltoys.experiments.scheduling.UnreliableNetworkClientTest;
+import rltoys.experiments.scheduling.UnreliableNetworkClientWithPoolTest;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ ParametersTest.class, SchedulerTest.class, JobPoolTest.class,
-    SchedulerNetworkUnreliableTest.class, SweepTest.class, OnPolicySweepTest.class,
+@Suite.SuiteClasses({ ParametersTest.class, SchedulerTest.class, JobPoolTest.class, UnreliableNetworkClientTest.class,
+    UnreliableNetworkClientWithPoolTest.class, SweepTest.class, OnPolicySweepTest.class,
     OffPolicyContinuousEvaluationSweepTest.class, OffPolicyPerEpisodeBasedEvaluationSweepTest.class })
 public class Tests {
 }

@@ -186,7 +186,7 @@ public class SVector extends AbstractVector implements SparseRealVector {
     return this;
   }
 
-  public MutableVector addToSelf(SVector other) {
+  private MutableVector addToSelf(SVector other, final double otherMultiplier) {
     int[] thisIndexes = Arrays.copyOf(this.indexes, this.indexes.length);
     double[] thisValues = Arrays.copyOf(this.values, this.values.length);
     int[] otherIndexes = other.indexes;
@@ -196,13 +196,13 @@ public class SVector extends AbstractVector implements SparseRealVector {
     clear();
     while (i < thisNbActive || j < other.nbActive) {
       if (j < otherIndexes.length && (i == thisNbActive || thisIndexes[i] > otherIndexes[j])) {
-        insertElementAtPosition(nbActive, otherIndexes[j], otherValues[j]);
+        insertElementAtPosition(nbActive, otherIndexes[j], otherMultiplier * otherValues[j]);
         j++;
       } else if (j == otherIndexes.length || thisIndexes[i] < otherIndexes[j]) {
         insertElementAtPosition(nbActive, thisIndexes[i], thisValues[i]);
         i++;
       } else {
-        insertElementAtPosition(nbActive, thisIndexes[i], thisValues[i] + otherValues[j]);
+        insertElementAtPosition(nbActive, thisIndexes[i], thisValues[i] + otherMultiplier * otherValues[j]);
         i++;
         j++;
       }
@@ -213,7 +213,7 @@ public class SVector extends AbstractVector implements SparseRealVector {
   @Override
   public MutableVector addToSelf(RealVector other) {
     if (other instanceof SVector)
-      return addToSelf((SVector) other);
+      return addToSelf((SVector) other, 1);
     if (other instanceof BVector)
       return addToSelf((BVector) other);
     int thisPosition = 0;
@@ -237,6 +237,8 @@ public class SVector extends AbstractVector implements SparseRealVector {
 
   @Override
   public MutableVector subtractToSelf(RealVector other) {
+    if (other instanceof SVector)
+      return addToSelf((SVector) other, -1);
     int thisPosition = 0;
     for (VectorEntry entry : other) {
       int otherIndex = entry.index();
