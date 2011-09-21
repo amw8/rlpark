@@ -11,6 +11,6 @@ import rlpark.plugin.robot.statemachine.StateMachineTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ LightByteBufferTest.class, DropTest.class, DiscoSocketTest.class, StateMachineTest.class,
-    DiscoLogfileTest.class })
+    DiscoLogfileTest.class, RobotsTest.class })
 public class RobotTests {
 }
