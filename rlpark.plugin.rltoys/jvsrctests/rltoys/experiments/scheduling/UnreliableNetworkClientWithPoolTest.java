@@ -30,7 +30,7 @@ public class UnreliableNetworkClientWithPoolTest {
     ServerScheduler scheduler = new ServerScheduler(SchedulerTestsUtils.Port, 0);
     scheduler.start();
     UnreliableNetworkClientTest.startUnreliableClients(5);
-    testServerSchedulerWithPool(scheduler, 10000, 100);
+    testServerSchedulerWithPool(scheduler, 1000, 100);
     scheduler.dispose();
   }
 

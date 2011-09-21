@@ -106,4 +106,8 @@ public class RandomNetwork implements Serializable {
   public LTU[] ltus() {
     return ltus;
   }
+
+  public void dispose() {
+    scheduler.dispose();
+  }
 }

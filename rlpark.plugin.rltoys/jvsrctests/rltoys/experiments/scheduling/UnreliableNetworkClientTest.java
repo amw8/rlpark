@@ -56,7 +56,7 @@ public class UnreliableNetworkClientTest {
     ServerScheduler scheduler = new ServerScheduler(SchedulerTestsUtils.Port, 0);
     scheduler.start();
     startUnreliableClients(5);
-    testServerScheduler(scheduler, 10000);
+    testServerScheduler(scheduler, 1000);
     scheduler.dispose();
   }
 

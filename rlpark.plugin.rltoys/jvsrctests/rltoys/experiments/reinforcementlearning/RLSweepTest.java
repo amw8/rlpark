@@ -53,15 +53,17 @@ public abstract class RLSweepTest {
 
   protected void checkFile(String testFolder, int multiplier, int divergedOnSlice) {
     for (int i = 0; i < NbRun; i++) {
-      File dataFile = new File(String.format("%s/%s/data%02d.logtxt", JUnitFolder, testFolder, i));
+      String filename = String.format("data%02d.logtxt", i);
+      File dataFile = new File(String.format("%s/%s/%s", JUnitFolder, testFolder, filename));
       if (!dataFile.canRead())
         Assert.fail("Cannot read " + dataFile.getAbsolutePath());
       ParametersLogFile logFile = new ParametersLogFile(dataFile.getAbsolutePath());
       List<FrozenParameters> parametersList = logFile.extractParameters(ProviderTest.ParameterName);
       for (FrozenParameters parameters : parametersList)
-        checkParameters(divergedOnSlice, parameters, multiplier);
+        checkParameters(testFolder, filename, divergedOnSlice, parameters, multiplier);
     }
   }
 
-  abstract protected void checkParameters(int divergedOnSlice, FrozenParameters parameters, int multiplier);
+  abstract protected void checkParameters(String testFolder, String filename, int divergedOnSlice,
+      FrozenParameters parameters, int multiplier);
 }

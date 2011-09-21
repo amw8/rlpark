@@ -61,7 +61,7 @@ public class OnPolicySweepTest extends RLSweepTest {
   }
 
   @Override
-  protected void checkParameters(int divergedOnSlice, FrozenParameters parameters, int multiplier) {
+  protected void checkParameters(String testFolder, String filename, int divergedOnSlice, FrozenParameters parameters, int multiplier) {
     for (String label : parameters.labels()) {
       int checkPoint = 0;
       if (label.contains("Reward"))
