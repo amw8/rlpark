@@ -18,13 +18,10 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
   public final String filepath;
   @Monitor(emptyLabel = true)
   private final LogFile logfile;
-  private double[] current = null;
-  private ObservationVersatile nextObservation;
   private ObservationVersatile currentObservation;
 
   public CrtrLogFile(String filepath) {
     logfile = LogFile.load(filepath);
-    step();
     this.filepath = filepath;
   }
 
@@ -41,13 +38,17 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
     return new Legend(labels);
   }
 
-  public double[] step() {
-    currentObservation = nextObservation;
+  @Override
+  public ObservationVersatile nextStep() {
     logfile.step();
-    current = logfile.currentLine();
-    nextObservation = new ObservationVersatile(logfile.clock.timeStep(), Robots.doubleArrayToByteArray(current),
-                                               current);
-    return current;
+    double[] nextObs = logfile.currentLine();
+    currentObservation = new ObservationVersatile(logfile.clock.timeStep(), Robots.doubleArrayToByteArray(nextObs),
+                                                  nextObs);
+    return currentObservation;
+  }
+
+  public double[] step() {
+    return nextStep().doubleValues();
   }
 
   @Override
@@ -80,29 +81,11 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
 
   @Override
   public double[] lastReceivedObs() {
-    return current;
+    return currentObservation.doubleValues();
   }
 
   @Override
   public int observationPacketSize() {
     return logfile.labels().length * 4;
-  }
-
-  @Override
-  public ObservationVersatile[] waitNewRawObs() {
-    step();
-    return lastReceivedRawObs();
-  }
-
-  @Override
-  public ObservationVersatile[] lastReceivedRawObs() {
-    if (currentObservation == null)
-      return null;
-    return new ObservationVersatile[] { currentObservation };
-  }
-
-  @Override
-  public ObservationVersatile getNewRawObs() {
-    return Robots.last(waitNewRawObs());
   }
 }

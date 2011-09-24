@@ -13,6 +13,7 @@ import rlpark.plugin.robot.sync.ObservationVersatile;
 import rltoys.environments.envio.observations.Legend;
 import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
 import zephyr.plugin.core.api.monitoring.abstracts.MonitorContainer;
+import zephyr.plugin.core.api.monitoring.abstracts.Monitored;
 
 public class CreateBinaryLogfile implements MonitorContainer, RobotLog {
   public static final String Extension = "crtbin";
@@ -46,37 +47,36 @@ public class CreateBinaryLogfile implements MonitorContainer, RobotLog {
     return nextObservation != null;
   }
 
-  public void step() {
+  @Override
+  public ObservationVersatile nextStep() {
     currentObservation = nextObservation;
     nextObservation = readNextObservation();
+    return currentObservation;
   }
 
-  @Override
-  public ObservationVersatile getNewRawObs() {
-    return Robots.last(waitNewRawObs());
-  }
-
-  @Override
-  public ObservationVersatile[] waitNewRawObs() {
-    step();
-    return lastReceivedRawObs();
-  }
-
-  @Override
-  public ObservationVersatile[] lastReceivedRawObs() {
-    if (currentObservation == null)
-      return null;
-    return new ObservationVersatile[] { currentObservation };
-  }
-
-  @Override
+  // @Override
   public void close() {
     discoLogFile.close();
   }
 
   @Override
   public void addToMonitor(DataMonitor monitor) {
-    Robots.addToMonitor(monitor, this);
+    addToMonitor(monitor, this);
+  }
+
+  static public void addToMonitor(DataMonitor monitor, final RobotLog problem) {
+    for (String label : problem.legend().getLabels()) {
+      final int obsIndex = problem.legend().indexOf(label);
+      monitor.add(label, 0, new Monitored() {
+        @Override
+        public double monitoredValue() {
+          double[] obs = problem.nextStep().doubleValues();
+          if (obs == null)
+            return -1;
+          return obs[obsIndex];
+        }
+      });
+    }
   }
 
   @Override
