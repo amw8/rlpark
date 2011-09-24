@@ -18,7 +18,7 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
   public final String filepath;
   @Monitor(emptyLabel = true)
   private final LogFile logfile;
-  private double[] nextObervation = null;
+  private ObservationVersatile currentObservation;
 
   public CrtrLogFile(String filepath) {
     logfile = LogFile.load(filepath);
@@ -41,9 +41,10 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
   @Override
   public ObservationVersatile nextStep() {
     logfile.step();
-    nextObervation = logfile.currentLine();
-    return new ObservationVersatile(logfile.clock.timeStep(), Robots.doubleArrayToByteArray(nextObervation),
-                                    nextObervation);
+    double[] nextObs = logfile.currentLine();
+    currentObservation = new ObservationVersatile(logfile.clock.timeStep(), Robots.doubleArrayToByteArray(nextObs),
+                                                  nextObs);
+    return currentObservation;
   }
 
   public double[] step() {
@@ -80,7 +81,7 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
 
   @Override
   public double[] lastReceivedObs() {
-    return nextObervation;
+    return currentObservation.doubleValues();
   }
 
   @Override
