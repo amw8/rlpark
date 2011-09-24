@@ -34,7 +34,7 @@ public class CreateDiscoFileHandler implements IFileHandler {
     Clock clock = new Clock(filepath);
     Zephyr.advertise(clock, logfile);
     while (clock.tick() && logfile.hasNextStep())
-      logfile.step();
+      logfile.nextStep();
     logfile.close();
   }
 }

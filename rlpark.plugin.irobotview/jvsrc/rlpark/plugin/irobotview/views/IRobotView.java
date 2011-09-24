@@ -10,7 +10,7 @@ import org.eclipse.jface.action.IToolBarManager;
 
 import rlpark.plugin.irobot.logfiles.IRobotLogFile;
 import rlpark.plugin.irobotview.filehandlers.IRobotLogFileHandler;
-import rlpark.plugin.robot.RobotProblem;
+import rlpark.plugin.robot.RobotLive;
 import rlpark.plugin.robot.Robots;
 import rltoys.math.ranges.Range;
 import rltoys.utils.Utils;
@@ -24,10 +24,10 @@ import zephyr.plugin.core.observations.SensorGroup;
 import zephyr.plugin.core.observations.SensorTextGroup.TextClient;
 import zephyr.plugin.core.views.Restartable;
 
-public abstract class IRobotView extends EnvironmentView<RobotProblem> implements Closeable, Restartable {
+public abstract class IRobotView extends EnvironmentView<RobotLive> implements Closeable, Restartable {
   static abstract public class IRobotViewProvider extends ClassViewProvider {
     public IRobotViewProvider() {
-      super(RobotProblem.class);
+      super(RobotLive.class);
     }
   }
 
@@ -103,7 +103,7 @@ public abstract class IRobotView extends EnvironmentView<RobotProblem> implement
   }
 
   @Override
-  protected void set(RobotProblem current) {
+  protected void set(RobotLive current) {
     super.set(current);
     restartAction.setEnabled(current instanceof IRobotLogFile);
     terminateAction.setEnabled(true);
