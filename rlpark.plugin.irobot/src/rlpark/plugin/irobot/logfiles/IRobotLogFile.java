@@ -3,7 +3,8 @@ package rlpark.plugin.irobot.logfiles;
 import java.util.ArrayList;
 import java.util.List;
 
-import rlpark.plugin.robot.RobotProblem;
+import rlpark.plugin.robot.RobotLog;
+import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.sync.ObservationVersatile;
 import rltoys.environments.envio.observations.Legend;
 import zephyr.plugin.core.api.logfiles.LogFile;
@@ -11,7 +12,7 @@ import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.synchronization.Clock;
 import zephyr.plugin.core.api.synchronization.Timed;
 
-public class IRobotLogFile implements RobotProblem, Timed {
+public class IRobotLogFile implements RobotLog, Timed {
   public static final String Extension = "irobotlog";
   private ObservationVersatile[] lastReceived = null;
 
@@ -50,11 +51,11 @@ public class IRobotLogFile implements RobotProblem, Timed {
     }
   }
 
+  @Override
   public boolean hasNextStep() {
     return !logfile.eof();
   }
 
-  @Override
   public void close() {
     logfile.close();
   }
@@ -69,13 +70,8 @@ public class IRobotLogFile implements RobotProblem, Timed {
   }
 
   @Override
-  public ObservationVersatile[] waitNewRawObs() {
+  public ObservationVersatile nextStep() {
     step();
-    return lastReceived;
-  }
-
-  @Override
-  public ObservationVersatile[] lastReceivedRawObs() {
-    return lastReceived;
+    return Robots.last(lastReceived);
   }
 }

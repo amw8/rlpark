@@ -18,13 +18,11 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
   public final String filepath;
   @Monitor(emptyLabel = true)
   private final LogFile logfile;
-  private double[] current = null;
-  private ObservationVersatile nextObservation;
-  private ObservationVersatile currentObservation;
+  private double[] nextDoubleObs = null;
+  private ObservationVersatile nextObservationVersatile;
 
   public CrtrLogFile(String filepath) {
     logfile = LogFile.load(filepath);
-    step();
     this.filepath = filepath;
   }
 
@@ -41,13 +39,18 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
     return new Legend(labels);
   }
 
+  @Override
+  public ObservationVersatile nextStep() {
+    step();
+    return nextObservationVersatile;
+  }
+
   public double[] step() {
-    currentObservation = nextObservation;
     logfile.step();
-    current = logfile.currentLine();
-    nextObservation = new ObservationVersatile(logfile.clock.timeStep(), Robots.doubleArrayToByteArray(current),
-                                               current);
-    return current;
+    nextDoubleObs = logfile.currentLine();
+    nextObservationVersatile = new ObservationVersatile(logfile.clock.timeStep(),
+                                                        Robots.doubleArrayToByteArray(nextDoubleObs), nextDoubleObs);
+    return nextDoubleObs;
   }
 
   @Override
@@ -80,29 +83,11 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
 
   @Override
   public double[] lastReceivedObs() {
-    return current;
+    return nextDoubleObs;
   }
 
   @Override
   public int observationPacketSize() {
     return logfile.labels().length * 4;
-  }
-
-  @Override
-  public ObservationVersatile[] waitNewRawObs() {
-    step();
-    return lastReceivedRawObs();
-  }
-
-  @Override
-  public ObservationVersatile[] lastReceivedRawObs() {
-    if (currentObservation == null)
-      return null;
-    return new ObservationVersatile[] { currentObservation };
-  }
-
-  @Override
-  public ObservationVersatile getNewRawObs() {
-    return Robots.last(waitNewRawObs());
   }
 }

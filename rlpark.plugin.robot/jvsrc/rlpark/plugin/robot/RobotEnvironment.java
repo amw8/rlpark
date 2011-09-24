@@ -8,7 +8,7 @@ import rltoys.environments.envio.Agent;
 import zephyr.plugin.core.api.labels.Labeled;
 import zephyr.plugin.core.api.synchronization.Clock;
 
-public abstract class RobotEnvironment implements RobotProblem, Labeled {
+public abstract class RobotEnvironment implements RobotLive, Labeled {
   protected final ObservationSynchronizer obsSync;
   protected ObservationVersatile[] lastReceivedObsBuffer;
 

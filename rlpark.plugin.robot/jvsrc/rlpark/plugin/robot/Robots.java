@@ -46,7 +46,7 @@ public class Robots {
     return new ObservationVersatile(time, buffer.array().clone(), doubleValues);
   }
 
-  static public void addToMonitor(DataMonitor monitor, final RobotProblem problem) {
+  static public void addToMonitor(DataMonitor monitor, final RobotLive problem) {
     for (String label : problem.legend().getLabels()) {
       final int obsIndex = problem.legend().indexOf(label);
       monitor.add(label, 0, new Monitored() {

@@ -6,5 +6,7 @@ public interface RobotLog extends RobotProblem {
 
   boolean hasNextStep();
 
-  ObservationVersatile getNewRawObs();
+  ObservationVersatile nextStep();
+
+  // ObservationVersatile getNewRawObs();
 }
