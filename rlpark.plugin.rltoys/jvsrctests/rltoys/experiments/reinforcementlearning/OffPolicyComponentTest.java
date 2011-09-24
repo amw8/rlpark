@@ -89,6 +89,11 @@ public class OffPolicyComponentTest {
     public Action proposeAction(RealVector x_t) {
       return action;
     }
+
+    @Override
+    public Policy targetPolicy() {
+      return null;
+    }
   }
 
   static class ProjectorFactoryTest implements ProjectorFactory {

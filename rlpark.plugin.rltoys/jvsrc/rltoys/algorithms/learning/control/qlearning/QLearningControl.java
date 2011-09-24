@@ -36,4 +36,9 @@ public class QLearningControl implements Control, OffPolicyLearner {
   public Policy acting() {
     return acting;
   }
+
+  @Override
+  public Policy targetPolicy() {
+    return acting;
+  }
 }

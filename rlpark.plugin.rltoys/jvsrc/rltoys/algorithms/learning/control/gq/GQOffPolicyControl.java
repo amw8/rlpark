@@ -33,4 +33,9 @@ public class GQOffPolicyControl implements Control, OffPolicyLearner {
     learn(s_t, a_t, s_tp1, null, r_tp1);
     return proposeAction(s_tp1);
   }
+
+  @Override
+  public Policy targetPolicy() {
+    return gq.targetPolicy();
+  }
 }

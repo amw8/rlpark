@@ -65,6 +65,7 @@ public class GreedyGQ implements Predictor, OffPolicyLearner {
     return gq;
   }
 
+  @Override
   public Policy targetPolicy() {
     return target;
   }
