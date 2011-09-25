@@ -13,8 +13,9 @@ import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.ProviderTest;
 import rltoys.experiments.parametersweep.SweepAll;
 import rltoys.experiments.parametersweep.interfaces.SweepDescriptor;
-import rltoys.experiments.parametersweep.internal.ParametersLogFile;
+import rltoys.experiments.parametersweep.internal.ParametersLogFileReader;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
+import rltoys.experiments.parametersweep.parameters.RunInfo;
 import rltoys.experiments.scheduling.SchedulerTest;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 
@@ -22,13 +23,14 @@ public abstract class RLSweepTest {
   protected static final String JUnitFolder = ".junittests_rlparametersweep";
   protected static final int NbRun = 4;
   protected static final int NbRewardCheckPoint = 10;
-  protected static final int NbEvaluations = 100;
+  protected static final int NbTimeSteps = 100;
+  protected static final int NbEpisode = 100;
   protected SweepAll sweep = null;
 
   @Before
   public void before() throws IOException {
     FileUtils.deleteDirectory(new File(JUnitFolder));
-    sweep = new SweepAll(new LocalScheduler(1));
+    sweep = new SweepAll(new LocalScheduler(2));
     SchedulerTest.junitMode();
     // Sweep.disableVerbose();
   }
@@ -51,19 +53,21 @@ public abstract class RLSweepTest {
       Assert.assertEquals((int) expected, (int) value);
   }
 
-  protected void checkFile(String testFolder, int multiplier, int divergedOnSlice) {
+  protected RunInfo checkFile(String testFolder, int divergedOnSlice) {
+    ParametersLogFileReader logFile = null;
     for (int i = 0; i < NbRun; i++) {
       String filename = String.format("data%02d.logtxt", i);
       File dataFile = new File(String.format("%s/%s/%s", JUnitFolder, testFolder, filename));
       if (!dataFile.canRead())
         Assert.fail("Cannot read " + dataFile.getAbsolutePath());
-      ParametersLogFile logFile = new ParametersLogFile(dataFile.getAbsolutePath());
+      logFile = new ParametersLogFileReader(dataFile.getAbsolutePath());
       List<FrozenParameters> parametersList = logFile.extractParameters(ProviderTest.ParameterName);
       for (FrozenParameters parameters : parametersList)
-        checkParameters(testFolder, filename, divergedOnSlice, parameters, multiplier);
+        checkParameters(testFolder, filename, divergedOnSlice, parameters);
     }
+    return logFile.infos();
   }
 
   abstract protected void checkParameters(String testFolder, String filename, int divergedOnSlice,
-      FrozenParameters parameters, int multiplier);
+      FrozenParameters parameters);
 }

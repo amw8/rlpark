@@ -28,7 +28,7 @@ public class SocketClient {
     }
   };
   private final SyncSocket clientSocket;
-  private final Thread clientThread = new Thread(clientRunnable, "ClientThread");
+  private final Thread clientThread = new Thread(clientRunnable, "ServerScheduler-ClientThread");
   private final Map<Integer, Runnable> idtoJob = new HashMap<Integer, Runnable>();
   private boolean waitingForJob = false;
   private int id;

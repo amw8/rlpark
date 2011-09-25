@@ -2,11 +2,12 @@ package rltoys.experiments.parametersweep.onpolicy;
 
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.onpolicy.internal.OnPolicyEvaluationContext;
+import rltoys.experiments.parametersweep.onpolicy.internal.OnPolicyRewardMonitor;
+import rltoys.experiments.parametersweep.onpolicy.internal.RewardMonitors;
 import rltoys.experiments.parametersweep.onpolicy.internal.SweepJob;
 import rltoys.experiments.parametersweep.parameters.Parameters;
 import rltoys.experiments.parametersweep.reinforcementlearning.AgentFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
-import rltoys.experiments.parametersweep.reinforcementlearning.internal.RewardMonitor;
 
 public class ContextEvaluation extends AbstractContextOnPolicy implements OnPolicyEvaluationContext {
   private static final long serialVersionUID = -5926779335932073094L;
@@ -23,7 +24,7 @@ public class ContextEvaluation extends AbstractContextOnPolicy implements OnPoli
   }
 
   @Override
-  public RewardMonitor createRewardMonitor(Parameters parameters) {
-    return new RewardMonitor(nbRewardCheckpoint, parameters.maxEpisodeTimeSteps(), parameters.nbEpisode());
+  public OnPolicyRewardMonitor createRewardMonitor(Parameters parameters) {
+    return RewardMonitors.create(nbRewardCheckpoint, parameters);
   }
 }

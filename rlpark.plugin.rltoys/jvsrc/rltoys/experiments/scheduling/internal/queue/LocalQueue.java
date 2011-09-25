@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobQueue;
@@ -73,7 +74,6 @@ public class LocalQueue implements JobQueue {
     Listener<JobDoneEvent> listener = pending.remove(todo);
     onJobDone(todo, done, listener);
     nbJobsDone++;
-    notifyAll();
   }
 
   private void onJobDone(Runnable todo, Runnable done, Listener<JobDoneEvent> listener) {
@@ -93,15 +93,21 @@ public class LocalQueue implements JobQueue {
   }
 
   static public void waitAllDone(LocalQueue queue) {
+    final Semaphore semaphore = new Semaphore(0);
+    final Listener<JobDoneEvent> listener = new Listener<JobDoneEvent>() {
+      @Override
+      public void listen(JobDoneEvent eventInfo) {
+        semaphore.release();
+      }
+    };
+    queue.onJobDone.connect(listener);
     while (!queue.areAllDone()) {
-      synchronized (queue) {
-        try {
-          queue.wait();
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
+      try {
+        semaphore.acquire();
+      } catch (InterruptedException e) {
       }
     }
+    queue.onJobDone.disconnect(listener);
   }
 
   @Override

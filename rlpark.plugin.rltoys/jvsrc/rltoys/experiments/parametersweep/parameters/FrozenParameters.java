@@ -9,11 +9,11 @@ public class FrozenParameters extends AbstractParameters {
   private static final long serialVersionUID = -1853925775244660996L;
   protected final int hashcode;
 
-  public FrozenParameters(Map<String, Double> parameters, Map<String, Double> results) {
-    super();
+  public FrozenParameters(RunInfo infos, Map<String, Double> parameters, Map<String, Double> results) {
+    super(infos);
     putAllSorted(parameters, this.parameters);
     putAllSorted(results, this.results);
-    hashcode = computeHashcode(parameters);
+    hashcode = computeHashcode(parameters) + infos.hashCode();
   }
 
   private void putAllSorted(Map<String, Double> source, Map<String, Double> target) {
@@ -23,7 +23,7 @@ public class FrozenParameters extends AbstractParameters {
       target.put(key, source.get(key));
   }
 
-  protected int computeHashcode(Map<String, Double> parameters) {
+  static protected int computeHashcode(Map<String, Double> parameters) {
     int hashcode = 0;
     for (Map.Entry<String, Double> entry : parameters.entrySet())
       hashcode += entry.hashCode();
@@ -37,7 +37,7 @@ public class FrozenParameters extends AbstractParameters {
     if (super.equals(obj))
       return true;
     AbstractParameters other = (AbstractParameters) obj;
-    return parameters.equals(other.parameters);
+    return parameters.equals(other.parameters) && infos().equals(other.infos());
   }
 
   @Override

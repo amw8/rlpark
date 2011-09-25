@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.parameters.RunInfo;
 
 
 public class ParametersTest {
@@ -44,11 +45,12 @@ public class ParametersTest {
   }
 
   private FrozenParameters toParameters(String[] flags, Object... objects) {
-    Parameters parameters = new Parameters();
-    for (int i = 0; i < objects.length / 2; i++)
-      parameters.put((String) objects[i * 2], (double) (Integer) objects[i * 2 + 1]);
+    RunInfo infos = new RunInfo();
     for (String flag : flags)
-      parameters.enableFlag(flag);
+      infos.enableFlag(flag);
+    Parameters parameters = new Parameters(infos);
+    for (int i = 0; i < objects.length / 2; i++)
+      parameters.putSweepParam((String) objects[i * 2], (double) (Integer) objects[i * 2 + 1]);
     return parameters.froze();
   }
 

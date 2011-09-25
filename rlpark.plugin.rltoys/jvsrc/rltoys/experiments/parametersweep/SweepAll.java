@@ -8,7 +8,8 @@ import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.interfaces.Context;
 import rltoys.experiments.parametersweep.interfaces.JobWithParameters;
 import rltoys.experiments.parametersweep.interfaces.SweepDescriptor;
-import rltoys.experiments.parametersweep.internal.ParametersLogFile;
+import rltoys.experiments.parametersweep.internal.ParametersLogFileReader;
+import rltoys.experiments.parametersweep.internal.ParametersLogFileWriter;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
@@ -34,10 +35,10 @@ public class SweepAll {
   }
 
   private void createAndSubmitRequiredJobs(SweepDescriptor sweepDescriptor, ExperimentCounter counter, Context context,
-      ParametersLogFile logFile) {
+      ParametersLogFileWriter logFile) {
     List<Parameters> allParameters = sweepDescriptor.provideParameters(context);
     String[] parameterLabels = allParameters.get(0).labels();
-    List<FrozenParameters> doneParameters = logFile.extractParameters(parameterLabels);
+    List<FrozenParameters> doneParameters = extractParameters(logFile.filepath, parameterLabels);
     List<Runnable> todoJobList = new ArrayList<Runnable>();
     for (Parameters parameters : allParameters) {
       if (!doneParameters.contains(parameters.froze()))
@@ -49,7 +50,12 @@ public class SweepAll {
     submitRequiredJob(logFile, parameterLabels, todoJobList);
   }
 
-  private void submitRequiredJob(ParametersLogFile logFile, String[] parameterLabels, List<Runnable> todoJobList) {
+  private List<FrozenParameters> extractParameters(String filepath, String[] parameterLabels) {
+    ParametersLogFileReader logFile = new ParametersLogFileReader(filepath);
+    return logFile.extractParameters(parameterLabels);
+  }
+
+  private void submitRequiredJob(ParametersLogFileWriter logFile, String[] parameterLabels, List<Runnable> todoJobList) {
     Listener<JobDoneEvent> jobListener = createJobListener(logFile);
     JobPoolListener poolListener = createPoolListener(logFile, parameterLabels);
     JobPool pool = new FileJobPool(extractName(logFile), poolListener, jobListener);
@@ -58,14 +64,14 @@ public class SweepAll {
     pool.submitTo(scheduler);
   }
 
-  private String extractName(ParametersLogFile logFile) {
+  private String extractName(ParametersLogFileWriter logFile) {
     File file = new File(logFile.filepath);
     File algoNameParentFile = file.getParentFile();
     File problemNameParentFile = algoNameParentFile.getParentFile();
     return String.format("%s/%s/%s", problemNameParentFile.getName(), algoNameParentFile.getName(), file.getName());
   }
 
-  private JobPoolListener createPoolListener(final ParametersLogFile logFile, final String[] parameterLabels) {
+  private JobPoolListener createPoolListener(final ParametersLogFileWriter logFile, final String[] parameterLabels) {
     return new JobPoolListener() {
       @Override
       public void listen(JobPool eventInfo) {
@@ -74,7 +80,7 @@ public class SweepAll {
     };
   }
 
-  private Listener<JobDoneEvent> createJobListener(final ParametersLogFile logFile) {
+  private Listener<JobDoneEvent> createJobListener(final ParametersLogFileWriter logFile) {
     return new Listener<JobDoneEvent>() {
       @Override
       public void listen(JobDoneEvent eventInfo) {
@@ -111,7 +117,7 @@ public class SweepAll {
     List<? extends Context> contexts = sweepDescriptor.provideContexts();
     for (Context context : contexts) {
       String filename = counter.folderFilename(context.folderPath(), context.fileName());
-      ParametersLogFile logFile = new ParametersLogFile(filename);
+      ParametersLogFileWriter logFile = new ParametersLogFileWriter(filename);
       createAndSubmitRequiredJobs(sweepDescriptor, counter, context, logFile);
     }
   }

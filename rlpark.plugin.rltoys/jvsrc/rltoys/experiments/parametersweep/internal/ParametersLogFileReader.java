@@ -3,28 +3,44 @@ package rltoys.experiments.parametersweep.internal;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
-import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.parameters.RunInfo;
 import rltoys.utils.Utils;
-import zephyr.plugin.core.api.monitoring.fileloggers.LoggerRow;
-import zephyr.plugin.core.api.monitoring.helpers.Loggers;
+import zephyr.plugin.core.api.logfiles.LogFile;
 
-public class ParametersLogFile {
+public class ParametersLogFileReader {
   public final String filepath;
+  private final RunInfo infos;
 
-  public ParametersLogFile(String filepath) {
+  public ParametersLogFileReader(String filepath) {
     this.filepath = filepath;
+    infos = readInfos();
+  }
+
+  private RunInfo readInfos() {
+    String infoFilepath = toInfoFilepath(filepath);
+    if (!new File(infoFilepath).canRead())
+      return null;
+    LogFile logFile = LogFile.load(infoFilepath);
+    String[] labels = logFile.labels();
+    logFile.step();
+    double[] values = logFile.currentLine();
+    RunInfo infos = new RunInfo();
+    for (int i = 0; i < values.length; i++)
+      infos.put(labels[i], values[i]);
+    return infos;
+  }
+
+  static protected String toInfoFilepath(String filepath) {
+    return new File(filepath).getParentFile().getAbsolutePath() + "infos.txt.gz";
   }
 
   private String[] readLabels(BufferedReader reader) throws IOException {
@@ -49,13 +65,13 @@ public class ParametersLogFile {
         parameterMap.put(labels[i], Double.parseDouble(values[i]));
       else
         resultMap.put(labels[i], Double.parseDouble(values[i]));
-    return new FrozenParameters(parameterMap, resultMap);
+    return new FrozenParameters(infos, parameterMap, resultMap);
   }
 
   public List<FrozenParameters> extractParameters(String... parameterLabelsArray) {
     Set<String> parameterLabels = Utils.asSet(parameterLabelsArray);
     List<FrozenParameters> result = new ArrayList<FrozenParameters>();
-    if (!canRead())
+    if (!canRead() || infos == null)
       return result;
     FileInputStream in = null;
     try {
@@ -85,37 +101,7 @@ public class ParametersLogFile {
     return new File(filepath).canRead();
   }
 
-  public void writeParameters(List<FrozenParameters> unsortedResultingParameters) {
-    try {
-      List<FrozenParameters> resultingParameters = new ArrayList<FrozenParameters>(unsortedResultingParameters);
-      Collections.sort(resultingParameters);
-      LoggerRow loggerRow = new LoggerRow(filepath);
-      loggerRow.writeLegend(resultingParameters.get(0).labels());
-      for (FrozenParameters parameters : resultingParameters)
-        loggerRow.writeRow(parameters.values());
-      loggerRow.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public void appendParameters(Parameters mutableParameters) {
-    FrozenParameters parameters = mutableParameters.froze();
-    boolean canRead = canRead();
-    try {
-      Loggers.checkParentFolder(this.filepath);
-      LoggerRow loggerRow = new LoggerRow(new PrintWriter(new FileOutputStream(filepath, true), true));
-      if (!canRead)
-        loggerRow.writeLegend(parameters.labels());
-      loggerRow.writeRow(parameters.values());
-      loggerRow.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public void reorganizeLogFile(String... parameterLabelsArray) {
-    List<FrozenParameters> logFileData = extractParameters(parameterLabelsArray);
-    writeParameters(logFileData);
+  public RunInfo infos() {
+    return infos;
   }
 }

@@ -12,8 +12,9 @@ public class Runner implements Serializable {
 
   static public class RunnerEvent {
     public int nbTotalTimeSteps = 0;
-    public int episode = 0;
+    public int episode = -1;
     public TRStep step = null;
+    public double episodeReward = Double.NaN;
 
     @Override
     public String toString() {
@@ -38,7 +39,7 @@ public class Runner implements Serializable {
 
   public RunnerEvent run() {
     assert runnerEvent.nbTotalTimeSteps == 0;
-    assert runnerEvent.episode == 0;
+    assert runnerEvent.episode == -1;
     while (runnerEvent.episode < nbEpisode)
       runEpisode();
     return runnerEvent;
@@ -52,25 +53,29 @@ public class Runner implements Serializable {
   }
 
   public void step() {
-    assert runnerEvent.episode < nbEpisode;
+    assert runnerEvent.episode <= nbEpisode;
     // When we start a new episode
     if (runnerEvent.step == null) {
       runnerEvent.step = environment.initialize();
       assert runnerEvent.step.isEpisodeStarting();
+      runnerEvent.episode += 1;
+      runnerEvent.episodeReward = 0;
     }
     // Fire the time step event
     onTimeStep.fire(runnerEvent);
     Action action = agent.getAtp1(runnerEvent.step);
-    // Fire the end of an episode
-    if (runnerEvent.step.isEpisodeEnding()) {
-      onEpisodeEnd.fire(runnerEvent);
-      runnerEvent.episode += 1;
-    }
-    runnerEvent.step = !runnerEvent.step.isEpisodeEnding() ? environment.step(action) : null;
-    runnerEvent.nbTotalTimeSteps++;
-    // Maximum number of steps in the episode reached
-    if (runnerEvent.step != null && runnerEvent.step.time == maxEpisodeTimeSteps)
+    // Check if the maximum number of steps in the episode is reached
+    if (runnerEvent.step.time == maxEpisodeTimeSteps)
       runnerEvent.step = runnerEvent.step.createEndingStep();
+    // Next step
+    if (!runnerEvent.step.isEpisodeEnding()) {
+      runnerEvent.step = environment.step(action);
+      runnerEvent.episodeReward += runnerEvent.step.r_tp1;
+      runnerEvent.nbTotalTimeSteps++;
+    } else {
+      onEpisodeEnd.fire(runnerEvent);
+      runnerEvent.step = null;
+    }
   }
 
   public RunnerEvent runnerEvent() {

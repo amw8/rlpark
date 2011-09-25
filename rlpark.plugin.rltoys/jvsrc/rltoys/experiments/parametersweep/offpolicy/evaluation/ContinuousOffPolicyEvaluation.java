@@ -5,11 +5,12 @@ import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.Runner;
 import rltoys.environments.envio.Runner.RunnerEvent;
 import rltoys.environments.envio.problems.RLProblem;
+import rltoys.experiments.parametersweep.onpolicy.internal.OnPolicyRewardMonitor;
+import rltoys.experiments.parametersweep.onpolicy.internal.RewardMonitors;
 import rltoys.experiments.parametersweep.parameters.Parameters;
 import rltoys.experiments.parametersweep.reinforcementlearning.AgentEvaluator;
 import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.ProjectorFactory;
-import rltoys.experiments.parametersweep.reinforcementlearning.internal.RewardMonitor;
 import zephyr.plugin.core.api.signals.Listener;
 
 public class ContinuousOffPolicyEvaluation extends AbstractOffPolicyEvaluation {
@@ -35,14 +36,14 @@ public class ContinuousOffPolicyEvaluation extends AbstractOffPolicyEvaluation {
     int nbEpisode = resetPeriod > 0 ? parameters.maxEpisodeTimeSteps() / nbRewardCheckpoint : 1;
     int nbTimeSteps = resetPeriod > 0 ? resetPeriod : parameters.maxEpisodeTimeSteps();
     final Runner runner = new Runner(problem, agent, nbEpisode, resetPeriod);
-    RewardMonitor rewardMonitor = new RewardMonitor("Target", nbRewardCheckpoint, nbTimeSteps, nbEpisode);
-    runner.onTimeStep.connect(rewardMonitor);
+    OnPolicyRewardMonitor monitor = RewardMonitors.create("Target", nbRewardCheckpoint, nbTimeSteps, nbEpisode);
+    monitor.connect(runner);
     behaviourRunner.onTimeStep.connect(new Listener<Runner.RunnerEvent>() {
       @Override
       public void listen(RunnerEvent eventInfo) {
         runner.step();
       }
     });
-    return rewardMonitor;
+    return monitor;
   }
 }

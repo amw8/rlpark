@@ -11,8 +11,10 @@ import rltoys.experiments.parametersweep.onpolicy.AbstractContextOnPolicy;
 import rltoys.experiments.parametersweep.onpolicy.ContextEvaluation;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.parameters.RunInfo;
 import rltoys.experiments.parametersweep.reinforcementlearning.AgentFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
+import rltoys.experiments.parametersweep.reinforcementlearning.RLParameters;
 import rltoys.utils.Utils;
 
 public class OnPolicySweepTest extends RLSweepTest {
@@ -44,36 +46,60 @@ public class OnPolicySweepTest extends RLSweepTest {
 
   @Test
   public void testSweepOneEpisode() {
-    testSweep(new OnPolicyTestSweep(Integer.MAX_VALUE, NbEvaluations, 1));
-    checkFile(ResultFolderTest, 1, Integer.MAX_VALUE);
+    testSweep(new OnPolicyTestSweep(Integer.MAX_VALUE, NbTimeSteps, 1));
+    RunInfo infos = checkFile(ResultFolderTest, Integer.MAX_VALUE);
+    checkInfos(infos, Integer.MAX_VALUE, NbTimeSteps, 1);
   }
 
   @Test
   public void testSweepMultipleEpisode() {
-    testSweep(new OnPolicyTestSweep(Integer.MAX_VALUE, 100, NbEvaluations));
-    checkFile(ResultFolderTest, 100, Integer.MAX_VALUE);
+    testSweep(new OnPolicyTestSweep(Integer.MAX_VALUE, NbTimeSteps, NbEpisode));
+    RunInfo infos = checkFile(ResultFolderTest, Integer.MAX_VALUE);
+    checkInfos(infos, Integer.MAX_VALUE, NbTimeSteps, NbEpisode);
   }
 
   @Test
   public void testSweepWithBadAgent() {
-    testSweep(new OnPolicyTestSweep(50, NbEvaluations, 1));
-    checkFile(ResultFolderTest, 1, 5);
+    testSweep(new OnPolicyTestSweep(50, NbTimeSteps, 1));
+    RunInfo infos = checkFile(ResultFolderTest, 5);
+    checkInfos(infos, 50, NbTimeSteps, 1);
+  }
+
+  private void checkInfos(RunInfo infos, int divergedOnSlice, int nbTimesteps, int nbEpisodes) {
+    Assert.assertEquals(nbTimesteps, (int) (double) infos.get(RLParameters.MaxEpisodeTimeSteps));
+    Assert.assertEquals(nbEpisodes, (int) (double) infos.get(RLParameters.NbEpisode));
+    double expectedReward = expectedReward(infos);
+    for (String label : infos.infoLabels())
+      checkRewardParameter(divergedOnSlice, label, expectedReward, infos.get(label));
+  }
+
+  private double expectedReward(RunInfo infos) {
+    if (infos.get(RLParameters.NbEpisode) == 1.0)
+      return 1.0;
+    return infos.get(RLParameters.MaxEpisodeTimeSteps);
   }
 
   @Override
-  protected void checkParameters(String testFolder, String filename, int divergedOnSlice, FrozenParameters parameters, int multiplier) {
-    for (String label : parameters.labels()) {
-      int checkPoint = 0;
-      if (label.contains("Reward"))
-        checkPoint = Integer.parseInt(label.substring(label.length() - 2, label.length()));
-      int sliceSize = NbEvaluations / NbRewardCheckPoint;
-      if (label.contains("Start"))
-        Assert.assertEquals(checkPoint * sliceSize, (int) parameters.get(label));
-      if (label.contains("Slice"))
-        assertValue(checkPoint >= divergedOnSlice, sliceSize * multiplier, parameters.get(label));
-      if (label.contains("Cumulated"))
-        assertValue(divergedOnSlice <= NbRewardCheckPoint, (NbRewardCheckPoint - checkPoint) * sliceSize * multiplier,
-                    parameters.get(label));
+  protected void checkParameters(String testFolder, String filename, int divergedOnSlice, FrozenParameters parameters) {
+    double expectedReward = expectedReward(parameters.infos());
+    for (String label : parameters.labels())
+      checkRewardParameter(divergedOnSlice, label, expectedReward, parameters.get(label));
+  }
+
+  private void checkRewardParameter(int divergedOnSlice, String label, double expectedReward, double value) {
+    int checkPoint = 0;
+    if (label.contains("Reward") && label.endsWith("RewardNbCheckPoint")) {
+      Assert.assertEquals(NbRewardCheckPoint, (int) value);
+      return;
     }
+    if (label.contains("Reward"))
+      checkPoint = Integer.parseInt(label.substring(label.length() - 2, label.length()));
+    int sliceSize = NbTimeSteps / NbRewardCheckPoint;
+    if (label.contains("Start"))
+      Assert.assertEquals(checkPoint * sliceSize, (int) value);
+    if (label.contains("Slice"))
+      assertValue(checkPoint >= divergedOnSlice, expectedReward, value);
+    if (label.contains("Cumulated"))
+      assertValue(divergedOnSlice <= NbRewardCheckPoint, expectedReward, value);
   }
 }

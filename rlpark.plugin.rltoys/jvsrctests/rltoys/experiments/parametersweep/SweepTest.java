@@ -10,9 +10,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import rltoys.experiments.ExperimentCounter;
-import rltoys.experiments.parametersweep.internal.ParametersLogFile;
+import rltoys.experiments.parametersweep.internal.ParametersLogFileReader;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.parameters.RunInfo;
 import rltoys.experiments.scheduling.SchedulerTest;
 import rltoys.experiments.scheduling.UnreliableNetworkClientTest;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
@@ -22,7 +23,6 @@ import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 public class SweepTest {
   private static final String JUnitFolder = ".junittests_parametersweep";
   private static final int NbRun = 3;
-  private static final int Port = 5000;
 
   @BeforeClass
   static public void setup() {
@@ -39,7 +39,7 @@ public class SweepTest {
 
   @Test(timeout = SchedulerTest.Timeout)
   public void testSweepNetworkScheduler() throws IOException {
-    ServerScheduler scheduler = new ServerScheduler(Port, 0);
+    ServerScheduler scheduler = UnreliableNetworkClientTest.createServerScheduler();
     UnreliableNetworkClientTest.startUnreliableClients(5);
     testSweep(scheduler);
     scheduler.dispose();
@@ -68,14 +68,17 @@ public class SweepTest {
                                              runIndex));
       if (!dataFile.canRead())
         return false;
-      ParametersLogFile logFile = new ParametersLogFile(dataFile.getAbsolutePath());
+      RunInfo infos = ProviderTest.createRunInfo();
+      ParametersLogFileReader logFile = new ParametersLogFileReader(dataFile.getAbsolutePath());
       List<FrozenParameters> doneParameters = logFile.extractParameters(ProviderTest.ParameterName);
       List<Parameters> todoParameters = ProviderTest.createParameters(nbValues, nbParameters);
       if (doneParameters.size() != todoParameters.size())
         return false;
       for (int i = 0; i < todoParameters.size(); i++) {
         FrozenParameters doneParameter = doneParameters.get(i);
+        Assert.assertEquals(infos, doneParameter.infos());
         Parameters todoParameter = todoParameters.get(i);
+        Assert.assertEquals(todoParameter.infos(), doneParameter.infos());
         Assert.assertTrue(todoParameter.compareTo(doneParameter) == 0);
         if (!ProviderTest.parametersHasBeenDone(doneParameter))
           return false;

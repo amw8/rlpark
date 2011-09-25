@@ -13,6 +13,7 @@ import rltoys.experiments.parametersweep.interfaces.SweepDescriptor;
 import rltoys.experiments.parametersweep.onpolicy.AbstractContextOnPolicy;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.parameters.RunInfo;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import rltoys.experiments.scheduling.schedulers.Schedulers;
 
@@ -22,8 +23,7 @@ public class SweepSelected {
   private final LocalScheduler scheduler = new LocalScheduler();
   private final List<FrozenParameters> todoParameters;
 
-  public SweepSelected(List<FrozenParameters> todoParameters, SweepDescriptor sweepDescriptor,
-      ExperimentCounter counter) {
+  public SweepSelected(List<FrozenParameters> todoParameters, SweepDescriptor sweepDescriptor, ExperimentCounter counter) {
     this.counter = counter;
     this.sweepDescriptor = sweepDescriptor;
     this.todoParameters = todoParameters;
@@ -79,11 +79,12 @@ public class SweepSelected {
       String[] components = arg.split("_");
       if (components.length == 1)
         continue;
-      Parameters parameters = new Parameters();
-      parameters.enableFlag(components[0]);
-      parameters.enableFlag(components[1]);
+      RunInfo infos = new RunInfo();
+      infos.enableFlag(components[0]);
+      infos.enableFlag(components[1]);
+      Parameters parameters = new Parameters(infos);
       for (int i = 1; i < components.length / 2; i++)
-        parameters.put(components[i * 2], Double.parseDouble(components[i * 2 + 1]));
+        parameters.putSweepParam(components[i * 2], Double.parseDouble(components[i * 2 + 1]));
       results.add(parameters.froze());
     }
     return results;

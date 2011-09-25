@@ -5,6 +5,7 @@ import rltoys.environments.envio.Runner;
 import rltoys.environments.envio.problems.RLProblem;
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.parameters.RunInfo;
 import rltoys.experiments.parametersweep.reinforcementlearning.AgentFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.ReinforcementLearningContext;
@@ -47,10 +48,11 @@ public abstract class AbstractContextOnPolicy implements ReinforcementLearningCo
   }
 
   public Parameters contextParameters() {
-    Parameters parameters = new Parameters();
+    RunInfo infos = new RunInfo();
+    infos.enableFlag(agentFactory.label());
+    infos.enableFlag(environmentFactory.label());
+    Parameters parameters = new Parameters(infos);
     environmentFactory.setExperimentParameters(parameters);
-    parameters.enableFlag(agentFactory.label());
-    parameters.enableFlag(environmentFactory.label());
     return parameters;
   }
 }

@@ -17,6 +17,7 @@ import rltoys.experiments.scheduling.internal.network.SocketClient;
 import rltoys.experiments.scheduling.internal.queue.LocalQueue;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import zephyr.plugin.core.api.signals.Listener;
+import zephyr.plugin.core.api.signals.Signal;
 import zephyr.plugin.core.api.synchronization.Chrono;
 
 public class ServerScheduler implements Scheduler {
@@ -40,10 +41,12 @@ public class ServerScheduler implements Scheduler {
 
   static final public int DefaultPort = 5000;
   static public boolean serverVerbose = true;
+  public Signal<ServerScheduler> onClientDisconnected = new Signal<ServerScheduler>();
   private final Listener<SocketClient> clientClosedListener = new Listener<SocketClient>() {
     @Override
     public void listen(SocketClient client) {
       removeClient(client);
+      onClientDisconnected.fire(ServerScheduler.this);
     }
   };
   private final Runnable acceptClientsRunnable = new Runnable() {
@@ -116,7 +119,9 @@ public class ServerScheduler implements Scheduler {
   }
 
   synchronized void removeClient(SocketClient client) {
-    clients.remove(client);
+    boolean removed = clients.remove(client);
+    if (!removed)
+      return;
     client.onClosed.disconnect(clientClosedListener);
     Collection<Runnable> pendingJobs = client.pendingJobs();
     for (Runnable pendingJob : pendingJobs)

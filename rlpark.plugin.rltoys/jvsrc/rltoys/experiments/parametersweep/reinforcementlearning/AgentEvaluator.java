@@ -8,5 +8,4 @@ public interface AgentEvaluator {
   void worstResultUntilEnd();
 
   void putResult(Parameters parameters);
-
 }

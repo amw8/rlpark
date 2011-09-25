@@ -8,6 +8,7 @@ import rltoys.environments.envio.problems.RLProblem;
 import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.offpolicy.evaluation.OffPolicyEvaluation;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.parameters.RunInfo;
 import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyAgentFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyProblemFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
@@ -60,10 +61,11 @@ public abstract class AbstractContextOffPolicy implements ReinforcementLearningC
   }
 
   public Parameters contextParameters() {
-    Parameters parameters = new Parameters();
+    RunInfo infos = new RunInfo();
+    infos.enableFlag(agentFactory.label());
+    infos.enableFlag(environmentFactory.label());
+    Parameters parameters = new Parameters(infos);
     environmentFactory.setExperimentParameters(parameters);
-    parameters.enableFlag(agentFactory.label());
-    parameters.enableFlag(environmentFactory.label());
     return parameters;
   }
 }

@@ -9,6 +9,7 @@ import rltoys.experiments.parametersweep.interfaces.JobWithParameters;
 import rltoys.experiments.parametersweep.interfaces.SweepDescriptor;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.parameters.RunInfo;
 import rltoys.utils.Utils;
 
 public class ProviderTest implements SweepDescriptor, Context {
@@ -39,6 +40,9 @@ public class ProviderTest implements SweepDescriptor, Context {
   }
 
   private static final long serialVersionUID = 7141220137708536488L;
+  private static final String FlagLabel = "FlagLabel";
+  private static final String InfoLabel = "InfoLabel";
+  private static final double InfoValue = 3.456;
   private final int nbParameters;
   private final int nbValues;
 
@@ -80,9 +84,17 @@ public class ProviderTest implements SweepDescriptor, Context {
     double[] parameterValues = new double[nbValues];
     for (int i = 0; i < parameterValues.length; i++)
       parameterValues[i] = i;
-    List<Parameters> result = null;
+    RunInfo infos = createRunInfo();
+    List<Parameters> result = Utils.asList(new Parameters(infos));
     for (int i = 0; i < nbParameters; i++)
       result = Parameters.combine(result, ParameterName + i, parameterValues);
     return result;
+  }
+
+  protected static RunInfo createRunInfo() {
+    RunInfo infos = new RunInfo();
+    infos.enableFlag(FlagLabel);
+    infos.put(InfoLabel, InfoValue);
+    return infos;
   }
 }

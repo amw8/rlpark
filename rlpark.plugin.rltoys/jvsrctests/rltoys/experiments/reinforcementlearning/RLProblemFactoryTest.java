@@ -8,6 +8,7 @@ import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.environments.envio.problems.RLProblem;
 import rltoys.experiments.parametersweep.parameters.Parameters;
+import rltoys.experiments.parametersweep.parameters.RunInfo;
 import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.RLParameters;
 
@@ -30,8 +31,9 @@ class RLProblemFactoryTest implements ProblemFactory {
 
   @Override
   public void setExperimentParameters(Parameters parameters) {
-    parameters.put(RLParameters.MaxEpisodeTimeSteps, nbTimeSteps);
-    parameters.put(RLParameters.NbEpisode, nbEpisode);
+    RunInfo infos = parameters.infos();
+    infos.put(RLParameters.MaxEpisodeTimeSteps, nbTimeSteps);
+    infos.put(RLParameters.NbEpisode, nbEpisode);
   }
 
   @Override

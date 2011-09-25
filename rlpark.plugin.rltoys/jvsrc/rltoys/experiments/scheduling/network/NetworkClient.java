@@ -97,7 +97,7 @@ public class NetworkClient {
       serverPort = Integer.parseInt(arg.substring(portSeparator));
   }
 
-  private static void startScheduler() throws UnknownHostException, IOException {
+  public static void runClient() throws UnknownHostException, IOException {
     NetworkClient scheduler = new NetworkClient(nbCore, serverHost, serverPort);
     if (maximumMinutesTime > 0)
       scheduler.setMaximumTime(maximumMinutesTime * 60);
@@ -118,7 +118,7 @@ public class NetworkClient {
     readParams(args);
     printParams();
     try {
-      startScheduler();
+      runClient();
     } catch (Exception e) {
       e.printStackTrace();
     }

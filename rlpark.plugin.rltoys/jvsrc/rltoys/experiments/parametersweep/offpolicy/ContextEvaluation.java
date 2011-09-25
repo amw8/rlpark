@@ -6,13 +6,14 @@ import rltoys.experiments.ExperimentCounter;
 import rltoys.experiments.parametersweep.offpolicy.evaluation.OffPolicyEvaluation;
 import rltoys.experiments.parametersweep.offpolicy.internal.OffPolicyEvaluationContext;
 import rltoys.experiments.parametersweep.offpolicy.internal.SweepJob;
+import rltoys.experiments.parametersweep.onpolicy.internal.OnPolicyRewardMonitor;
+import rltoys.experiments.parametersweep.onpolicy.internal.RewardMonitors;
 import rltoys.experiments.parametersweep.parameters.Parameters;
 import rltoys.experiments.parametersweep.reinforcementlearning.AgentEvaluator;
 import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyAgent;
 import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyAgentFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyProblemFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.ProjectorFactory;
-import rltoys.experiments.parametersweep.reinforcementlearning.internal.RewardMonitor;
 
 public class ContextEvaluation extends AbstractContextOffPolicy implements OffPolicyEvaluationContext {
   private static final long serialVersionUID = -593900122821568271L;
@@ -28,11 +29,10 @@ public class ContextEvaluation extends AbstractContextOffPolicy implements OffPo
   }
 
   @Override
-  public RewardMonitor connectBehaviourRewardMonitor(Runner runner, Parameters parameters) {
-    RewardMonitor behaviourMonitor = new RewardMonitor("Behaviour", evaluation.nbRewardCheckpoint(),
-                                                       parameters.maxEpisodeTimeSteps(), parameters.nbEpisode());
-    runner.onTimeStep.connect(behaviourMonitor);
-    return behaviourMonitor;
+  public AgentEvaluator connectBehaviourRewardMonitor(Runner runner, Parameters parameters) {
+    OnPolicyRewardMonitor monitor = RewardMonitors.create("Behaviour", evaluation.nbRewardCheckpoint(), parameters);
+    monitor.connect(runner);
+    return monitor;
   }
 
   @Override
