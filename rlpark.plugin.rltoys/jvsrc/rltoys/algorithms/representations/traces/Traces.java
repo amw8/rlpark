@@ -2,6 +2,7 @@ package rltoys.algorithms.representations.traces;
 
 import java.io.Serializable;
 
+import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
 
 public interface Traces extends Serializable {
@@ -13,5 +14,5 @@ public interface Traces extends Serializable {
 
   void clear();
 
-  RealVector vect();
+  MutableVector vect();
 }

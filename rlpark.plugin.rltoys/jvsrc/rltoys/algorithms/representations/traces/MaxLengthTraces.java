@@ -2,6 +2,7 @@ package rltoys.algorithms.representations.traces;
 
 import java.util.Arrays;
 
+import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.SVector;
 
@@ -38,7 +39,7 @@ public class MaxLengthTraces implements Traces {
   }
 
   @Override
-  public RealVector vect() {
+  public MutableVector vect() {
     return traces.vect();
   }
 

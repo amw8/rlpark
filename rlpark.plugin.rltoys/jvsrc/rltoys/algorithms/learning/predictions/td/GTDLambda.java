@@ -24,9 +24,8 @@ public class GTDLambda extends GTD {
     delta_t = r_tp1 + gamma * v_tp1 - v_t;
     e.update(gamma * lambda, phi_t, rho_t);
     RealVector e_delta = e.vect().mapMultiply(delta_t);
-    RealVector correction = phi_tp1 != null ?
-        phi_tp1.mapMultiply(e.vect().dotProduct(w) * gamma * (1 - lambda)) :
-        new SVector(w.size);
+    RealVector correction = phi_tp1 != null ? phi_tp1.mapMultiply(e.vect().dotProduct(w) * gamma * (1 - lambda))
+        : new SVector(w.size);
     v.addToSelf(e_delta.subtract(correction).mapMultiplyToSelf(alpha_v));
     w.addToSelf(e_delta.subtract(phi_t.mapMultiply(w.dotProduct(phi_t))).mapMultiplyToSelf(alpha_w));
     return delta_t;
@@ -41,5 +40,11 @@ public class GTDLambda extends GTD {
   @Override
   public double predict(RealVector x) {
     return v.dotProduct(x);
+  }
+
+  @Override
+  public void resetWeight(int index) {
+    super.resetWeight(index);
+    e.vect().setEntry(index, 0);
   }
 }

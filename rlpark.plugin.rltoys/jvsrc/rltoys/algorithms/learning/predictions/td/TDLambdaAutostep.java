@@ -133,8 +133,7 @@ public class TDLambdaAutostep implements OnPolicyTD {
       int eIndex, double eValue, final double delta_t) {
     double absDeltaEH = computeAbsDeltaEH(eIndex, eValue, delta_t);
     normalizerData[eIndex] = Math.max(absDeltaEH,
-                                      normalizerData[eIndex]
-                                          + (featureNorm(densePhi, alphaData, eIndex, eValue) / tau)
+                                      normalizerData[eIndex] + (featureNorm(densePhi, alphaData, eIndex, eValue) / tau)
                                           * (absDeltaEH - normalizerData[eIndex]));
     normalizerData[eIndex] = Math.max(lowerNumericalBound, normalizerData[eIndex]);
     alphaData[eIndex] = alphaData[eIndex] * Math.exp(mu * delta_t * eValue * h.data[eIndex] / normalizerData[eIndex]);
@@ -169,6 +168,7 @@ public class TDLambdaAutostep implements OnPolicyTD {
     alpha.data[index] = .1;
     h.data[index] = 0;
     normalizer.data[index] = 0;
+    e.vect().setEntry(index, 0);
   }
 
   @Override

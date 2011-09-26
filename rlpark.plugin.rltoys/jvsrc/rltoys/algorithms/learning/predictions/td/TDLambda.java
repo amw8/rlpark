@@ -40,7 +40,9 @@ public class TDLambda extends TD {
     return delta_t;
   }
 
-  public Traces eligibility() {
-    return e;
+  @Override
+  public void resetWeight(int index) {
+    super.resetWeight(index);
+    e.vect().setEntry(index, 0);
   }
 }

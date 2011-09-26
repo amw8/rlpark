@@ -66,6 +66,7 @@ public class GTDBetaLambda implements Predictor, LinearLearner {
   public void resetWeight(int index) {
     v.data[index] = 0;
     w.data[index] = 0;
+    e.vect().setEntry(index, 0);
   }
 
   @Override

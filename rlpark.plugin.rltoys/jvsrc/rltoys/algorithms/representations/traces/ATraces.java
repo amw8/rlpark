@@ -116,7 +116,7 @@ public class ATraces implements Traces {
   }
 
   @Override
-  public RealVector vect() {
+  public MutableVector vect() {
     return vector;
   }
 

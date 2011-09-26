@@ -20,9 +20,9 @@ public class GQ implements Predictor, LinearLearner {
   protected double beta_tp1;
   protected double lambda_t;
   @Monitor(level = 4)
-  private final PVector w;
-  private final Traces e;
-  private double delta_t;
+  protected final PVector w;
+  protected final Traces e;
+  protected double delta_t;
 
   public GQ(double alpha_v, double alpha_w, double beta, double lambda, int nbFeatures) {
     this(alpha_v, alpha_w, beta, lambda, nbFeatures, new ATraces());
@@ -38,7 +38,7 @@ public class GQ implements Predictor, LinearLearner {
     w = new PVector(nbFeatures);
   }
 
-  private double initEpisode() {
+  protected double initEpisode() {
     e.clear();
     return 0.0;
   }
@@ -50,9 +50,8 @@ public class GQ implements Predictor, LinearLearner {
     delta_t = r_tp1 + beta_tp1 * z_tp1 + (1 - beta_tp1) * v_tp1 - v.dotProduct(x_t);
     e.update((1 - beta_tp1) * lambda_t * rho_t, x_t);
     MutableVector delta_e = e.vect().mapMultiply(delta_t);
-    RealVector tdCorrection = x_bar_tp1 != null ?
-        x_bar_tp1.mapMultiply((1 - beta_tp1) * (1 - lambda_t) * e.vect().dotProduct(w)) :
-        new SVector(v.size);
+    RealVector tdCorrection = x_bar_tp1 != null ? x_bar_tp1.mapMultiply((1 - beta_tp1) * (1 - lambda_t)
+        * e.vect().dotProduct(w)) : new SVector(v.size);
     v.addToSelf(delta_e.subtract(tdCorrection).mapMultiply(alpha_v));
     w.addToSelf(delta_e.subtractToSelf(x_t.mapMultiply(w.dotProduct(x_t))).mapMultiply(alpha_w));
     return delta_t;
@@ -71,6 +70,8 @@ public class GQ implements Predictor, LinearLearner {
   @Override
   public void resetWeight(int index) {
     v.data[index] = 0;
+    e.vect().setEntry(index, 0);
+    w.data[index] = 0;
   }
 
   @Override
