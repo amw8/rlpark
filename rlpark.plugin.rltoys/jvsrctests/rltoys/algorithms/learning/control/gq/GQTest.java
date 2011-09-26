@@ -22,10 +22,17 @@ import rltoys.math.vector.implementations.Vectors;
 
 public class GQTest {
   public interface GQControlFactory {
+    GQ createGQ(double beta, double alpha_theta, double alpha_w, double lambda, final int featureVectorSize);
+
     GreedyGQ createGQControl(GQ gq, Action[] actions, StateToStateAction toStateAction, Policy target, Policy behaviour);
   }
 
-  private final GQControlFactory defaultGQFactory = new GQControlFactory() {
+  private final GQControlFactory greedyGQFactory = new GQControlFactory() {
+    @Override
+    public GQ createGQ(double beta, double alpha_theta, double alpha_w, double lambda, final int featureVectorSize) {
+      return new GQ(alpha_theta, alpha_w, beta, lambda, featureVectorSize);
+    }
+
     @Override
     public GreedyGQ createGQControl(GQ gq, Action[] actions, StateToStateAction toStateAction, Policy target,
         Policy behaviour) {
@@ -51,17 +58,18 @@ public class GQTest {
   private void testGQOnRandomWalk(double beta, double alpha_theta, double alpha_w, double lambda,
       double targetLeftProbability, double behaviourLeftProbability) {
     testGQOnRandomWalk(beta, alpha_theta, alpha_w, lambda, targetLeftProbability, behaviourLeftProbability,
-                       defaultGQFactory);
+                       greedyGQFactory);
   }
 
-  private void testGQOnRandomWalk(double beta, double alpha_theta, double alpha_w, double lambda,
+  static public void testGQOnRandomWalk(double beta, double alpha_theta, double alpha_w, double lambda,
       double targetLeftProbability, double behaviourLeftProbability, GQControlFactory gqControlFactory) {
     Random random = new Random(0);
     ConstantPolicy behaviourPolicy = RandomWalk.newPolicy(random, behaviourLeftProbability);
     ConstantPolicy targetPolicy = RandomWalk.newPolicy(random, targetLeftProbability);
     RandomWalk problem = new RandomWalk(behaviourPolicy);
     FSGAgentState agentState = new FSGAgentState(problem);
-    GQ gq = new GQ(alpha_theta, alpha_w, beta, lambda, agentState.vectorSize());
+    final int featureVectorSize = agentState.vectorSize();
+    GQ gq = gqControlFactory.createGQ(beta, alpha_theta, alpha_w, lambda, featureVectorSize);
     GreedyGQ controlGQ = gqControlFactory.createGQControl(gq, agentState.graph().actions(), agentState, targetPolicy,
                                                           behaviourPolicy);
     int nbEpisode = 0;
@@ -80,7 +88,7 @@ public class GQTest {
     Assert.assertTrue(Vectors.checkValues(controlGQ.theta()));
   }
 
-  private PVector computeValueFunction(FSGAgentState agentState, GQ gq, Policy targetPolicy) {
+  static private PVector computeValueFunction(FSGAgentState agentState, GQ gq, Policy targetPolicy) {
     PVector v = new PVector(agentState.size);
     for (Map.Entry<GraphState, Integer> entry : agentState.stateIndexes().entrySet()) {
       GraphState s = entry.getKey();
