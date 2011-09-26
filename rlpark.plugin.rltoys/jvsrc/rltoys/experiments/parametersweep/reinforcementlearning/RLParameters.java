@@ -19,4 +19,12 @@ public class RLParameters {
   final static public double[] getStepSizeValues() {
     return new double[] { .0001, .0005, .001, .005, .01, .05, .1, .5, 1. };
   }
+
+  public static double[] getStepSizeValuesWithZero() {
+    double[] withoutZero = getStepSizeValues();
+    double[] result = new double[withoutZero.length + 1];
+    System.arraycopy(withoutZero, 0, result, 1, withoutZero.length);
+    result[0] = 0.0;
+    return result;
+  }
 }

@@ -33,6 +33,8 @@ public class NetworkClient {
     networkJobQueue.onJobReceived.connect(new Listener<JobQueue>() {
       @Override
       public void listen(JobQueue eventInfo) {
+        if (localScheduler.isShutdown())
+          return;
         localScheduler.start();
       }
     });

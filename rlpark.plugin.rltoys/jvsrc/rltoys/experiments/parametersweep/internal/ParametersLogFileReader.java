@@ -40,7 +40,7 @@ public class ParametersLogFileReader {
   }
 
   static protected String toInfoFilepath(String filepath) {
-    return new File(filepath).getParentFile().getAbsolutePath() + "infos.txt.gz";
+    return new File(filepath).getParentFile().getAbsolutePath() + "/infos.txt.gz";
   }
 
   private String[] readLabels(BufferedReader reader) throws IOException {

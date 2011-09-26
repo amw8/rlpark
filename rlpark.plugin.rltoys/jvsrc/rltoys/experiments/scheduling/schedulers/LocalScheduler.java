@@ -106,4 +106,8 @@ public class LocalScheduler implements Scheduler {
   public Throwable exceptionOccured() {
     return exceptionThrown;
   }
+
+  public boolean isShutdown() {
+    return executor.isShutdown();
+  }
 }

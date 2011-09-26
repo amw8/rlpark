@@ -46,8 +46,8 @@ public class ParametersLogFileWriter {
     FrozenParameters parameters = mutableParameters.froze();
     boolean canRead = canRead();
     try {
-      checkInfo(parameters);
       Loggers.checkParentFolder(this.filepath);
+      checkInfo(parameters);
       LoggerRow loggerRow = new LoggerRow(new PrintWriter(new FileOutputStream(filepath, true), true));
       if (!canRead)
         loggerRow.writeLegend(parameters.labels());
