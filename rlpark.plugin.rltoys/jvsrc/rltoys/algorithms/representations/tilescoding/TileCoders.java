@@ -78,7 +78,6 @@ public abstract class TileCoders implements Projector {
     return includeActiveFeature ? nbActiveTiles + 1 : nbActiveTiles;
   }
 
-  @Override
   public int vectorSize() {
     int vectorSize = computeVectorSize();
     return includeActiveFeature ? vectorSize + 1 : vectorSize;
@@ -88,7 +87,7 @@ public abstract class TileCoders implements Projector {
   public BinaryVector project(double[] inputs) {
     vector.clear();
     if (inputs == null)
-      return null;
+      return vector.copy();
     activateIndexes(inputs, vector);
     if (includeActiveFeature)
       vector.setOn(vector.getDimension() - 1);

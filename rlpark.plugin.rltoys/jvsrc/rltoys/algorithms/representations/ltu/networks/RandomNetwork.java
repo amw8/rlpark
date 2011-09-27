@@ -75,10 +75,12 @@ public class RandomNetwork implements Serializable {
   }
 
   protected void prepareProjection(BinaryVector obs) {
-    for (int activeIndex : obs.activeIndexes())
-      denseInputVector[activeIndex] = 1;
     output.clear();
     updatedLTUs.clean();
+    if (obs == null)
+      return;
+    for (int activeIndex : obs.activeIndexes())
+      denseInputVector[activeIndex] = 1;
   }
 
   protected void postProjection(BinaryVector obs) {
@@ -88,6 +90,8 @@ public class RandomNetwork implements Serializable {
 
   public BVector project(BinaryVector obs) {
     prepareProjection(obs);
+    if (obs == null)
+      return output.copy();
     scheduler.update(this, obs);
     nbUnitUpdated = updatedLTUs.nbUnitUpdated();
     postProjection(obs);

@@ -102,12 +102,7 @@ public class OffPolicyComponentTest {
       return new Projector() {
         @Override
         public RealVector project(double[] ds) {
-          return ds != null ? new PVector(1.0) : null;
-        }
-
-        @Override
-        public int vectorSize() {
-          return 1;
+          return new PVector(1.0);
         }
       };
     }

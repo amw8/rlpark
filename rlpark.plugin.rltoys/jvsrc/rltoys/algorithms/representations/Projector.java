@@ -5,7 +5,13 @@ import java.io.Serializable;
 import rltoys.math.vector.RealVector;
 
 public interface Projector extends Serializable {
-  RealVector project(double[] ds);
-
-  int vectorSize();
+  /**
+   * Project an observation. If the observation is null, it should return a
+   * non-null vector representing an absorbing state.
+   * 
+   * @param obs
+   *          observation to project
+   * @return a non-null vector
+   */
+  RealVector project(double[] obs);
 }
