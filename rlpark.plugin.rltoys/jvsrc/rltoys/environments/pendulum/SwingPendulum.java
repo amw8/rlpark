@@ -15,6 +15,8 @@ import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 public class SwingPendulum implements ProblemBounded, ProblemDiscreteAction {
   public boolean constantEpisodeTime = true;
   public static final double uMax = 2.0;
+  private static final Action[] Actions = new Action[] { new ActionArray(-uMax), new ActionArray(0),
+      new ActionArray(uMax) };
   public static final Range ActionRange = new Range(-uMax, uMax);
   protected static final String VELOCITY = "velocity";
   protected static final String THETA = "theta";
@@ -133,6 +135,6 @@ public class SwingPendulum implements ProblemBounded, ProblemDiscreteAction {
 
   @Override
   public Action[] actions() {
-    return new Action[] { new ActionArray(-uMax), new ActionArray(0), new ActionArray(uMax) };
+    return Actions;
   }
 }

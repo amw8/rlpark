@@ -55,7 +55,7 @@ public class FSGAgentState implements StateToStateAction {
 
   public PVector currentFeatureState() {
     if (graph.currentState() == null)
-      return null;
+      return new PVector(size);
     return featureState;
   }
 
@@ -136,8 +136,7 @@ public class FSGAgentState implements StateToStateAction {
   }
 
   private RealMatrix createStateDistributionMatrix(ArrayRealVector d) {
-    RealMatrix d_pi = new Array2DRowRealMatrix(nbStates(),
-                                               nbStates());
+    RealMatrix d_pi = new Array2DRowRealMatrix(nbStates(), nbStates());
     int ci = 0;
     for (int i = 0; i < nbStates(); i++) {
       GraphState s = states()[i];
@@ -253,8 +252,10 @@ public class FSGAgentState implements StateToStateAction {
 
   @Override
   public PVector stateAction(RealVector s, Action a) {
-    GraphState sg = graph.state(s);
     PVector sa = new PVector(nbNonAbsorbingState() * graph.actions().length);
+    if (s == null)
+      return sa;
+    GraphState sg = graph.state(s);
     for (int ai = 0; ai < graph.actions().length; ai++)
       if (graph.actions()[ai] == a) {
         sa.setEntry(ai * nbNonAbsorbingState() + stateIndexes.get(sg), 1);

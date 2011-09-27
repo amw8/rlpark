@@ -6,6 +6,7 @@ import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.RLAgent;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.BVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 public class AgentFA implements RLAgent {
@@ -23,7 +24,9 @@ public class AgentFA implements RLAgent {
 
   @Override
   public Action getAtp1(TRStep step) {
-    RealVector x_tp1 = projector.project(step.o_tp1);
+    if (step.isEpisodeStarting())
+      x_t = null;
+    RealVector x_tp1 = step.o_tp1 != null ? projector.project(step.o_tp1) : new BVector(projector.vectorSize());
     Action a_tp1 = control.step(x_t, step.a_t, x_tp1, step.r_tp1);
     x_t = x_tp1;
     return a_tp1;

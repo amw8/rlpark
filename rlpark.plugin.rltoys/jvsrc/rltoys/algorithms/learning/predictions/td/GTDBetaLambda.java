@@ -37,9 +37,8 @@ public class GTDBetaLambda implements Predictor, LinearLearner {
       RealVector phi_tp1, double z_tp1, double r_tp1) {
     if (phi_t == null)
       return initEpisode();
-    double v_tp1 = phi_tp1 != null ? v.dotProduct(phi_tp1) : 0.0;
     v_t = v.dotProduct(phi_t);
-    delta_t = rho_t * (r_tp1 + beta_tp1 * z_tp1 + (1 - beta_tp1) * v_tp1) - v_t;
+    delta_t = rho_t * (r_tp1 + beta_tp1 * z_tp1 + (1 - beta_tp1) * v.dotProduct(phi_tp1)) - v_t;
     e.update(rho_tm1 * (1 - beta_t) * lambda, phi_t);
     RealVector e_delta_t = e.vect().mapMultiply(delta_t);
     RealVector tdCorrection = null;

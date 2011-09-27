@@ -18,4 +18,9 @@ public class RandomNetworkProjector implements Projector {
     BinaryVector bobs = BVector.toBinary(ds);
     return randomNetwork.project(bobs);
   }
+
+  @Override
+  public int vectorSize() {
+    return randomNetwork.outputSize;
+  }
 }

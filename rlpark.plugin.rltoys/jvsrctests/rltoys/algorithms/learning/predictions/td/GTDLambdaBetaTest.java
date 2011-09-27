@@ -138,11 +138,10 @@ public class GTDLambdaBetaTest {
       StepData stepData = agentState.step();
       double rho = 0.0;
       if (stepData.a_t != null)
-        rho = targetPolicy.pi(stepData.v_t(), stepData.a_t) /
-            behaviourPolicy.pi(stepData.v_t(), stepData.a_t);
+        rho = targetPolicy.pi(stepData.v_t(), stepData.a_t) / behaviourPolicy.pi(stepData.v_t(), stepData.a_t);
       PVector currentFeatureState = agentState.currentFeatureState();
       gtd.update(rho, currentFeatureState, stepData.r_tp1);
-      if (currentFeatureState == null) {
+      if (stepData.s_tp1 == null) {
         nbEpisode += 1;
         Assert.assertTrue(nbEpisode < 100000);
       }

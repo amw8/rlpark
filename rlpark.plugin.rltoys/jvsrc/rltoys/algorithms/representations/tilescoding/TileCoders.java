@@ -78,6 +78,7 @@ public abstract class TileCoders implements Projector {
     return includeActiveFeature ? nbActiveTiles + 1 : nbActiveTiles;
   }
 
+  @Override
   public int vectorSize() {
     int vectorSize = computeVectorSize();
     return includeActiveFeature ? vectorSize + 1 : vectorSize;

@@ -23,6 +23,8 @@ public class OffPolicyAgent implements RLAgent {
 
   @Override
   public Action getAtp1(TRStep step) {
+    if (step.isEpisodeStarting())
+      x_t = null;
     RealVector x_tp1 = projector.project(step.o_tp1);
     Action a_tp1 = behaviour.decide(x_tp1);
     learner.learn(x_t, step.a_t, x_tp1, a_tp1, step.r_tp1);

@@ -46,6 +46,8 @@ public class ActorCriticPendulum implements Runnable {
     Action action = null;
     RealVector x_t = null;
     while (clock.tick()) {
+      if (step.isEpisodeStarting())
+        x_t = null;
       BinaryVector x_tp1 = tileCoders.project(step.o_tp1);
       action = actorCritic.step(x_t, step.a_t, x_tp1, step.r_tp1);
       step = problem.step(action);

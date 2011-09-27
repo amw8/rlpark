@@ -33,8 +33,7 @@ public class TDLambda extends TD {
     if (phi_t == null)
       return initEpisode();
     v_t = v.dotProduct(phi_t);
-    v_tp1 = phi_tp1 != null ? v.dotProduct(phi_tp1) : 0.0;
-    delta_t = r_tp1 + gamma * v_tp1 - v_t;
+    delta_t = r_tp1 + gamma * v.dotProduct(phi_tp1) - v_t;
     e.update(lambda * gamma, phi_t);
     v.addToSelf(alpha_v * delta_t, e.vect());
     return delta_t;

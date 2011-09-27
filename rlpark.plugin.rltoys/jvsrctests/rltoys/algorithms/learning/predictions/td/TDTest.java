@@ -157,7 +157,7 @@ public class TDTest {
       StepData stepData = agentState.step();
       RealVector currentFeatureState = agentState.currentFeatureState();
       td.learn(stepData.r_tp1, currentFeatureState);
-      if (currentFeatureState == null) {
+      if (stepData.s_tp1 == null) {
         nbEpisode += 1;
         Assert.assertTrue(nbEpisode < 100000);
       }

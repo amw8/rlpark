@@ -21,8 +21,8 @@ public class TDC extends TD {
   public double update(double gamma, RealVector phi_t, RealVector phi_tp1, double r_tp1) {
     if (phi_t == null)
       return initEpisode();
-    v_tp1 = phi_tp1 != null ? v.dotProduct(phi_tp1) : 0.0;
-    delta_t = r_tp1 + gamma * v_tp1 - v.dotProduct(phi_t);
+    v_t = v.dotProduct(phi_t);
+    delta_t = r_tp1 + gamma * v.dotProduct(phi_tp1) - v_t;
     RealVector tdCorrection = tdCorrection(phi_t, phi_tp1);
     v.addToSelf(phi_t.mapMultiply(alpha_v * delta_t).subtract(tdCorrection));
     w.addToSelf(phi_t.mapMultiply(alpha_w * (delta_t - phi_t.dotProduct(w))));

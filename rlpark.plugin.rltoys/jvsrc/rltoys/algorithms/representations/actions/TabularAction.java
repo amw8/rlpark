@@ -10,10 +10,12 @@ public class TabularAction implements StateToStateAction {
   private static final long serialVersionUID = 1705117400022134128L;
   private final Action[] actions;
   private final int stateFeatureSize;
+  private final BVector nullVector;
 
   public TabularAction(Action[] actions, int stateFeatureSize) {
     this.actions = actions;
     this.stateFeatureSize = stateFeatureSize;
+    this.nullVector = new BVector(vectorSize());
   }
 
   @Override
@@ -23,8 +25,8 @@ public class TabularAction implements StateToStateAction {
 
   @Override
   public RealVector stateAction(RealVector s, Action a) {
-    if (s == null || a == null)
-      return null;
+    if (s == null)
+      return nullVector;
     if (s instanceof BinaryVector)
       return stateAction((BinaryVector) s, a);
     MutableVector phi_sa = s.newInstance(vectorSize());

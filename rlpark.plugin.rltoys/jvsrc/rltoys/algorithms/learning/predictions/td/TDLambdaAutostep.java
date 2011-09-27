@@ -20,7 +20,6 @@ public class TDLambdaAutostep implements OnPolicyTD {
   @Monitor(level = 4)
   final private PVector v;
   private double v_t;
-  private double v_tp1;
   @Monitor(wrappers = { Squared.ID, Abs.ID })
   private double delta_t;
 
@@ -73,7 +72,6 @@ public class TDLambdaAutostep implements OnPolicyTD {
 
   protected double initEpisode() {
     e.clear();
-    v_tp1 = 0;
     return 0;
   }
 
@@ -82,8 +80,7 @@ public class TDLambdaAutostep implements OnPolicyTD {
     if (phi_t == null)
       return initEpisode();
     v_t = v.dotProduct(phi_t);
-    v_tp1 = phi_tp1 != null ? v.dotProduct(phi_tp1) : 0.0;
-    delta_t = r_tp1 + gamma * v_tp1 - v_t;
+    delta_t = r_tp1 + gamma * v.dotProduct(phi_tp1) - v_t;
     e.update(lambda * gamma, phi_t);
     PVector densePhi = new PVector(phi_t.accessData());
     if (e.vect() instanceof SVector)

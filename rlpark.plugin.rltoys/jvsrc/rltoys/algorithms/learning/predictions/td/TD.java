@@ -12,12 +12,9 @@ public class TD implements OnPolicyTD {
   protected double gamma;
   @Monitor(level = 4)
   final public PVector v;
-  @Monitor
-  protected double v_t;
-  @Monitor
-  protected double v_tp1;
   @Monitor(wrappers = { Squared.ID, Abs.ID })
   protected double delta_t;
+  protected double v_t;
 
   public TD(double alpha_v, int nbFeatures) {
     this(Double.NaN, alpha_v, nbFeatures);
@@ -30,7 +27,7 @@ public class TD implements OnPolicyTD {
   }
 
   protected double initEpisode() {
-    v_tp1 = 0;
+    v_t = 0;
     return 0;
   }
 
@@ -43,8 +40,7 @@ public class TD implements OnPolicyTD {
     if (phi_t == null)
       return initEpisode();
     v_t = v.dotProduct(phi_t);
-    v_tp1 = phi_tp1 != null ? v.dotProduct(phi_tp1) : 0.0;
-    delta_t = r_tp1 + gamma * v_tp1 - v_t;
+    delta_t = r_tp1 + gamma * v.dotProduct(phi_tp1) - v_t;
     v.addToSelf(alpha_v * delta_t, phi_t);
     return delta_t;
   }
@@ -61,10 +57,6 @@ public class TD implements OnPolicyTD {
   @Override
   public PVector weights() {
     return v;
-  }
-
-  public double v_t() {
-    return v_t;
   }
 
   @Override
