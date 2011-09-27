@@ -1,6 +1,7 @@
 package rltoys.algorithms.learning.control.qlearning;
 
 import rltoys.algorithms.learning.control.Control;
+import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.OffPolicyLearner;
@@ -40,5 +41,10 @@ public class QLearningControl implements Control, OffPolicyLearner {
   @Override
   public Policy targetPolicy() {
     return acting;
+  }
+
+  @Override
+  public Predictor predictor() {
+    return qlearning;
   }
 }

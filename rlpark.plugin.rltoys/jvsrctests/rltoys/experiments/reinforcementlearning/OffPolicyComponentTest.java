@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.Projector;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
@@ -92,6 +93,11 @@ public class OffPolicyComponentTest {
 
     @Override
     public Policy targetPolicy() {
+      return null;
+    }
+
+    @Override
+    public Predictor predictor() {
       return null;
     }
   }

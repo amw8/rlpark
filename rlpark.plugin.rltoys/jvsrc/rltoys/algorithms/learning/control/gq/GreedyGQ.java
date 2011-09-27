@@ -10,7 +10,7 @@ import rltoys.math.vector.implementations.PVector;
 import rltoys.math.vector.implementations.SVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-public class GreedyGQ implements Predictor, OffPolicyLearner {
+public class GreedyGQ implements OffPolicyLearner {
   private static final long serialVersionUID = 7017521530598253457L;
   @Monitor
   protected final GQ gq;
@@ -47,11 +47,6 @@ public class GreedyGQ implements Predictor, OffPolicyLearner {
     return gq.update(phi_stat, rho_t, r_tp1, sa_bar_tp1, z_tp1);
   }
 
-  @Override
-  public double predict(RealVector x) {
-    return gq.predict(x);
-  }
-
   public PVector theta() {
     return gq.v;
   }
@@ -77,5 +72,10 @@ public class GreedyGQ implements Predictor, OffPolicyLearner {
   @Override
   public Action proposeAction(RealVector x_t) {
     return target.decide(x_t);
+  }
+
+  @Override
+  public Predictor predictor() {
+    return gq;
   }
 }

@@ -2,6 +2,7 @@ package rltoys.environments.envio;
 
 import java.io.Serializable;
 
+import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.math.vector.RealVector;
@@ -12,4 +13,6 @@ public interface OffPolicyLearner extends Serializable {
   Action proposeAction(RealVector x_t);
 
   Policy targetPolicy();
+
+  Predictor predictor();
 }

@@ -38,8 +38,8 @@ public class ControlOffPolicyDemon implements Demon {
     return outcomeFunction;
   }
 
-  public Predictor predicter() {
-    return gq;
+  public Predictor predictor() {
+    return gq.predictor();
   }
 
   public Policy targetPolicy() {
