@@ -13,7 +13,7 @@ public class FrozenParameters extends AbstractParameters {
     super(infos);
     putAllSorted(parameters, this.parameters);
     putAllSorted(results, this.results);
-    hashcode = computeHashcode(parameters) + infos.hashCode();
+    hashcode = computeHashcode(parameters);
   }
 
   private void putAllSorted(Map<String, Double> source, Map<String, Double> target) {

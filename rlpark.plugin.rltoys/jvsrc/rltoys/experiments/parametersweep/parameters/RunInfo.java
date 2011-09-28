@@ -1,8 +1,10 @@
 package rltoys.experiments.parametersweep.parameters;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class RunInfo implements Serializable {
   private static final long serialVersionUID = 4114752829910485352L;
@@ -32,7 +34,22 @@ public class RunInfo implements Serializable {
     if (other == null)
       return false;
     RunInfo o = (RunInfo) other;
-    return infos.equals(o.infos);
+    Set<String> keysToCheck = new HashSet<String>();
+    keysToCheck.addAll(o.infos.keySet());
+    keysToCheck.retainAll(infos.keySet());
+    for (String key : keysToCheck) {
+      Double thisValue = infos.get(key);
+      Double otherValue = o.infos.get(key);
+      if (thisValue == otherValue)
+        continue;
+      if (thisValue == null && otherValue != null)
+        return false;
+      if (otherValue == null && thisValue != null)
+        return false;
+      if (!thisValue.equals(otherValue))
+        return false;
+    }
+    return true;
   }
 
   public String[] infoLabels() {
@@ -53,5 +70,10 @@ public class RunInfo implements Serializable {
 
   public Double get(String name) {
     return infos.get(name);
+  }
+
+  @Override
+  public String toString() {
+    return infos.toString();
   }
 }
