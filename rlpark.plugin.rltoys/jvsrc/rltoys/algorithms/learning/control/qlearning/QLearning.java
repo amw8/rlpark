@@ -31,11 +31,6 @@ public class QLearning implements Predictor {
   }
 
   private void pickupBestAction(RealVector s_tp1) {
-    if (s_tp1 == null) {
-      q_sa_tp1 = 0.0;
-      a_star = null;
-      return;
-    }
     q_sa_tp1 = -Double.MAX_VALUE;
     for (Action a : actions) {
       RealVector phi_sa = toStateAction.stateAction(s_tp1, a);
@@ -55,6 +50,10 @@ public class QLearning implements Predictor {
     double delta = r_tp1 + gamma * q_sa_tp1 - theta.dotProduct(phi_sa_t);
     if (a_tp1 == a_star)
       e.update(gamma * lambda, phi_sa_t);
+    else {
+      e.clear();
+      e.update(0, phi_sa_t);
+    }
     theta.addToSelf(alpha * delta, e.vect());
     return delta;
   }

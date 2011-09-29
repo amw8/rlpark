@@ -115,7 +115,7 @@ public class NetworkClient {
   public static void main(String[] args) {
     if (args.length < 1) {
       System.err.println("Usage: java -jar <jarfile.jar> -t<max time: 30,60,... mins> -c<nb cores> <hostname:port>");
-      System.exit(1);
+      return;
     }
     readParams(args);
     printParams();
