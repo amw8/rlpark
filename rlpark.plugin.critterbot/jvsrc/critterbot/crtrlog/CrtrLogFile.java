@@ -43,7 +43,7 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog {
         continue;
       legendLabels.add(labels[i]);
     }
-    return new Legend(labels);
+    return new Legend(legendLabels);
   }
 
   @Override
@@ -67,7 +67,7 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog {
   private double[] removeLocalTimeValue(double[] obs) {
     double[] result = new double[obs.length - 1];
     System.arraycopy(obs, 0, result, 0, timeIndex);
-    System.arraycopy(obs, timeIndex + 1, result, timeIndex, obs.length - timeIndex);
+    System.arraycopy(obs, timeIndex + 1, result, timeIndex, obs.length - timeIndex - 1);
     return result;
   }
 
