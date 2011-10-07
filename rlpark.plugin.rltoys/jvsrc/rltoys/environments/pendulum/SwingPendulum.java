@@ -7,16 +7,19 @@ import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.environments.envio.problems.ProblemBounded;
+import rltoys.environments.envio.problems.ProblemContinuousAction;
 import rltoys.environments.envio.problems.ProblemDiscreteAction;
 import rltoys.math.ranges.Range;
 import rltoys.utils.Utils;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
-public class SwingPendulum implements ProblemBounded, ProblemDiscreteAction {
-  public boolean constantEpisodeTime = true;
+public class SwingPendulum implements ProblemBounded, ProblemDiscreteAction, ProblemContinuousAction {
   public static final double uMax = 2.0;
-  private static final Action[] Actions = new Action[] { new ActionArray(-uMax), new ActionArray(0),
-      new ActionArray(uMax) };
+  public boolean constantEpisodeTime = true;
+  public static final ActionArray STOP = new ActionArray(0);
+  public static final ActionArray RIGHT = new ActionArray(uMax);
+  public static final ActionArray LEFT = new ActionArray(-uMax);
+  private static final Action[] Actions = new Action[] { LEFT, STOP, RIGHT };
   public static final Range ActionRange = new Range(-uMax, uMax);
   protected static final String VELOCITY = "velocity";
   protected static final String THETA = "theta";
@@ -136,5 +139,10 @@ public class SwingPendulum implements ProblemBounded, ProblemDiscreteAction {
   @Override
   public Action[] actions() {
     return Actions;
+  }
+
+  @Override
+  public Range[] actionRanges() {
+    return new Range[] { ActionRange };
   }
 }

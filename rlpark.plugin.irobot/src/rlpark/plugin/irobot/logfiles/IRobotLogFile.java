@@ -9,10 +9,8 @@ import rlpark.plugin.robot.sync.ObservationVersatile;
 import rltoys.environments.envio.observations.Legend;
 import zephyr.plugin.core.api.logfiles.LogFile;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
-import zephyr.plugin.core.api.synchronization.Clock;
-import zephyr.plugin.core.api.synchronization.Timed;
 
-public class IRobotLogFile implements RobotLog, Timed {
+public class IRobotLogFile implements RobotLog {
   public static final String Extension = "irobotlog";
   private ObservationVersatile[] lastReceived = null;
 
@@ -25,11 +23,6 @@ public class IRobotLogFile implements RobotLog, Timed {
 
   public double[] lastReceivedObs() {
     return logfile.currentLine();
-  }
-
-  @Override
-  public Clock clock() {
-    return logfile.clock();
   }
 
   @Override

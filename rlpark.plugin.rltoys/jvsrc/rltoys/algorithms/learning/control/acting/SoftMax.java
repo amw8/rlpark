@@ -19,14 +19,14 @@ public class SoftMax extends StochasticPolicy implements MonitorContainer {
   final protected Map<Action, Double> actionDistribution = new LinkedHashMap<Action, Double>();
   private final Map<Action, RealVector> phis_sa = new LinkedHashMap<Action, RealVector>();
   private final StateToStateAction toStateAction;
-  private final double tau;
+  private final double temperature;
   private final Predictor predictor;
   private final Action[] availableActions;
 
-  public SoftMax(Random random, Predictor predictor, Action[] actions, StateToStateAction toStateAction, double tau) {
+  public SoftMax(Random random, Predictor predictor, Action[] actions, StateToStateAction toStateAction, double temperature) {
     super(random);
     this.toStateAction = toStateAction;
-    this.tau = tau;
+    this.temperature = temperature;
     this.predictor = predictor;
     availableActions = actions;
   }
@@ -48,7 +48,7 @@ public class SoftMax extends StochasticPolicy implements MonitorContainer {
     for (Action action : availableActions) {
       RealVector phi_sa = toStateAction.stateAction(s, action);
       phis_sa.put(action, phi_sa);
-      double value = Math.exp(predictor.predict(phi_sa) / tau);
+      double value = Math.exp(predictor.predict(phi_sa) / temperature);
       sum += value;
       actionDistribution.put(action, value);
     }

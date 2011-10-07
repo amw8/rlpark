@@ -7,14 +7,17 @@ import rltoys.environments.envio.actions.ActionArray;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.environments.envio.observations.TRStep;
 import rltoys.environments.envio.problems.ProblemBounded;
+import rltoys.environments.envio.problems.ProblemContinuousAction;
 import rltoys.environments.envio.problems.ProblemDiscreteAction;
 import rltoys.math.ranges.Range;
 
-public class MountainCar implements ProblemBounded, ProblemDiscreteAction {
-  protected static final ActionArray LEFT = new ActionArray(-1.0);
-  protected static final ActionArray RIGHT = new ActionArray(1.0);
-  protected static final ActionArray STOP = new ActionArray(0.0);
+public class MountainCar implements ProblemBounded, ProblemDiscreteAction, ProblemContinuousAction {
+  static private final double MaxActionValue = 1.0;
+  public static final ActionArray LEFT = new ActionArray(-MaxActionValue);
+  public static final ActionArray RIGHT = new ActionArray(MaxActionValue);
+  public static final ActionArray STOP = new ActionArray(0.0);
   protected static final Action[] Actions = { STOP, RIGHT, LEFT };
+  static public final Range ActionRange = new Range(-MaxActionValue, MaxActionValue);
 
   protected static final String VELOCITY = "velocity";
   protected static final String POSITION = "position";
@@ -41,7 +44,7 @@ public class MountainCar implements ProblemBounded, ProblemDiscreteAction {
   }
 
   protected void update(ActionArray action) {
-    double actionThrottle = Math.min(Math.max(action.actions[0], -1.0), 1.0);
+    double actionThrottle = ActionRange.bound(action.actions[0]);
     double throttle = actionThrottle * throttleFactor;
     velocity = velocityRange.bound(velocity + 0.001 * throttle - 0.0025 * Math.cos(3 * position));
     position += velocity;
@@ -98,5 +101,10 @@ public class MountainCar implements ProblemBounded, ProblemDiscreteAction {
   @Override
   public Range[] getObservationRanges() {
     return new Range[] { positionRange, velocityRange };
+  }
+
+  @Override
+  public Range[] actionRanges() {
+    return new Range[] { ActionRange };
   }
 }

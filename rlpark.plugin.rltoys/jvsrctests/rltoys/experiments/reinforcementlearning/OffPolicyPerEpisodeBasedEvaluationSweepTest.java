@@ -7,8 +7,7 @@ import rltoys.experiments.parametersweep.offpolicy.evaluation.EpisodeBasedOffPol
 import rltoys.experiments.parametersweep.offpolicy.evaluation.OffPolicyEvaluation;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
 import rltoys.experiments.parametersweep.parameters.RunInfo;
-import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyProblemFactory;
-import rltoys.experiments.reinforcementlearning.OffPolicyComponentTest.OffPolicyRLProblemFactoryTest;
+import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
 import rltoys.experiments.reinforcementlearning.OffPolicyComponentTest.OffPolicySweepDescriptor;
 
 public class OffPolicyPerEpisodeBasedEvaluationSweepTest extends AbstractOffPolicyRLSweepTest {
@@ -23,7 +22,7 @@ public class OffPolicyPerEpisodeBasedEvaluationSweepTest extends AbstractOffPoli
     OffPolicyEvaluation evaluation = new EpisodeBasedOffPolicyEvaluation(NbBehaviourRewardCheckpoint,
                                                                          NbTimeStepsPerEvaluation,
                                                                          NbEpisodePerEvaluation);
-    OffPolicyProblemFactory problemFactory = new OffPolicyRLProblemFactoryTest(NbEpisode, NbTimeSteps);
+    ProblemFactory problemFactory = new RLProblemFactoryTest(NbEpisode, NbTimeSteps);
     testSweep(new OffPolicySweepDescriptor(problemFactory, evaluation));
     RunInfo infos = checkFile("Problem/Action01", Integer.MAX_VALUE);
     checkInfos("Problem/Action01", Integer.MAX_VALUE, infos);

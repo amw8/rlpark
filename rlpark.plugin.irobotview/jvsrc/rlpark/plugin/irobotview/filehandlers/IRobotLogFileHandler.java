@@ -8,6 +8,7 @@ import java.util.List;
 import rlpark.plugin.irobot.logfiles.IRobotLogFile;
 import zephyr.plugin.core.Utils;
 import zephyr.plugin.core.api.Zephyr;
+import zephyr.plugin.core.api.synchronization.Clock;
 import zephyr.plugin.filehandling.IFileHandler;
 
 public class IRobotLogFileHandler implements IFileHandler {
@@ -24,8 +25,9 @@ public class IRobotLogFileHandler implements IFileHandler {
 
   static public void handle(String filepath) {
     IRobotLogFile logfile = new IRobotLogFile(filepath);
-    Zephyr.advertise(logfile.clock(), logfile);
-    while (logfile.hasNextStep())
+    Clock clock = new Clock(filepath);
+    Zephyr.advertise(clock, logfile);
+    while (clock.tick() && logfile.hasNextStep())
       logfile.step();
     logfile.close();
   }

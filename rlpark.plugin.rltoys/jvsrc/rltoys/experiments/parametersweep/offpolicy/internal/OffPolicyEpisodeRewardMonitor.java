@@ -5,7 +5,7 @@ import rltoys.experiments.parametersweep.reinforcementlearning.internal.Abstract
 
 public class OffPolicyEpisodeRewardMonitor extends AbstractRewardMonitor {
   private final Runner runner;
-  private final int nextEvaluationIndex = 0;
+  private int nextEvaluationIndex = 0;
   private final int nbEpisodePerEvaluation;
 
   public OffPolicyEpisodeRewardMonitor(Runner runner, int nbLearnerEvaluation, int nbTotalBehaviourEpisodes,
@@ -25,11 +25,12 @@ public class OffPolicyEpisodeRewardMonitor extends AbstractRewardMonitor {
   }
 
   public void runEvaluationIFN(int episodeIndex) {
-    if (starts[nextEvaluationIndex] > episodeIndex)
+    if (nextEvaluationIndex >= starts.length || starts[nextEvaluationIndex] > episodeIndex)
       return;
     for (int i = 0; i < nbEpisodePerEvaluation; i++) {
       runner.runEpisode();
       registerMeasurement(episodeIndex, runner.runnerEvent().episodeReward);
     }
+    nextEvaluationIndex++;
   }
 }

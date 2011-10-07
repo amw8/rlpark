@@ -40,7 +40,7 @@ public class Runner implements Serializable {
   public RunnerEvent run() {
     assert runnerEvent.nbTotalTimeSteps == 0;
     assert runnerEvent.episode == -1;
-    while (runnerEvent.episode < nbEpisode)
+    while (runnerEvent.episode < nbEpisode - 1)
       runEpisode();
     return runnerEvent;
   }
@@ -53,7 +53,7 @@ public class Runner implements Serializable {
   }
 
   public void step() {
-    assert runnerEvent.episode <= nbEpisode;
+    assert runnerEvent.episode < nbEpisode;
     // When we start a new episode
     if (runnerEvent.step == null) {
       runnerEvent.step = environment.initialize();

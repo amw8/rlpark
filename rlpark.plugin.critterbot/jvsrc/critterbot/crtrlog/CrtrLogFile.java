@@ -9,42 +9,66 @@ import rlpark.plugin.robot.sync.ObservationVersatile;
 import rltoys.environments.envio.observations.Legend;
 import zephyr.plugin.core.api.logfiles.LogFile;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
-import zephyr.plugin.core.api.synchronization.Clock;
-import zephyr.plugin.core.api.synchronization.Timed;
 import critterbot.CritterbotProblem;
 import critterbot.actions.CritterbotAction;
 
-public class CrtrLogFile implements CritterbotProblem, RobotLog, Timed {
+public class CrtrLogFile implements CritterbotProblem, RobotLog {
   public final String filepath;
   @Monitor(emptyLabel = true)
   private final LogFile logfile;
   private ObservationVersatile currentObservation;
+  private final Legend legend;
+  private final int timeIndex;
 
   public CrtrLogFile(String filepath) {
     logfile = LogFile.load(filepath);
     this.filepath = filepath;
+    timeIndex = findTimeIndex();
+    legend = createLegend();
   }
 
-  @Override
-  public Clock clock() {
-    return logfile.clock();
+  private int findTimeIndex() {
+    String[] labels = logfile.labels();
+    for (int i = 0; i < labels.length; i++)
+      if (labels[i].equals("LocalTime"))
+        return i;
+    return -1;
+  }
+
+  private Legend createLegend() {
+    List<String> legendLabels = new ArrayList<String>();
+    String[] labels = logfile.labels();
+    for (int i = 0; i < labels.length; i++) {
+      if (i == timeIndex)
+        continue;
+      legendLabels.add(labels[i]);
+    }
+    return new Legend(labels);
   }
 
   @Override
   public Legend legend() {
-    List<String> labels = new ArrayList<String>();
-    for (String label : logfile.labels())
-      labels.add(label);
-    return new Legend(labels);
+    return legend;
   }
 
   @Override
   public ObservationVersatile nextStep() {
     logfile.step();
-    double[] nextObs = logfile.currentLine();
-    currentObservation = new ObservationVersatile(logfile.clock.timeStep(), Robots.doubleArrayToByteArray(nextObs),
-                                                  nextObs);
+    double[] obs = logfile.currentLine();
+    long localTime = 0;
+    if (timeIndex >= 0) {
+      localTime = (long) obs[timeIndex];
+      obs = removeLocalTimeValue(obs);
+    }
+    currentObservation = new ObservationVersatile(localTime, Robots.doubleArrayToByteArray(obs), obs);
     return currentObservation;
+  }
+
+  private double[] removeLocalTimeValue(double[] obs) {
+    double[] result = new double[obs.length - 1];
+    System.arraycopy(obs, 0, result, 0, timeIndex);
+    System.arraycopy(obs, timeIndex + 1, result, timeIndex, obs.length - timeIndex);
+    return result;
   }
 
   public double[] step() {

@@ -5,6 +5,7 @@ import java.util.List;
 
 import zephyr.plugin.core.Utils;
 import zephyr.plugin.core.api.Zephyr;
+import zephyr.plugin.core.api.synchronization.Clock;
 import zephyr.plugin.filehandling.IFileHandler;
 import critterbot.crtrlog.CrtrLogFile;
 
@@ -22,8 +23,9 @@ public class FileHandler implements IFileHandler {
 
   static public void handle(String filepath) {
     CrtrLogFile logfile = CrtrLogFile.load(filepath);
-    Zephyr.advertise(logfile.clock(), logfile);
-    while (logfile.hasNextStep())
+    Clock clock = new Clock(filepath);
+    Zephyr.advertise(clock, logfile);
+    while (clock.tick() && logfile.hasNextStep())
       logfile.step();
     logfile.close();
   }

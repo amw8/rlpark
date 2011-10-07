@@ -19,7 +19,7 @@ import rltoys.experiments.parametersweep.offpolicy.evaluation.OffPolicyEvaluatio
 import rltoys.experiments.parametersweep.parameters.Parameters;
 import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyAgent;
 import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyAgentFactory;
-import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyProblemFactory;
+import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
 import rltoys.experiments.parametersweep.reinforcementlearning.ProjectorFactory;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.PVector;
@@ -27,32 +27,11 @@ import rltoys.utils.Utils;
 
 @SuppressWarnings("serial")
 public class OffPolicyComponentTest {
-  static class OffPolicyRLProblemFactoryTest extends RLProblemFactoryTest implements OffPolicyProblemFactory {
-    OffPolicyRLProblemFactoryTest(int nbEpisode, int nbTimeSteps) {
-      super(nbEpisode, nbTimeSteps);
-    }
-
-    @Override
-    public Policy createBehaviourPolicy(RLProblem problem, final Random random) {
-      return new Policy() {
-        @Override
-        public double pi(RealVector s, Action a) {
-          return 1;
-        }
-
-        @Override
-        public Action decide(RealVector s) {
-          return new ActionArray(random.nextDouble());
-        }
-      };
-    }
-  }
-
   static class OffPolicySweepDescriptor implements SweepDescriptor {
     private final OffPolicyEvaluation evaluation;
-    private final OffPolicyProblemFactory problemFactory;
+    private final ProblemFactory problemFactory;
 
-    public OffPolicySweepDescriptor(OffPolicyProblemFactory problemFactory, OffPolicyEvaluation evaluation) {
+    public OffPolicySweepDescriptor(ProblemFactory problemFactory, OffPolicyEvaluation evaluation) {
       this.evaluation = evaluation;
       this.problemFactory = problemFactory;
     }
@@ -121,6 +100,21 @@ public class OffPolicyComponentTest {
     public OffPolicyAgentFactoryTest(String label, Action action) {
       this.action = action;
       this.label = label;
+    }
+
+    @Override
+    public Policy createBehaviourPolicy(RLProblem problem, final Random random) {
+      return new Policy() {
+        @Override
+        public double pi(RealVector s, Action a) {
+          return 1;
+        }
+
+        @Override
+        public Action decide(RealVector s) {
+          return new ActionArray(random.nextDouble());
+        }
+      };
     }
 
     @Override

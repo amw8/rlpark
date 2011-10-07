@@ -5,14 +5,13 @@ import org.junit.Test;
 
 import rltoys.experiments.parametersweep.offpolicy.evaluation.ContinuousOffPolicyEvaluation;
 import rltoys.experiments.parametersweep.parameters.FrozenParameters;
-import rltoys.experiments.parametersweep.reinforcementlearning.OffPolicyProblemFactory;
-import rltoys.experiments.reinforcementlearning.OffPolicyComponentTest.OffPolicyRLProblemFactoryTest;
+import rltoys.experiments.parametersweep.reinforcementlearning.ProblemFactory;
 import rltoys.experiments.reinforcementlearning.OffPolicyComponentTest.OffPolicySweepDescriptor;
 
 public class OffPolicyContinuousEvaluationSweepTest extends AbstractOffPolicyRLSweepTest {
   @Test
   public void testSweepOneEpisode() {
-    OffPolicyProblemFactory problemFactory = new OffPolicyRLProblemFactoryTest(1, NbTimeSteps);
+    ProblemFactory problemFactory = new RLProblemFactoryTest(1, NbTimeSteps);
     ContinuousOffPolicyEvaluation evaluation = new ContinuousOffPolicyEvaluation(10);
     testSweep(new OffPolicySweepDescriptor(problemFactory, evaluation));
     checkFile("Problem/Action01", Integer.MAX_VALUE);
