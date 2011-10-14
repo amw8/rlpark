@@ -5,13 +5,18 @@
          point="zephyr.runnable">
       <client
             autostart="false"
-            class="rlpark.plugin.opencv.runnables.WebCam"
+            class="rlpark.plugin.opencv.runnables.WebcamRunnable"
             id="rlpark.plugin.opencv.webcam">
       </client>
       <client
             autostart="false"
             class="rlpark.plugin.opencv.runnables.MotionDetection"
             id="rlpark.plugin.opencv.motiondetection">
+      </client>
+      <client
+            autostart="false"
+            class="rlpark.plugin.opencv.runnables.TraceRunnable"
+            id="rlpark.plugin.opencv.trace">
       </client>
    </extension>
 

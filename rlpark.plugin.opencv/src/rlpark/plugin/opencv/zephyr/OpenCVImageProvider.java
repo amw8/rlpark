@@ -1,8 +1,10 @@
-package rlpark.plugin.opencv;
+package rlpark.plugin.opencv.zephyr;
 
 import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
 
 import java.awt.image.BufferedImage;
+
+import rlpark.plugin.opencv.OpenCVUtils;
 
 import zephyr.plugin.core.api.video.ImageProvider;
 

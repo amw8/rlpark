@@ -1,5 +1,6 @@
 package rlpark.plugin.opencv;
 
+import zephyr.plugin.core.api.monitoring.annotations.IgnoreMonitor;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 import com.googlecode.javacv.cpp.opencv_core;
@@ -8,37 +9,25 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 @Monitor
 public class MotionMeasure {
+  @IgnoreMonitor
   private static final int DEPTH = opencv_core.IPL_DEPTH_32F;
-  private final OpenCVImageBuffer buffer = new OpenCVImageBuffer(DEPTH, 1);
-  private final OpenCVImageBuffer current = new OpenCVImageBuffer(DEPTH, 1);
-  private final OpenCVImageBuffer background = new OpenCVImageBuffer(DEPTH, 1);
-  private final OpenCVImageBuffer backgroundBuffer = new OpenCVImageBuffer(DEPTH, 1);
-  private final OpenCVImageBuffer difference = new OpenCVImageBuffer(DEPTH, 1);
-  private double area;
-  private final double lambda;
-  private double d;
+  private final ImageTrace trace;
+  private final ImageBuffer current;
+  private final ImageBuffer difference;
+  private final double area;
   private double measure;
 
-  public MotionMeasure(double lambda) {
-    this.lambda = lambda;
+  public MotionMeasure(int width, int height, double lambda) {
+    trace = new ImageTrace(lambda, width, height, DEPTH, 1);
+    current = new ImageBuffer(width, height, DEPTH, 1);
+    difference = new ImageBuffer(width, height, DEPTH, 1);
+    area = width * height;
   }
 
   public double update(IplImage currentFrame) {
     current.update(currentFrame);
-    if (background.im() == null) {
-      background.update(currentFrame);
-      backgroundBuffer.update(currentFrame);
-      buffer.update(currentFrame);
-      difference.update(currentFrame);
-      area = currentFrame.height() * currentFrame.width();
-    }
-    d = lambda * d + (1 - lambda);
-    opencv_core.cvScale(backgroundBuffer.im(), backgroundBuffer.im(), lambda, 0.0);
-    opencv_core.cvScale(current.im(), buffer.im(), 1.0 - lambda, 0.0);
-    opencv_core.cvAdd(backgroundBuffer.im(), buffer.im(), backgroundBuffer.im(), null);
-    opencv_core.cvScale(backgroundBuffer.im(), background.im(), 1.0 / d, 0.0);
-    opencv_core.cvAbsDiff(background.im(), current.im(), difference.im());
-
+    trace.update(current.im());
+    opencv_core.cvAbsDiff(trace.im(), current.im(), difference.im());
     measure = toValue(opencv_core.cvSum(difference.im()));
     return measure;
   }
@@ -48,9 +37,7 @@ public class MotionMeasure {
   }
 
   public void dispose() {
-    buffer.dispose();
-    current.dispose();
-    backgroundBuffer.dispose();
+    trace.dispose();
     difference.dispose();
   }
 }

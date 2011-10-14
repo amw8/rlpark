@@ -2,21 +2,22 @@ package rlpark.plugin.opencv;
 
 import java.awt.image.BufferedImage;
 
+import rlpark.plugin.opencv.zephyr.OpenCVImageProvider;
+
 import zephyr.plugin.core.api.video.ImageProvider;
 
 import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.googlecode.javacv.cpp.opencv_imgproc;
 
-public class OpenCVImageBuffer implements ImageProvider {
+public class ImageBuffer implements ImageProvider {
   private final OpenCVImageProvider imageProvider = new OpenCVImageProvider();
-  private final int depth;
   private final int channels;
-  private IplImage image;
+  private final IplImage image;
   private IplImage channelBuffer;
 
-  public OpenCVImageBuffer(int depth, int channels) {
-    this.depth = depth;
+  public ImageBuffer(int width, int height, int depth, int channels) {
+    image = IplImage.create(width, height, depth, channels);
     this.channels = channels;
   }
 
@@ -27,8 +28,6 @@ public class OpenCVImageBuffer implements ImageProvider {
   }
 
   public void update(IplImage frame) {
-    if (image == null)
-      image = IplImage.create(frame.width(), frame.height(), depth, channels);
     IplImage channelConverted = convertChannelIFN(frame);
     if (channelConverted.depth() == image.depth())
       opencv_core.cvCopy(channelConverted, image);
