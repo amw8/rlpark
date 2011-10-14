@@ -7,7 +7,7 @@ import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 public class RewardObservationFunction implements RewardFunction, Labeled {
   private static final long serialVersionUID = -5930168576876015871L;
   @Monitor
-  private double reward;
+  protected double reward;
   private final int observationIndex;
   private final String label;
 
