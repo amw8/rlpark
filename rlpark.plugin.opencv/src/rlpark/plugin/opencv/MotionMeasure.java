@@ -9,25 +9,21 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 @Monitor
 public class MotionMeasure {
-  @IgnoreMonitor
-  private static final int DEPTH = opencv_core.IPL_DEPTH_32F;
   private final ImageTrace trace;
-  private final ImageBuffer current;
   private final ImageBuffer difference;
+  @IgnoreMonitor
   private final double area;
   private double measure;
 
-  public MotionMeasure(int width, int height, double lambda) {
-    trace = new ImageTrace(lambda, width, height, DEPTH, 1);
-    current = new ImageBuffer(width, height, DEPTH, 1);
-    difference = new ImageBuffer(width, height, DEPTH, 1);
+  public MotionMeasure(double lambda, int width, int height, int depth, int channels) {
+    trace = new ImageTrace(lambda, width, height, depth, channels);
+    difference = new ImageBuffer(width, height, depth, channels);
     area = width * height;
   }
 
   public double update(IplImage currentFrame) {
-    current.update(currentFrame);
-    trace.update(current.im());
-    opencv_core.cvAbsDiff(trace.im(), current.im(), difference.im());
+    trace.update(currentFrame);
+    opencv_core.cvAbsDiff(trace.im(), currentFrame, difference.im());
     measure = toValue(opencv_core.cvSum(difference.im()));
     return measure;
   }
@@ -39,5 +35,13 @@ public class MotionMeasure {
   public void dispose() {
     trace.dispose();
     difference.dispose();
+  }
+
+  public int channels() {
+    return trace.im().nChannels();
+  }
+
+  public ImageTrace trace() {
+    return trace;
   }
 }

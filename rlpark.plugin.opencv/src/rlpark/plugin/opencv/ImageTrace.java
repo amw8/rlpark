@@ -9,18 +9,18 @@ import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 public class ImageTrace implements ImageProvider {
-  private final double lambda;
+  public final double lambda;
   private double d = 0.0;
   private final ImageBuffer buffer01;
   private final ImageBuffer average;
   private final ImageBuffer trace;
   private final OpenCVImageProvider provider = new OpenCVImageProvider();
 
-  public ImageTrace(double lambda, int width, int height, int depth, int channel) {
+  public ImageTrace(double lambda, int width, int height, int depth, int channels) {
     this.lambda = lambda;
-    trace = new ImageBuffer(width, height, depth, channel);
-    buffer01 = new ImageBuffer(width, height, depth, channel);
-    average = new ImageBuffer(width, height, depth, channel);
+    trace = new ImageBuffer(width, height, depth, channels);
+    buffer01 = new ImageBuffer(width, height, depth, channels);
+    average = new ImageBuffer(width, height, depth, channels);
   }
 
   public IplImage update(IplImage currentFrame) {

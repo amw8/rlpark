@@ -4,8 +4,8 @@ import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_8U;
 
 import java.awt.image.BufferedImage;
 
+import rlpark.plugin.opencv.ImageBuffer;
 import rlpark.plugin.opencv.OpenCVUtils;
-
 import zephyr.plugin.core.api.video.ImageProvider;
 
 import com.googlecode.javacv.cpp.opencv_core;
@@ -53,5 +53,9 @@ public class OpenCVImageProvider implements ImageProvider {
       depthBuffer.release();
     if (channelBuffer != null)
       depthBuffer.release();
+  }
+
+  public void update(ImageBuffer currentFrame) {
+    update(currentFrame.im());
   }
 }

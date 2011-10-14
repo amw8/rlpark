@@ -6,16 +6,18 @@ import zephyr.plugin.core.api.Zephyr;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.synchronization.Clock;
 
+import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 @Monitor
 public class MotionDetection implements Runnable {
+  private static final int DEPTH = opencv_core.IPL_DEPTH_32F;
   private final Clock clock = new Clock();
-  private final FrameGrabber grabber = new FrameGrabber(0);
+  private final FrameGrabber grabber = new FrameGrabber(0, DEPTH, 1);
   private final MotionMeasure motionMeasure;
 
   public MotionDetection() {
-    motionMeasure = new MotionMeasure(grabber.width(), grabber.height(), .99);
+    motionMeasure = new MotionMeasure(.99, grabber.width(), grabber.height(), DEPTH, 1);
     Zephyr.advertise(clock, this);
   }
 
