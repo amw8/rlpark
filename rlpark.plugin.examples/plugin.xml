@@ -8,6 +8,11 @@
             class="learning.ActorCriticPendulum"
             id="learning.actorcriticpendulum">
       </client>
+      <client
+            autostart="true"
+            class="learning.SarsaMountainCarZephyr"
+            id="rlpark.plugin.examples.mountaincar">
+      </client>
    </extension>
 
 </plugin>

@@ -63,7 +63,7 @@ public class DiscoConnection implements ObservationReceiver {
     DiscoPacket packet = null;
     try {
       packet = socket.recv();
-    } catch (IOException e) {
+    } catch (Throwable e) {
       e.printStackTrace();
       close();
     }
