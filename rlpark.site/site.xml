@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/zephyr.feature.main_1.0.0.qualifier.jar" id="zephyr.feature.main" version="1.0.0.qualifier">
-      <category name="rlpark.site.rlai"/>
-   </feature>
    <feature url="features/rlpark.feature.critterbot_1.0.0.qualifier.jar" id="rlpark.feature.critterbot" version="1.0.0.qualifier">
       <category name="rlpark.site.rlai"/>
    </feature>

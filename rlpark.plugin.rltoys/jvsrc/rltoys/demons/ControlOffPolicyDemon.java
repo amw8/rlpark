@@ -5,6 +5,11 @@ import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
+import rltoys.demons.functions.ConstantGamma;
+import rltoys.demons.functions.ConstantOutcomeFunction;
+import rltoys.demons.functions.GammaFunction;
+import rltoys.demons.functions.OutcomeFunction;
+import rltoys.demons.functions.RewardFunction;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
@@ -14,20 +19,23 @@ public class ControlOffPolicyDemon implements Demon {
   private final OutcomeFunction outcomeFunction;
   @Monitor
   private final GreedyGQ gq;
+  private final GammaFunction gammaFunction;
 
-  public ControlOffPolicyDemon(RewardFunction rewardFunction, GreedyGQ gq) {
-    this(new OutcomeFunction.DefaultOutcomeFunction(), rewardFunction, gq);
+  public ControlOffPolicyDemon(RewardFunction rewardFunction, final GreedyGQ gq) {
+    this(gq, rewardFunction, new ConstantGamma(gq.gamma()), new ConstantOutcomeFunction(0));
   }
 
-  public ControlOffPolicyDemon(OutcomeFunction outcomeFunction, RewardFunction rewardFunction, GreedyGQ gq) {
+  public ControlOffPolicyDemon(GreedyGQ gq, RewardFunction rewardFunction, GammaFunction gammaFunction,
+      OutcomeFunction outcomeFunction) {
     this.rewardFunction = rewardFunction;
     this.gq = gq;
     this.outcomeFunction = outcomeFunction;
+    this.gammaFunction = gammaFunction;
   }
 
   @Override
   public void update(RealVector x_t, Action a_t, RealVector x_tp1) {
-    gq.update(x_t, a_t, rewardFunction.reward(), outcomeFunction.outcome(), x_tp1, a_t);
+    gq.update(x_t, a_t, rewardFunction.reward(), gammaFunction.gamma(), outcomeFunction.outcome(), x_tp1, a_t);
   }
 
   public RewardFunction rewardFunction() {

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import rltoys.algorithms.learning.predictions.td.TD;
+import rltoys.demons.functions.RewardFunction;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.BVector;
 import rltoys.math.vector.implementations.PVector;

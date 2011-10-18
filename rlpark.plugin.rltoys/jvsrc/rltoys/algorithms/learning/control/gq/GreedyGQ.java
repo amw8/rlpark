@@ -32,7 +32,8 @@ public class GreedyGQ implements OffPolicyLearner {
 
   }
 
-  public double update(RealVector s_t, Action a_t, double r_tp1, double z_tp1, RealVector s_tp1, Action a_tp1) {
+  public double update(RealVector s_t, Action a_t, double r_tp1, double gamma_tp1, double z_tp1, RealVector s_tp1,
+      Action a_tp1) {
     rho_t = 0.0;
     if (a_t != null)
       rho_t = target.pi(s_t, a_t) / behaviour.pi(s_t, a_t);
@@ -69,7 +70,7 @@ public class GreedyGQ implements OffPolicyLearner {
 
   @Override
   public void learn(RealVector x_t, Action a_t, RealVector x_tp1, Action a_tp1, double reward) {
-    update(x_t, a_t, reward, 0, x_tp1, a_tp1);
+    update(x_t, a_t, reward, gamma(), 0, x_tp1, a_tp1);
   }
 
   @Override
