@@ -10,8 +10,6 @@ public interface Traces extends Serializable {
 
   void update(double lambda, RealVector phi);
 
-  void update(double lambda, RealVector phi, double rho);
-
   void clear();
 
   MutableVector vect();

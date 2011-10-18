@@ -21,7 +21,8 @@ public class GTDLambda extends GTD {
       return initEpisode();
     v_t = v.dotProduct(x_t);
     delta_t = r_tp1 + (1 - gamma_tp1) * z_tp1 + gamma_tp1 * v.dotProduct(x_tp1) - v_t;
-    e.update(gamma_tp1 * lambda, x_t, rho_t);
+    e.update(gamma_tp1 * lambda, x_t);
+    e.vect().mapMultiplyToSelf(rho_t);
     RealVector e_delta = e.vect().mapMultiply(delta_t);
     RealVector correction = x_tp1 != null ? x_tp1.mapMultiply(e.vect().dotProduct(w) * gamma_tp1 * (1 - lambda))
         : new SVector(w.size);

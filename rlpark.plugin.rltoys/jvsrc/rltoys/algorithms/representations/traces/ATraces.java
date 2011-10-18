@@ -61,19 +61,12 @@ public class ATraces implements Traces {
 
   @Override
   public void update(double lambda, RealVector phi) {
-    update(lambda, phi, 1.0);
-  }
-
-  @Override
-  public void update(double lambda, RealVector phi, double rho) {
     vector.mapMultiplyToSelf(lambda);
     addToSelf(phi);
     if (clearRequired(phi, lambda)) {
       clearBelowThreshold();
       adjustThreshold(lambda);
     }
-    if (rho != 1.0)
-      vector.mapMultiplyToSelf(rho);
   }
 
   private void adjustThreshold(double lambda) {

@@ -28,12 +28,6 @@ public class MaxLengthTraces implements Traces {
   }
 
   @Override
-  public void update(double lambda, RealVector phi, double rho) {
-    traces.update(lambda, phi, rho);
-    controlLength();
-  }
-
-  @Override
   public void clear() {
     traces.clear();
   }
