@@ -29,12 +29,12 @@ public class TDLambda extends TD {
   }
 
   @Override
-  public double update(double gamma, RealVector phi_t, RealVector phi_tp1, double r_tp1) {
-    if (phi_t == null)
+  public double update(RealVector x_t, RealVector x_tp1, double r_tp1, double gamma_tp1) {
+    if (x_t == null)
       return initEpisode();
-    v_t = v.dotProduct(phi_t);
-    delta_t = r_tp1 + gamma * v.dotProduct(phi_tp1) - v_t;
-    e.update(lambda * gamma, phi_t);
+    v_t = v.dotProduct(x_t);
+    delta_t = r_tp1 + gamma_tp1 * v.dotProduct(x_tp1) - v_t;
+    e.update(lambda * gamma_tp1, x_t);
     v.addToSelf(alpha_v * delta_t, e.vect());
     return delta_t;
   }

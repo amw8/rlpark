@@ -45,7 +45,7 @@ public class GTDLambdaTest {
       if (stepData.a_t != null)
         rho = targetPolicy.pi(stepData.v_t(), stepData.a_t) / behaviourPolicy.pi(stepData.v_t(), stepData.a_t);
       PVector phi_tp1 = agentState.currentFeatureState();
-      gtd.update(phi_t, phi_tp1, stepData.r_tp1, rho);
+      gtd.update(rho, phi_t, phi_tp1, stepData.r_tp1);
       if (stepData.s_tp1 == null) {
         nbEpisode += 1;
         Assert.assertTrue(nbEpisode < 100000);

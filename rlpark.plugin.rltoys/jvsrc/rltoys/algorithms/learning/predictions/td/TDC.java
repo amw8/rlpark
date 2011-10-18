@@ -18,14 +18,14 @@ public class TDC extends TD {
   }
 
   @Override
-  public double update(double gamma, RealVector phi_t, RealVector phi_tp1, double r_tp1) {
-    if (phi_t == null)
+  public double update(RealVector x_t, RealVector x_tp1, double r_tp1, double gamma_tp1) {
+    if (x_t == null)
       return initEpisode();
-    v_t = v.dotProduct(phi_t);
-    delta_t = r_tp1 + gamma * v.dotProduct(phi_tp1) - v_t;
-    RealVector tdCorrection = tdCorrection(phi_t, phi_tp1);
-    v.addToSelf(phi_t.mapMultiply(alpha_v * delta_t).subtract(tdCorrection));
-    w.addToSelf(phi_t.mapMultiply(alpha_w * (delta_t - phi_t.dotProduct(w))));
+    v_t = v.dotProduct(x_t);
+    delta_t = r_tp1 + gamma_tp1 * v.dotProduct(x_tp1) - v_t;
+    RealVector tdCorrection = tdCorrection(x_t, x_tp1);
+    v.addToSelf(x_t.mapMultiply(alpha_v * delta_t).subtract(tdCorrection));
+    w.addToSelf(x_t.mapMultiply(alpha_w * (delta_t - x_t.dotProduct(w))));
     return delta_t;
   }
 
@@ -39,5 +39,9 @@ public class TDC extends TD {
   public void resetWeight(int index) {
     super.resetWeight(index);
     w.data[index] = 0;
+  }
+
+  public PVector secondaryWeights() {
+    return w;
   }
 }

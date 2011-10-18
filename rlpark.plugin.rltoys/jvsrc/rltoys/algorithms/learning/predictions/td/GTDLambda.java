@@ -16,17 +16,17 @@ public class GTDLambda extends GTD {
   }
 
   @Override
-  public double update(double gamma, RealVector phi_t, RealVector phi_tp1, double r_tp1, double rho_t) {
-    if (phi_t == null)
+  public double update(double rho_t, RealVector x_t, RealVector x_tp1, double r_tp1, double gamma_tp1, double z_tp1) {
+    if (x_t == null)
       return initEpisode();
-    v_t = v.dotProduct(phi_t);
-    delta_t = r_tp1 + gamma * v.dotProduct(phi_tp1) - v_t;
-    e.update(gamma * lambda, phi_t, rho_t);
+    v_t = v.dotProduct(x_t);
+    delta_t = r_tp1 + (1 - gamma_tp1) * z_tp1 + gamma_tp1 * v.dotProduct(x_tp1) - v_t;
+    e.update(gamma_tp1 * lambda, x_t, rho_t);
     RealVector e_delta = e.vect().mapMultiply(delta_t);
-    RealVector correction = phi_tp1 != null ? phi_tp1.mapMultiply(e.vect().dotProduct(w) * gamma * (1 - lambda))
+    RealVector correction = x_tp1 != null ? x_tp1.mapMultiply(e.vect().dotProduct(w) * gamma_tp1 * (1 - lambda))
         : new SVector(w.size);
     v.addToSelf(e_delta.subtract(correction).mapMultiplyToSelf(alpha_v));
-    w.addToSelf(e_delta.subtract(phi_t.mapMultiply(w.dotProduct(phi_t))).mapMultiplyToSelf(alpha_w));
+    w.addToSelf(e_delta.subtract(x_t.mapMultiply(w.dotProduct(x_t))).mapMultiplyToSelf(alpha_w));
     return delta_t;
   }
 
@@ -34,11 +34,6 @@ public class GTDLambda extends GTD {
   protected double initEpisode() {
     e.clear();
     return super.initEpisode();
-  }
-
-  @Override
-  public double predict(RealVector x) {
-    return v.dotProduct(x);
   }
 
   @Override

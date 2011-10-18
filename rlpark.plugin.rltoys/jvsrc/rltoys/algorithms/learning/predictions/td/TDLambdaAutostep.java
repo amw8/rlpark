@@ -76,13 +76,13 @@ public class TDLambdaAutostep implements OnPolicyTD {
   }
 
   @Override
-  public double update(RealVector phi_t, RealVector phi_tp1, double r_tp1) {
-    if (phi_t == null)
+  public double update(RealVector x_t, RealVector x_tp1, double r_tp1) {
+    if (x_t == null)
       return initEpisode();
-    v_t = v.dotProduct(phi_t);
-    delta_t = r_tp1 + gamma * v.dotProduct(phi_tp1) - v_t;
-    e.update(lambda * gamma, phi_t);
-    PVector densePhi = new PVector(phi_t.accessData());
+    v_t = v.dotProduct(x_t);
+    delta_t = r_tp1 + gamma * v.dotProduct(x_tp1) - v_t;
+    e.update(lambda * gamma, x_t);
+    PVector densePhi = new PVector(x_t.accessData());
     if (e.vect() instanceof SVector)
       updateNormalizationAndStepSizeSparse(delta_t, densePhi.data);
     else if (e.vect() instanceof DenseVector)

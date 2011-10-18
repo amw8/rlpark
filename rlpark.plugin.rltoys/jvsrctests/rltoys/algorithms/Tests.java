@@ -15,7 +15,6 @@ import rltoys.algorithms.learning.control.sarsa.TracesTest;
 import rltoys.algorithms.learning.predictions.supervised.AdalineTest;
 import rltoys.algorithms.learning.predictions.supervised.IDBDTest;
 import rltoys.algorithms.learning.predictions.supervised.K1Test;
-import rltoys.algorithms.learning.predictions.td.GTDLambdaBetaTest;
 import rltoys.algorithms.learning.predictions.td.GTDLambdaTest;
 import rltoys.algorithms.learning.predictions.td.TDTest;
 import rltoys.algorithms.representations.ObsHistoryTest;
@@ -33,8 +32,8 @@ import rltoys.algorithms.representations.traces.ATracesTest;
 @Suite.SuiteClasses({ AveBinsTest.class, AveBinsTreeTest.class, ConstantPolicyTest.class, ObsHistoryTest.class,
     TabularActionTest.class, SoftMaxTest.class, TileCodersNoHashingTest.class, ATracesTest.class,
     TileCodersHashingTest.class, MurmurHash2Test.class, AdalineTest.class, IDBDTest.class, K1Test.class, TDTest.class,
-    GTDLambdaBetaTest.class, GTDLambdaTest.class, GQTest.class, GQOnPolicyTest.class, SarsaTest.class,
-    QLearningTest.class, TracesTest.class, ActorCriticOnPolicyOnStateTest.class,
-    ActorCriticOnPolicyOnPendulumTest.class, ActorCriticMountainCarTest.class, RandomNetworkTest.class })
+    GTDLambdaTest.class, GQTest.class, GQOnPolicyTest.class, SarsaTest.class, QLearningTest.class, TracesTest.class,
+    ActorCriticOnPolicyOnStateTest.class, ActorCriticOnPolicyOnPendulumTest.class, ActorCriticMountainCarTest.class,
+    RandomNetworkTest.class })
 public class Tests {
 }
