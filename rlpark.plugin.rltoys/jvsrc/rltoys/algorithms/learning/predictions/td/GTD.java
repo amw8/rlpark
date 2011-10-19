@@ -16,7 +16,7 @@ public class GTD extends TDC implements GVF {
       return initEpisode();
     v_t = v.dotProduct(x_t);
     delta_t = r_tp1 + (1 - gamma_tp1) * z_tp1 + gamma_tp1 * v.dotProduct(x_tp1) - v_t;
-    RealVector tdCorrection = tdCorrection(x_t, x_tp1).mapMultiply(rho_t);
+    RealVector tdCorrection = tdCorrection(x_t, x_tp1, gamma_tp1).mapMultiply(rho_t);
     v.addToSelf(x_t.mapMultiply(alpha_v * delta_t).subtract(tdCorrection));
     w.addToSelf(x_t.mapMultiply(alpha_w * (delta_t - x_t.dotProduct(w))));
     return delta_t;

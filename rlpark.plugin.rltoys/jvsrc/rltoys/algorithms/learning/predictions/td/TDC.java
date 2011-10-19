@@ -23,16 +23,16 @@ public class TDC extends TD {
       return initEpisode();
     v_t = v.dotProduct(x_t);
     delta_t = r_tp1 + gamma_tp1 * v.dotProduct(x_tp1) - v_t;
-    RealVector tdCorrection = tdCorrection(x_t, x_tp1);
+    RealVector tdCorrection = tdCorrection(x_t, x_tp1, gamma_tp1);
     v.addToSelf(x_t.mapMultiply(alpha_v * delta_t).subtract(tdCorrection));
     w.addToSelf(x_t.mapMultiply(alpha_w * (delta_t - x_t.dotProduct(w))));
     return delta_t;
   }
 
-  protected RealVector tdCorrection(RealVector phi_t, RealVector phi_tp1) {
-    if (phi_tp1 == null)
-      return new PVector(phi_t.getDimension());
-    return phi_tp1.mapMultiply(phi_t.dotProduct(w)).mapMultiply(alpha_v * gamma);
+  protected RealVector tdCorrection(RealVector x_t, RealVector x_tp1, double gamma_tp1) {
+    if (x_tp1 == null)
+      return new PVector(x_t.getDimension());
+    return x_tp1.mapMultiply(x_t.dotProduct(w)).mapMultiply(alpha_v * gamma_tp1);
   }
 
   @Override
