@@ -79,4 +79,8 @@ public class SwingPendulumView extends ForegroundCanvasView<SwingPendulum> {
   protected Class<?> classSupported() {
     return SwingPendulum.class;
   }
+
+  @Override
+  protected void unset() {
+  }
 }
