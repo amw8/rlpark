@@ -5,7 +5,7 @@
       version="1.0.0.qualifier"
       provider-name="Thomas">
 
-   <description url="http://critterbot.rl-community.org/software/crittergui">
+   <description url="http://thomasdegris.github.com/rlpark/">
       IRobot (Create and Roomba) extension of RLPark
    </description>
 
@@ -104,7 +104,8 @@ This Agreement is governed by the laws of the State of New York and the intellec
    </license>
 
    <url>
-      <update label="Zephyr" url="http://www.ualberta.ca/~degris/zephyr"/>
+      <update label="RLPark" url="http://www.ualberta.ca/~degris/rlpark"/>
+      <discovery label="Zephyr" url="http://www.ualberta.ca/~degris/zephyr"/>
    </url>
 
    <includes

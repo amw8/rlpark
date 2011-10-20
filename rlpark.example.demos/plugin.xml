@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.eclipse.ui.main.menu?after=menu.run">
+         <menu
+               label="Demos">
+            <command
+                  commandId="zephyr.plugin.core.command.startrunnable"
+                  label="Actor-Critic on Pendulum"
+                  style="push">
+               <parameter
+                     name="zephyr.plugin.core.command.parameter.runnableid"
+                     value="rlpark.example.learning.actorcriticpendulum">
+               </parameter>
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+</plugin>

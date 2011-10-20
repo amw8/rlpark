@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="rlpark.feature.rl"
-      label="RLPark"
+      id="rlpark.feature.demos"
+      label="RLPark Demos"
       version="1.0.0.qualifier"
       provider-name="Thomas">
 
-   <description url="http://critterbot.rl-community.org/software/rlpark">
-      Reinforcement Learning Extension for Zephyr
+   <description url="http://thomasdegris.github.com/rlpark/">
+      Demos for RLPark
    </description>
+
 
    <copyright url="http://www.eclipse.org/legal/epl-v10.html">
       See license.
@@ -108,28 +109,32 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <discovery label="Zephyr" url="http://www.ualberta.ca/~degris/zephyr"/>
    </url>
 
-   <includes
-         id="rlpark.feature.rl.source"
-         version="1.0.0.qualifier"/>
-
    <plugin
-         id="rlpark.plugin.rltoys"
+         id="rlpark.example.demos"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="rlpark.plugin.rltoysview"
+         id="rlpark.example.learning"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="rlpark.plugin.apache"
+         id="rlpark.example.robots"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="rlpark.example.surprise"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
 </feature>
