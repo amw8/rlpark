@@ -4,8 +4,8 @@ import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.PVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
+@Monitor
 public class TDC extends TD {
-
   private static final long serialVersionUID = 7305877522126081130L;
   @Monitor(level = 4)
   protected final PVector w;

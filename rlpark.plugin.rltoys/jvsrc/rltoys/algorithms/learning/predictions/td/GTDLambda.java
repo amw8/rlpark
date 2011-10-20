@@ -3,7 +3,9 @@ package rltoys.algorithms.learning.predictions.td;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.SVector;
+import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
+@Monitor
 public class GTDLambda extends GTD {
   private static final long serialVersionUID = 8687476023177671278L;
   protected double lambda;

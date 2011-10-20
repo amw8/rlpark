@@ -1,9 +1,10 @@
 package rltoys.algorithms.learning.predictions.td;
 
 import rltoys.math.vector.RealVector;
+import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
+@Monitor
 public class GTD extends TDC implements GVF {
-
   private static final long serialVersionUID = 3930476106142858179L;
 
   public GTD(double gamma, double alpha_v, double alpha_w, int nbFeatures) {

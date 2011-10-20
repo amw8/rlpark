@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: rlpark.plugin.examples
-Bundle-SymbolicName: rlpark.plugin.examples;singleton:=true
+Bundle-SymbolicName: rlpark.example.scripts;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Thomas
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

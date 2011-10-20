@@ -6,6 +6,7 @@ import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.monitoring.wrappers.Abs;
 import zephyr.plugin.core.api.monitoring.wrappers.Squared;
 
+@Monitor
 public class TD implements OnPolicyTD {
   private static final long serialVersionUID = -3640476464100200081L;
   final public double alpha_v;
