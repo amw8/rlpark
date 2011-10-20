@@ -30,8 +30,8 @@ public class QLearningControl implements Control, OffPolicyLearner {
   }
 
   @Override
-  public Action proposeAction(RealVector s) {
-    return acting.decide(s);
+  public Action proposeAction(RealVector x) {
+    return acting.decide(x);
   }
 
   public Policy acting() {

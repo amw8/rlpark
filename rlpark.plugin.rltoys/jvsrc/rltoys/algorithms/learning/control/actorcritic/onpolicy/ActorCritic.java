@@ -42,4 +42,9 @@ public class ActorCritic implements Control {
     updateActors(x_t, delta);
     return computeAction(x_tp1);
   }
+
+  @Override
+  public Action proposeAction(RealVector x) {
+    return computeAction(x);
+  }
 }

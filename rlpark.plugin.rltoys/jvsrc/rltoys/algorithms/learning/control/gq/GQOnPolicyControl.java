@@ -29,4 +29,9 @@ public class GQOnPolicyControl implements Control {
   public Policy acting() {
     return acting;
   }
+
+  @Override
+  public Action proposeAction(RealVector x) {
+    return acting.decide(x);
+  }
 }
