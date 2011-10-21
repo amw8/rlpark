@@ -11,7 +11,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import rlpark.plugin.irobot.logfiles.IRobotLogFile;
 import rlpark.plugin.irobotview.filehandlers.IRobotLogFileHandler;
 import rlpark.plugin.robot.RobotLive;
-import rlpark.plugin.robot.Robots;
 import rltoys.math.ranges.Range;
 import rltoys.utils.Utils;
 import zephyr.ZephyrCore;
@@ -97,7 +96,7 @@ public abstract class IRobotView extends EnvironmentView<RobotLive> implements C
 
   @Override
   public boolean synchronize() {
-    currentObservation = Robots.toDoubles(environment.lastReceivedRawObs());
+    currentObservation = environment.lastReceivedRawObs().doubleValues();
     synchronize(currentObservation);
     return true;
   }
@@ -114,8 +113,8 @@ public abstract class IRobotView extends EnvironmentView<RobotLive> implements C
     if (environment == null)
       setViewName("Observation", "");
     IRobotLogFile logFile = environment instanceof IRobotLogFile ? (IRobotLogFile) environment : null;
-    String viewTitle = logFile == null ? environment.getClass().getSimpleName() :
-        new File(logFile.filepath()).getName();
+    String viewTitle = logFile == null ? environment.getClass().getSimpleName() : new File(logFile.filepath())
+        .getName();
     String tooltip = logFile == null ? "" : logFile.filepath();
     setViewName(viewTitle, tooltip);
   }

@@ -1,4 +1,4 @@
-package rltoys.demons.functions;
+package rltoys.horde.functions;
 
 public class ConstantGamma implements GammaFunction {
   private static final long serialVersionUID = -4493833693286307798L;

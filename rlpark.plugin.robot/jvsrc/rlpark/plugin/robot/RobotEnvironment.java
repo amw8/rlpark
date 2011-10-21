@@ -1,8 +1,10 @@
 package rlpark.plugin.robot;
 
+
 import rlpark.plugin.robot.sync.ObservationReceiver;
 import rlpark.plugin.robot.sync.ObservationSynchronizer;
 import rlpark.plugin.robot.sync.ObservationVersatile;
+import rlpark.plugin.robot.sync.ObservationVersatileArray;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.Agent;
 import zephyr.plugin.core.api.labels.Labeled;
@@ -10,7 +12,7 @@ import zephyr.plugin.core.api.synchronization.Clock;
 
 public abstract class RobotEnvironment implements RobotLive, Labeled {
   protected final ObservationSynchronizer obsSync;
-  protected ObservationVersatile[] lastReceivedObsBuffer;
+  protected ObservationVersatile lastReceivedObsBuffer;
 
   public RobotEnvironment(ObservationReceiver receiver, boolean persistent) {
     prepareEnvironment();
@@ -29,32 +31,28 @@ public abstract class RobotEnvironment implements RobotLive, Labeled {
   }
 
   public double[] newObsNow() {
-    ObservationVersatile newObs = toOneObs(newRawObsNow());
-    return newObs != null ? newObs.doubleValues() : null;
+    return newRawObsNow().doubleValues();
   }
 
-  public ObservationVersatile[] newRawObsNow() {
-    ObservationVersatile[] newObs = obsSync.newObsNow();
-    if (newObs != null)
-      lastReceivedObsBuffer = newObs;
+  public ObservationVersatileArray newRawObsNow() {
+    ObservationVersatileArray newObs = obsSync.newObsNow();
+    if (newObs.last() != null)
+      lastReceivedObsBuffer = newObs.last();
     return newObs;
   }
 
-  protected ObservationVersatile toOneObs(ObservationVersatile[] obs) {
-    return obs != null ? obs[obs.length - 1] : null;
-  }
-
   public double[] waitNewObs() {
-    ObservationVersatile rawobs = toOneObs(waitNewRawObs());
-    return rawobs != null ? rawobs.doubleValues() : null;
+    return waitNewRawObs().doubleValues();
   }
 
   @Override
-  public ObservationVersatile[] waitNewRawObs() {
-    lastReceivedObsBuffer = obsSync.waitNewObs();
-    if (lastReceivedObsBuffer == null)
+  public ObservationVersatileArray waitNewRawObs() {
+    ObservationVersatileArray observations = obsSync.waitNewObs();
+    if (observations == null)
       close();
-    return lastReceivedObsBuffer;
+    if (observations.last() != null)
+      lastReceivedObsBuffer = observations.last();
+    return observations;
   }
 
   @Override
@@ -68,14 +66,11 @@ public abstract class RobotEnvironment implements RobotLive, Labeled {
   }
 
   public double[] lastReceivedObs() {
-    ObservationVersatile lastReceivedObs = toOneObs(lastReceivedObsBuffer);
-    if (lastReceivedObs == null)
-      return null;
-    return lastReceivedObs.doubleValues();
+    return lastReceivedObsBuffer != null ? lastReceivedObsBuffer.doubleValues() : null;
   }
 
   @Override
-  public ObservationVersatile[] lastReceivedRawObs() {
+  public ObservationVersatile lastReceivedRawObs() {
     return lastReceivedObsBuffer;
   }
 

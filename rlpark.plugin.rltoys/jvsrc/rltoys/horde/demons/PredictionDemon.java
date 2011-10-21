@@ -1,9 +1,9 @@
-package rltoys.demons;
+package rltoys.horde.demons;
 
 import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.td.OnPolicyTD;
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.demons.functions.RewardFunction;
+import rltoys.horde.functions.RewardFunction;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.labels.Labeled;
 import zephyr.plugin.core.api.labels.Labels;

@@ -4,42 +4,13 @@ import java.util.Arrays;
 
 import rlpark.plugin.robot.disco.datatype.LiteByteBuffer;
 import rlpark.plugin.robot.sync.ObservationVersatile;
+import rlpark.plugin.robot.sync.ObservationVersatileArray;
 import rlpark.plugin.robot.sync.ScalarInterpreter;
-import rltoys.math.GrayCode;
-import rltoys.math.vector.BinaryVector;
-import rltoys.math.vector.implementations.BVector;
+import rltoys.algorithms.representations.observations.Observation;
 import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
 import zephyr.plugin.core.api.monitoring.abstracts.Monitored;
 
 public class Robots {
-
-  public static double[] toDoubles(ObservationVersatile[] obs) {
-    ObservationVersatile last = last(obs);
-    if (last == null)
-      return null;
-    return last.doubleValues();
-  }
-
-  public static ObservationVersatile last(ObservationVersatile[] obs) {
-    if (obs == null || obs.length == 0)
-      return null;
-    return obs[obs.length - 1];
-  }
-
-  public static BinaryVector toRawBinary(ObservationVersatile[] obs) {
-    ObservationVersatile last = last(obs);
-    if (last == null)
-      return null;
-    return BVector.toBinary(last.rawData());
-  }
-
-  public static BinaryVector toGrayCodeBinary(ObservationVersatile[] obs) {
-    ObservationVersatile last = last(obs);
-    if (last == null)
-      return null;
-    return BVector.toBinary(GrayCode.toGrayCode(last.rawData()));
-  }
-
   static public ObservationVersatile createObservation(long time, LiteByteBuffer buffer, ScalarInterpreter interpreter) {
     double[] doubleValues = new double[interpreter.size()];
     interpreter.interpret(buffer, doubleValues);
@@ -52,7 +23,7 @@ public class Robots {
       monitor.add(label, 0, new Monitored() {
         @Override
         public double monitoredValue() {
-          double[] obs = toDoubles(problem.lastReceivedRawObs());
+          double[] obs = problem.lastReceivedRawObs().doubleValues();
           if (obs == null)
             return -1;
           return obs[obsIndex];
@@ -85,5 +56,13 @@ public class Robots {
 
   public static final int byteArrayToInt(byte[] current) {
     return (current[0] << 24) + ((current[1] & 0xFF) << 16) + ((current[2] & 0xFF) << 8) + (current[3] & 0xFF);
+  }
+
+  public static double[] toDoubles(ObservationVersatileArray observation) {
+    return observation != null ? observation.doubleValues() : null;
+  }
+
+  public static double[] toDoubles(Observation obs) {
+    return toDoubles((ObservationVersatileArray) obs);
   }
 }

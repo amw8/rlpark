@@ -1,4 +1,4 @@
-package rltoys.algorithms.representations;
+package rltoys.algorithms.representations.observations;
 
 import rltoys.environments.envio.observations.Legend;
 import rltoys.math.normalization.MinMaxNormalizer;

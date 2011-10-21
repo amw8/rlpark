@@ -46,8 +46,8 @@ public class RoombaRobot extends IRobotEnvironment {
   protected void sendActionToRobot(double left, double right) {
     short shortLeft = toActionValue(MaxAction, left);
     short shortRight = toActionValue(MaxAction, right);
-    sendMessage(new byte[] { (byte) 146, (byte) (shortRight >> 8), (byte) shortRight,
-        (byte) (shortLeft >> 8), (byte) shortLeft });
+    sendMessage(new byte[] { (byte) 146, (byte) (shortRight >> 8), (byte) shortRight, (byte) (shortLeft >> 8),
+        (byte) shortLeft });
   }
 
   public static Range[] getRanges() {
@@ -62,7 +62,7 @@ public class RoombaRobot extends IRobotEnvironment {
     if (lastReceivedObsBuffer == null)
       return;
     Legend legend = legend();
-    final double[] lastObs = toOneObs(lastReceivedObsBuffer).doubleValues();
+    final double[] lastObs = lastReceivedObsBuffer.doubleValues();
     double icRight = lastObs[legend.indexOf(IRobotDrops.ICRight)];
     lastObs[legend.indexOf(IRobotDrops.ICOmni)] = icRight;
     if (icRight == 88 || icRight == 89)

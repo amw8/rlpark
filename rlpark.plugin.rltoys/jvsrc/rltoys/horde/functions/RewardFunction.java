@@ -1,4 +1,4 @@
-package rltoys.demons.functions;
+package rltoys.horde.functions;
 
 import java.io.Serializable;
 

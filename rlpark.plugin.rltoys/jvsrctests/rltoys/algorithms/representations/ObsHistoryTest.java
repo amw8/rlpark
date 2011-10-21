@@ -3,6 +3,7 @@ package rltoys.algorithms.representations;
 import org.junit.Assert;
 import org.junit.Test;
 
+import rltoys.algorithms.representations.observations.ObsHistory;
 import rltoys.environments.envio.observations.Legend;
 import rltoys.math.ranges.Range;
 import rltoys.utils.RLToysTestUtils;

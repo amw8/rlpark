@@ -7,8 +7,7 @@ import rltoys.environments.envio.observations.Legend;
 
 public class CritterbotRobot extends CritterbotEnvironment {
   public enum SoundMode {
-    None,
-    FFT
+    None, FFT
   }
 
   static public final SoundMode defaultSoundMode = SoundMode.None;
@@ -72,7 +71,7 @@ public class CritterbotRobot extends CritterbotEnvironment {
       return null;
     if (lastSoundData == null)
       return robotObs;
-    ObservationVersatile soundUpdatedObs = toOneObs(soundSync.newObsNow());
+    ObservationVersatile soundUpdatedObs = soundSync.newObsNow().last();
     if (soundUpdatedObs != null)
       System.arraycopy(soundUpdatedObs.doubleValues(), 0, lastSoundData, 0, lastSoundData.length);
     double[] obs = new double[robotObs.length + lastSoundData.length];

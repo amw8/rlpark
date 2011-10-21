@@ -1,15 +1,15 @@
-package rltoys.demons;
+package rltoys.horde.demons;
 
 import rltoys.algorithms.learning.control.gq.GreedyGQ;
 import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
-import rltoys.demons.functions.ConstantGamma;
-import rltoys.demons.functions.ConstantOutcomeFunction;
-import rltoys.demons.functions.GammaFunction;
-import rltoys.demons.functions.OutcomeFunction;
-import rltoys.demons.functions.RewardFunction;
+import rltoys.horde.functions.ConstantGamma;
+import rltoys.horde.functions.ConstantOutcomeFunction;
+import rltoys.horde.functions.GammaFunction;
+import rltoys.horde.functions.OutcomeFunction;
+import rltoys.horde.functions.RewardFunction;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 

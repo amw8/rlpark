@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.representations.actions.Action;
+import rltoys.horde.demons.Demon;
+import rltoys.horde.demons.DemonScheduler;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.BVector;
 import rltoys.utils.Utils;

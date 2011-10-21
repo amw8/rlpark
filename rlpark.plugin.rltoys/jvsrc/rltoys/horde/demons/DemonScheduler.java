@@ -1,4 +1,4 @@
-package rltoys.demons;
+package rltoys.horde.demons;
 
 import java.io.Serializable;
 import java.util.List;

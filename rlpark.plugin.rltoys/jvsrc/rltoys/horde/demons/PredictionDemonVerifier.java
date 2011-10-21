@@ -1,11 +1,11 @@
-package rltoys.demons;
+package rltoys.horde.demons;
 
 import java.io.Serializable;
 
 import rltoys.algorithms.learning.predictions.td.OnPolicyTD;
 import rltoys.algorithms.learning.predictions.td.TD;
 import rltoys.algorithms.learning.predictions.td.TDLambdaAutostep;
-import rltoys.demons.functions.RewardFunction;
+import rltoys.horde.functions.RewardFunction;
 import rltoys.utils.NotImplemented;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import zephyr.plugin.core.api.monitoring.wrappers.Abs;

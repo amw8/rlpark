@@ -7,7 +7,6 @@ import java.util.Random;
 import rlpark.plugin.irobot.data.CreateAction;
 import rlpark.plugin.irobot.robots.CreateRobot;
 import rlpark.plugin.irobot.robots.IRobotEnvironment;
-import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.sync.ObservationVersatile;
 import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.td.TDLambda;
@@ -21,12 +20,12 @@ import rltoys.algorithms.representations.ltu.networks.RandomNetwork;
 import rltoys.algorithms.representations.ltu.units.LTU;
 import rltoys.algorithms.representations.ltu.units.LTUAdaptive;
 import rltoys.algorithms.representations.traces.RTraces;
-import rltoys.demons.DemonScheduler;
-import rltoys.demons.PredictionDemon;
-import rltoys.demons.PredictionDemonVerifier;
-import rltoys.demons.RewardObservationFunction;
-import rltoys.demons.functions.RewardFunction;
 import rltoys.environments.envio.observations.Legend;
+import rltoys.horde.demons.DemonScheduler;
+import rltoys.horde.demons.PredictionDemon;
+import rltoys.horde.demons.PredictionDemonVerifier;
+import rltoys.horde.functions.RewardFunction;
+import rltoys.horde.functions.RewardObservationFunction;
 import rltoys.math.GrayCode;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.BVector;
@@ -133,7 +132,7 @@ public class CreateRawDataRecursiveRandomNetworkNexting implements Runnable {
   @Override
   public void run() {
     while (!environment.isClosed() && clock.tick()) {
-      ObservationVersatile lastObs = Robots.last(environment.waitNewRawObs());
+      ObservationVersatile lastObs = environment.waitNewRawObs().last();
       updateRewards(lastObs.doubleValues());
       BVector binaryObs = BVector.toBinary(GrayCode.toGrayCode(lastObs.rawData()));
       BVector x_tp1 = stateUpdate.updateState(binaryObs);

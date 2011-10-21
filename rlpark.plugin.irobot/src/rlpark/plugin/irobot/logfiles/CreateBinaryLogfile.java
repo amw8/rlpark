@@ -10,7 +10,9 @@ import rlpark.plugin.robot.disco.drops.Drop;
 import rlpark.plugin.robot.disco.io.DiscoLogfile;
 import rlpark.plugin.robot.disco.io.DiscoPacket;
 import rlpark.plugin.robot.sync.ObservationVersatile;
+import rlpark.plugin.robot.sync.ObservationVersatileArray;
 import rltoys.environments.envio.observations.Legend;
+import zephyr.plugin.core.Utils;
 import zephyr.plugin.core.api.monitoring.abstracts.DataMonitor;
 import zephyr.plugin.core.api.monitoring.abstracts.MonitorContainer;
 import zephyr.plugin.core.api.monitoring.abstracts.Monitored;
@@ -48,10 +50,10 @@ public class CreateBinaryLogfile implements MonitorContainer, RobotLog {
   }
 
   @Override
-  public ObservationVersatile nextStep() {
+  public ObservationVersatileArray nextStep() {
     currentObservation = nextObservation;
     nextObservation = readNextObservation();
-    return currentObservation;
+    return new ObservationVersatileArray(Utils.asList(currentObservation));
   }
 
   // @Override

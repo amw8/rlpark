@@ -66,7 +66,7 @@ public class ObservationSynchronizer {
     notifyAll();
   }
 
-  synchronized public ObservationVersatile[] waitNewObs() {
+  synchronized public ObservationVersatileArray waitNewObs() {
     if (lastObsBuffer.size() > 0)
       return useLastObs();
     try {
@@ -77,15 +77,14 @@ public class ObservationSynchronizer {
     return useLastObs();
   }
 
-  synchronized public ObservationVersatile[] newObsNow() {
+  synchronized public ObservationVersatileArray newObsNow() {
     return useLastObs();
   }
 
-  synchronized private ObservationVersatile[] useLastObs() {
+  synchronized private ObservationVersatileArray useLastObs() {
     if (lastObsBuffer.size() == 0)
       return null;
-    ObservationVersatile[] result = new ObservationVersatile[lastObsBuffer.size()];
-    lastObsBuffer.toArray(result);
+    ObservationVersatileArray result = new ObservationVersatileArray(lastObsBuffer);
     lastObsBuffer.clear();
     return result;
   }

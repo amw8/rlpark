@@ -1,6 +1,5 @@
-package rltoys.demons;
+package rltoys.horde.functions;
 
-import rltoys.demons.functions.RewardFunction;
 import rltoys.environments.envio.observations.Legend;
 import zephyr.plugin.core.api.labels.Labeled;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;

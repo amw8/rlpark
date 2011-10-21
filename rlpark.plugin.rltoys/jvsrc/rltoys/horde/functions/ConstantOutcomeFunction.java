@@ -1,4 +1,4 @@
-package rltoys.demons.functions;
+package rltoys.horde.functions;
 
 public class ConstantOutcomeFunction implements OutcomeFunction {
   private final double outcome;

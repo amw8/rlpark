@@ -1,4 +1,4 @@
-package rltoys.algorithms.representations;
+package rltoys.algorithms.representations.observations;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -6,7 +6,9 @@ import java.util.List;
 import rlpark.plugin.robot.RobotLog;
 import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.sync.ObservationVersatile;
+import rlpark.plugin.robot.sync.ObservationVersatileArray;
 import rltoys.environments.envio.observations.Legend;
+import zephyr.plugin.core.Utils;
 import zephyr.plugin.core.api.logfiles.LogFile;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import critterbot.CritterbotProblem;
@@ -52,7 +54,7 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog {
   }
 
   @Override
-  public ObservationVersatile nextStep() {
+  public ObservationVersatileArray nextStep() {
     logfile.step();
     double[] obs = logfile.currentLine();
     long localTime = 0;
@@ -61,7 +63,7 @@ public class CrtrLogFile implements CritterbotProblem, RobotLog {
       obs = removeLocalTimeValue(obs);
     }
     currentObservation = new ObservationVersatile(localTime, Robots.doubleArrayToByteArray(obs), obs);
-    return currentObservation;
+    return new ObservationVersatileArray(Utils.asList(currentObservation));
   }
 
   private double[] removeLocalTimeValue(double[] obs) {

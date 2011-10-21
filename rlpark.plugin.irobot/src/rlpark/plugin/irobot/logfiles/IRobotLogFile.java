@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rlpark.plugin.robot.RobotLog;
-import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.sync.ObservationVersatile;
+import rlpark.plugin.robot.sync.ObservationVersatileArray;
 import rltoys.environments.envio.observations.Legend;
+import rltoys.utils.Utils;
 import zephyr.plugin.core.api.logfiles.LogFile;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 public class IRobotLogFile implements RobotLog {
   public static final String Extension = "irobotlog";
-  private ObservationVersatile[] lastReceived = null;
+  private ObservationVersatile lastReceived = null;
 
   @Monitor(emptyLabel = true)
   private final LogFile logfile;
@@ -35,13 +36,10 @@ public class IRobotLogFile implements RobotLog {
 
   public void step() {
     if (hasNextStep()) {
-      if (lastReceived == null)
-        lastReceived = new ObservationVersatile[1];
       logfile.step();
-      lastReceived[0] = new ObservationVersatile(-1, null, logfile.currentLine());
-    } else {
+      lastReceived = new ObservationVersatile(-1, null, logfile.currentLine());
+    } else
       lastReceived = null;
-    }
   }
 
   @Override
@@ -63,8 +61,8 @@ public class IRobotLogFile implements RobotLog {
   }
 
   @Override
-  public ObservationVersatile nextStep() {
+  public ObservationVersatileArray nextStep() {
     step();
-    return Robots.last(lastReceived);
+    return new ObservationVersatileArray(Utils.asList(lastReceived));
   }
 }
