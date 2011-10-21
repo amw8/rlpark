@@ -19,4 +19,9 @@ public class ControlAverageReward implements Control {
   public Action step(RealVector x_t, Action a_t, RealVector x_tp1, double r_tp1) {
     return control.step(x_t, a_t, x_tp1, averageReward.average(r_tp1));
   }
+
+  @Override
+  public Action proposeAction(RealVector x) {
+    return control.proposeAction(x);
+  }
 }

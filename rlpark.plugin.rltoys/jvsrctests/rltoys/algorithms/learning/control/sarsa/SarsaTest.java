@@ -67,6 +67,11 @@ public class SarsaTest extends MountainCarOnPolicyTest {
       expectedSarsa.update(s_t, a_t, r_tp1, s_tp1);
       return a_tp1;
     }
+
+    @Override
+    public Action proposeAction(RealVector x) {
+      return acting.decide(x);
+    }
   }
 
   @Test
