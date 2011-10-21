@@ -8,7 +8,7 @@ import rlpark.plugin.robot.Robots;
 import rlpark.plugin.robot.sync.ObservationVersatile;
 import rlpark.plugin.robot.sync.ObservationVersatileArray;
 import rltoys.environments.envio.observations.Legend;
-import zephyr.plugin.core.Utils;
+import rltoys.utils.Utils;
 import zephyr.plugin.core.api.logfiles.LogFile;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 import critterbot.CritterbotProblem;

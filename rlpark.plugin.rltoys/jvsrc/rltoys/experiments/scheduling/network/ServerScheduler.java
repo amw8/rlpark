@@ -10,11 +10,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
-import rltoys.experiments.scheduling.interfaces.JobQueue;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
 import rltoys.experiments.scheduling.internal.messages.Messages;
 import rltoys.experiments.scheduling.internal.network.SocketClient;
-import rltoys.experiments.scheduling.internal.queue.LocalQueue;
+import rltoys.experiments.scheduling.queue.LocalQueue;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import zephyr.plugin.core.api.signals.Listener;
 import zephyr.plugin.core.api.signals.Signal;
@@ -149,7 +148,7 @@ public class ServerScheduler implements Scheduler {
   }
 
   @Override
-  public JobQueue queue() {
+  public LocalQueue queue() {
     return localQueue;
   }
 }

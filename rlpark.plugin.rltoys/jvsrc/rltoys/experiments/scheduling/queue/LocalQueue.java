@@ -1,4 +1,4 @@
-package rltoys.experiments.scheduling.internal.queue;
+package rltoys.experiments.scheduling.queue;
 
 import java.util.HashMap;
 import java.util.Iterator;

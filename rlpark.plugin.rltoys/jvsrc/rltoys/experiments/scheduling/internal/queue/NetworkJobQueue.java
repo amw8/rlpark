@@ -13,6 +13,7 @@ import rltoys.experiments.scheduling.internal.messages.MessageJob;
 import rltoys.experiments.scheduling.internal.messages.Messages;
 import rltoys.experiments.scheduling.internal.network.NetworkClassLoader;
 import rltoys.experiments.scheduling.internal.network.SyncSocket;
+import rltoys.experiments.scheduling.queue.LocalQueue;
 import zephyr.plugin.core.api.signals.Signal;
 import zephyr.plugin.core.api.synchronization.Chrono;
 

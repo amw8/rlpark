@@ -7,7 +7,7 @@ import java.util.List;
 import rltoys.experiments.scheduling.interfaces.JobDoneEvent;
 import rltoys.experiments.scheduling.interfaces.JobPool;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
-import rltoys.experiments.scheduling.internal.queue.LocalQueue;
+import rltoys.experiments.scheduling.queue.LocalQueue;
 import zephyr.plugin.core.api.signals.Listener;
 
 

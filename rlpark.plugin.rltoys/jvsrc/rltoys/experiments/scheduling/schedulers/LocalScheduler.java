@@ -7,7 +7,7 @@ import java.util.concurrent.Future;
 
 import rltoys.experiments.scheduling.interfaces.JobQueue;
 import rltoys.experiments.scheduling.interfaces.Scheduler;
-import rltoys.experiments.scheduling.internal.queue.LocalQueue;
+import rltoys.experiments.scheduling.queue.LocalQueue;
 import rltoys.utils.Scheduling;
 import zephyr.plugin.core.api.synchronization.Chrono;
 

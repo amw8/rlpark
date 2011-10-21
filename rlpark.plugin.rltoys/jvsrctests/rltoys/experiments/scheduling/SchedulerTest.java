@@ -13,9 +13,9 @@ import rltoys.experiments.scheduling.SchedulerTestsUtils.Job;
 import rltoys.experiments.scheduling.SchedulerTestsUtils.JobDoneListener;
 import rltoys.experiments.scheduling.internal.messages.ClassLoading;
 import rltoys.experiments.scheduling.internal.messages.Messages;
-import rltoys.experiments.scheduling.internal.queue.LocalQueue;
 import rltoys.experiments.scheduling.network.NetworkClient;
 import rltoys.experiments.scheduling.network.ServerScheduler;
+import rltoys.experiments.scheduling.queue.LocalQueue;
 import rltoys.experiments.scheduling.schedulers.LocalScheduler;
 import rltoys.utils.Command;
 
