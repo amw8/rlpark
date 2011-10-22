@@ -15,11 +15,7 @@ public abstract class RobotEnvironment implements RobotLive, Labeled {
   protected ObservationVersatile lastReceivedObsBuffer;
 
   public RobotEnvironment(ObservationReceiver receiver, boolean persistent) {
-    prepareEnvironment();
     obsSync = new ObservationSynchronizer(receiver, persistent);
-  }
-
-  protected void prepareEnvironment() {
   }
 
   public ObservationSynchronizer synchronizer() {
@@ -48,8 +44,11 @@ public abstract class RobotEnvironment implements RobotLive, Labeled {
   @Override
   public ObservationVersatileArray waitNewRawObs() {
     ObservationVersatileArray observations = obsSync.waitNewObs();
-    if (observations == null)
+    if (observations == null) {
+      lastReceivedObsBuffer = null;
       close();
+      return null;
+    }
     if (observations.last() != null)
       lastReceivedObsBuffer = observations.last();
     return observations;

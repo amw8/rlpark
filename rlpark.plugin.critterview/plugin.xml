@@ -20,37 +20,30 @@
       </client>
    </extension>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="zephyr.plugin.critterview.commands.StartSimulator"
-            description="Start the Critterbot Simulator"
-            id="zephyr.plugin.critterview.startsimulator"
-            name="Start Simulator">
-      </command>
-      <command
-            defaultHandler="zephyr.plugin.critterview.commands.ConnectCritterbot"
-            description="Connect to the Critterbot"
-            id="zephyr.plugin.critterview.connectcritterbot"
-            name="Connect to Critterbot">
-      </command>
-   </extension>
-   <extension
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="menu:menu.file?after=zephyr.plugin.core.zephyrbegin">
          <menu
                label="Critterbot">
             <command
-                  commandId="zephyr.plugin.critterview.startsimulator"
+                  commandId="zephyr.plugin.core.command.startrunnable"
                   label="Start a Simulator"
                   mnemonic="S"
                   style="push">
+               <parameter
+                     name="zephyr.plugin.core.command.parameter.runnableid"
+                     value="zephyr.plugin.critterview.simulator">
+               </parameter>
             </command>
             <command
-                  commandId="zephyr.plugin.critterview.connectcritterbot"
+                  commandId="zephyr.plugin.core.command.startrunnable"
                   label="Connect to Critterbot"
                   mnemonic="C"
                   style="push">
+               <parameter
+                     name="zephyr.plugin.core.command.parameter.runnableid"
+                     value="zephyr.plugin.critterview.critterbot">
+               </parameter>
             </command>
          </menu>
       </menuContribution>
@@ -94,12 +87,12 @@
       <client
             autostart="false"
             class="zephyr.plugin.critterview.runnable.CritterbotRunnable"
-            id="critterbot">
+            id="zephyr.plugin.critterview.critterbot">
       </client>
       <client
             autostart="false"
             class="zephyr.plugin.critterview.runnable.SimulatorRunnable"
-            id="simulator">
+            id="zephyr.plugin.critterview.simulator">
       </client>
    </extension>
    <extension

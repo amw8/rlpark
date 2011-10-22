@@ -4,21 +4,19 @@ import rltoys.algorithms.representations.actions.Action;
 import rltoys.environments.envio.Agent;
 import zephyr.plugin.core.api.synchronization.Clock;
 import critterbot.actions.CritterbotAction;
-import critterbot.actions.VoltageSpaceAction;
 import critterbot.environment.CritterbotEnvironment;
-import critterbot.environment.CritterbotRobot;
-import critterbot.environment.CritterbotRobot.SoundMode;
 
 public class ConstantAgent implements Runnable, Agent {
-  private final CritterbotEnvironment environment = new CritterbotRobot(SoundMode.None);
   private final Clock clock = new Clock("ConstantAgent");
   private final CritterbotAction action;
+  private final CritterbotEnvironment environment;
 
-  public ConstantAgent() {
-    this(CritterbotAction.DoNothing);
+  public ConstantAgent(CritterbotEnvironment environment) {
+    this(environment, CritterbotAction.DoNothing);
   }
 
-  public ConstantAgent(CritterbotAction action) {
+  public ConstantAgent(CritterbotEnvironment environment, CritterbotAction action) {
+    this.environment = environment;
     this.action = action;
   }
 
@@ -31,9 +29,5 @@ public class ConstantAgent implements Runnable, Agent {
   public void run() {
     while (clock.tick() && !environment.isClosed())
       environment.sendAction(action);
-  }
-
-  public static void main(String[] args) {
-    new ConstantAgent(new VoltageSpaceAction(10, 10, 10)).run();
   }
 }

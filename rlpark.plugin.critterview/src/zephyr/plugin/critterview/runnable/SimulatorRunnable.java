@@ -1,25 +1,19 @@
 package zephyr.plugin.critterview.runnable;
 
-import rlpark.plugin.rltoysview.commands.AgentRobotRunnable;
-import rlpark.plugin.rltoysview.commands.RunEnvironmentCommand;
-import rlpark.plugin.robot.RobotEnvironment;
-import rltoys.environments.envio.Agent;
-import critterbot.actions.CritterbotAction;
+import zephyr.plugin.core.api.Zephyr;
+import zephyr.plugin.core.api.synchronization.Clock;
 import critterbot.environment.CritterbotSimulator;
-import critterbot.examples.ConstantAgent;
+import critterbot.environment.CritterbotSimulator.SimulatorCommand;
 
-public class SimulatorRunnable extends AgentRobotRunnable {
-  public SimulatorRunnable() {
-    super(new RunEnvironmentCommand() {
-      @Override
-      public Agent createAgent() {
-        return new ConstantAgent(CritterbotAction.DoNothing);
-      }
-
-      @Override
-      public RobotEnvironment createEnvironment() {
-        return new CritterbotSimulator();
-      }
-    });
+public class SimulatorRunnable implements Runnable {
+  @Override
+  public void run() {
+    SimulatorCommand simulatorCommand = CritterbotSimulator.startSimulator();
+    CritterbotSimulator simulator = new CritterbotSimulator(simulatorCommand);
+    Clock clock = new Clock("Simulator");
+    Zephyr.advertise(clock, simulator);
+    while (!simulator.isClosed() && clock.tick())
+      simulator.waitNewObs();
+    simulator.close();
   }
 }

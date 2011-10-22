@@ -43,9 +43,13 @@
                   style="push">
             </command>
             <command
-                  commandId="zephyr.plugin.irobotview.connectcreateclient"
+                  commandId="zephyr.plugin.core.command.startrunnable"
                   label="Connect To Server..."
                   style="push">
+               <parameter
+                     name="zephyr.plugin.core.command.parameter.runnableid"
+                     value="rlpark.plugin.irobotview.runnable.createrunnable">
+               </parameter>
             </command>
             <command
                   commandId="zephyr.plugin.irobotview.connectcreate"
@@ -61,9 +65,13 @@
                   style="push">
             </command>
             <command
-                  commandId="zephyr.plugin.irobotview.command.connectroombaclient"
+                  commandId="zephyr.plugin.core.command.startrunnable"
                   label="Connect To Server..."
                   style="push">
+               <parameter
+                     name="zephyr.plugin.core.command.parameter.runnableid"
+                     value="rlpark.plugin.irobotview.runnable.roombarunnable">
+               </parameter>
             </command>
             <command
                   commandId="zephyr.plugin.irobotview.command.connectroomba"
@@ -88,18 +96,6 @@
             name="Connect to a Roomba">
       </command>
       <command
-            defaultHandler="rlpark.plugin.irobotview.command.ConnectCreateClient"
-            description="Connect a client to a Create server"
-            id="zephyr.plugin.irobotview.connectcreateclient"
-            name="Connect to a Create server">
-      </command>
-      <command
-            defaultHandler="rlpark.plugin.irobotview.command.ConnectRoombaClient"
-            description="Connect a client to a Roomba server"
-            id="zephyr.plugin.irobotview.command.connectroombaclient"
-            name="Connect to a Roomba server">
-      </command>
-      <command
             defaultHandler="rlpark.plugin.irobotview.command.ServerCreate"
             description="Start a Create Server..."
             id="zephyr.plugin.irobotview.servercreate"
@@ -120,6 +116,19 @@
       </client>
       <client
             class="rlpark.plugin.irobotview.filehandlers.CreateDiscoFileHandler">
+      </client>
+   </extension>
+   <extension
+         point="zephyr.runnable">
+      <client
+            autostart="false"
+            class="rlpark.plugin.irobotview.runnable.CreateRunnable"
+            id="rlpark.plugin.irobotview.runnable.createrunnable">
+      </client>
+      <client
+            autostart="false"
+            class="rlpark.plugin.irobotview.runnable.RoombaRunnable"
+            id="rlpark.plugin.irobotview.runnable.roombarunnable">
       </client>
    </extension>
  </plugin>

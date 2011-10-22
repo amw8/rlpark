@@ -7,10 +7,12 @@ import critterbot.actions.XYThetaAction;
 import critterbot.environment.CritterbotDrops;
 import critterbot.environment.CritterbotEnvironment;
 import critterbot.environment.CritterbotSimulator;
+import critterbot.environment.CritterbotSimulator.SimulatorCommand;
 
 public class CritterbotExample {
   public static void main(String[] args) {
-    CritterbotEnvironment environment = new CritterbotSimulator();
+    SimulatorCommand command = CritterbotSimulator.startSimulator();
+    CritterbotEnvironment environment = new CritterbotSimulator(command);
     Legend legend = environment.legend();
     while (!environment.isClosed()) {
       double[] obs = environment.waitNewObs();

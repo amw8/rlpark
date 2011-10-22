@@ -1,11 +1,18 @@
 package rlpark.plugin.irobotview.command;
 
 import rlpark.plugin.irobot.robots.CreateRobot;
-import rlpark.plugin.irobot.robots.IRobotEnvironment;
+import rlpark.plugin.irobotview.runnable.CreateRunnable;
+import zephyr.ZephyrCore;
+import zephyr.plugin.core.RunnableFactory;
 
 public class ConnectCreate extends EnvironmentSerialPortCommand {
   @Override
-  protected IRobotEnvironment createIRobotEnvironment(String serialPortPath) {
-    return new CreateRobot(serialPortPath);
+  protected void startRunnable(final String serialPortPath) {
+    ZephyrCore.start(new RunnableFactory() {
+      @Override
+      public Runnable createRunnable() {
+        return new CreateRunnable(new CreateRobot(serialPortPath));
+      }
+    });
   }
 }

@@ -8,12 +8,14 @@ import critterbot.actions.XYThetaAction;
 import critterbot.environment.CritterbotDrops;
 import critterbot.environment.CritterbotEnvironment;
 import critterbot.environment.CritterbotSimulator;
+import critterbot.environment.CritterbotSimulator.SimulatorCommand;
 
 public class CritterbotWithLatencyExample {
   final static public long Latency = 100;
 
   public static void main(String[] args) {
-    CritterbotEnvironment environment = new CritterbotSimulator();
+    SimulatorCommand command = CritterbotSimulator.startSimulator();
+    CritterbotEnvironment environment = new CritterbotSimulator(command);
     Legend legend = environment.legend();
     Chrono chrono = new Chrono();
     while (!environment.isClosed()) {

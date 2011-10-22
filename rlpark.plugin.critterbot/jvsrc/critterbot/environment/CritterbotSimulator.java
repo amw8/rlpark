@@ -12,25 +12,40 @@ import rltoys.environments.envio.observations.ObsFilter;
 import rltoys.utils.Command;
 
 public class CritterbotSimulator extends CritterbotEnvironment {
-  static boolean simulatorInProcess = false;
-  static boolean remoteDebugging = false;
-  private static String jarPath = null;
-  static final Integer SimulatorPort = findFreePort();
-  static final String[] simulatorParameters = { "-p", SimulatorPort.toString(), "-nv" };
-  static final String[] remoteDebugingArgs = { "-Xdebug",
-      "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044" };
-  protected Command command;
+  static public class SimulatorCommand {
+    final public int port;
+    final public Command command;
 
-  public CritterbotSimulator() {
-    super(new CritterbotConnection("localhost", SimulatorPort));
+    public SimulatorCommand(Command command, int port) {
+      this.port = port;
+      this.command = command;
+    }
   }
 
-  @Override
-  protected void prepareEnvironment() {
-    if (simulatorInProcess)
-      startSimulatorInProcess();
-    else
-      startSimulatorOutProcess();
+  static boolean remoteDebugging = false;
+  private static String jarPath = null;
+  static final String[] remoteDebugingArgs = { "-Xdebug",
+      "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044" };
+  private SimulatorCommand command;
+
+  public CritterbotSimulator(SimulatorCommand command) {
+    super(new CritterbotConnection("localhost", command.port));
+    this.command = command;
+  }
+
+  static public SimulatorCommand startSimulator() {
+    if (jarPath == null)
+      setJarPath(getDefaultSimulatorJarPath());
+    int port = findFreePort();
+    String[] commandLine = buildSimulatorCommandLine(port);
+    System.out.println("Running: " + toCommandLineString(commandLine));
+    Command command = new Command(CritterbotSimulator.class.getSimpleName(), commandLine);
+    try {
+      command.start();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return new SimulatorCommand(command, port);
   }
 
   private static int findFreePort() {
@@ -47,7 +62,7 @@ public class CritterbotSimulator extends CritterbotEnvironment {
     return port;
   }
 
-  protected String[] buildSimulatorCommandLine() {
+  static protected String[] buildSimulatorCommandLine(int port) {
     String absJarPath = new File(jarPath).getAbsolutePath();
     List<String> commandLine = new ArrayList<String>();
     commandLine.add("java");
@@ -56,6 +71,7 @@ public class CritterbotSimulator extends CritterbotEnvironment {
         commandLine.add(parameter);
     commandLine.add("-jar");
     commandLine.add(absJarPath);
+    String[] simulatorParameters = { "-p", String.valueOf(port), "-nv" };
     for (String parameter : simulatorParameters)
       commandLine.add(parameter);
     String[] result = new String[commandLine.size()];
@@ -63,20 +79,7 @@ public class CritterbotSimulator extends CritterbotEnvironment {
     return result;
   }
 
-  private void startSimulatorOutProcess() {
-    if (jarPath == null)
-      setJarPath(getDefaultSimulatorJarPath());
-    String[] commandLine = buildSimulatorCommandLine();
-    System.out.println("Running: " + toCommandLineString(commandLine));
-    command = new Command(getClass().getSimpleName(), commandLine);
-    try {
-      command.start();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  private String toCommandLineString(String[] commandLine) {
+  static private String toCommandLineString(String[] commandLine) {
     StringBuilder result = new StringBuilder();
     for (String arg : commandLine) {
       result.append(arg);
@@ -85,25 +88,13 @@ public class CritterbotSimulator extends CritterbotEnvironment {
     return result.substring(0, result.length() - 1);
   }
 
-  private String getDefaultSimulatorJarPath() {
+  static private String getDefaultSimulatorJarPath() {
     String filePath = SimulatorMain.class.getResource(SimulatorMain.class.getSimpleName() + ".class").getFile();
     int classIndex = filePath.indexOf("/" + SimulatorMain.class.getCanonicalName().replace('.', '/'));
     String pathToFile = filePath.substring(filePath.indexOf('/'), classIndex);
     if (pathToFile.endsWith("!"))
       pathToFile = filePath.substring(0, filePath.length() - 1);
     return pathToFile;
-  }
-
-  private void startSimulatorInProcess() {
-    Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        SimulatorMain.main(new String[] { "-p", SimulatorPort.toString(), "-nk", "-nv" });
-      }
-    };
-    Thread thread = new Thread(runnable);
-    thread.start();
-    thread.setPriority(Thread.MAX_PRIORITY);
   }
 
   public static void setJarPath(String jarPath) {
@@ -120,7 +111,7 @@ public class CritterbotSimulator extends CritterbotEnvironment {
   public void close() {
     super.close();
     if (command != null) {
-      command.kill();
+      command.command.kill();
       command = null;
     }
   }
