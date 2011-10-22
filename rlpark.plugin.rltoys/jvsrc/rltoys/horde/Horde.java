@@ -12,7 +12,11 @@ import rltoys.horde.functions.HordeUpdatable;
 import rltoys.horde.functions.OutcomeFunction;
 import rltoys.horde.functions.RewardFunction;
 import rltoys.math.vector.RealVector;
+import zephyr.plugin.core.api.labels.Labels;
+import zephyr.plugin.core.api.monitoring.annotations.Monitor;
+import zephyr.plugin.core.api.parsing.LabelProvider;
 
+@Monitor
 public class Horde {
   final private List<HordeUpdatable> functions = new ArrayList<HordeUpdatable>();
   final private List<Demon> demons = new ArrayList<Demon>();
@@ -33,6 +37,16 @@ public class Horde {
     addFunctions(rewardFunctions);
     addFunctions(outcomeFunctions);
     addFunctions(gammaFunctions);
+  }
+
+  @LabelProvider(ids = { "demons" })
+  String demonLabel(int i) {
+    return Labels.label(demons.get(i));
+  }
+
+  @LabelProvider(ids = { "functions" })
+  String functionLabel(int i) {
+    return Labels.label(functions.get(i));
   }
 
   private void addFunctions(List<?> functions) {

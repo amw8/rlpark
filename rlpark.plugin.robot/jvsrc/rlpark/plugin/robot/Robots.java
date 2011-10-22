@@ -65,4 +65,8 @@ public class Robots {
   public static double[] toDoubles(Observation obs) {
     return toDoubles((ObservationVersatileArray) obs);
   }
+
+  public static double[] toDoubles(ObservationVersatile obs) {
+    return obs != null ? obs.doubleValues() : null;
+  }
 }

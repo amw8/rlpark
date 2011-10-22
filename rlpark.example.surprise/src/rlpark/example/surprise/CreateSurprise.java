@@ -50,11 +50,11 @@ public class CreateSurprise implements Runnable {
   private Action a_t;
 
   public CreateSurprise() {
-    Zephyr.advertise(clock, this);
+    agentState = new RobotState();
     horde = createHorde();
     surprise = new Surprise(horde.demons(), SurpriseTrackingSpeed);
-    agentState = new RobotState();
     robotBehaviour = new RobotBehaviour(new Random(0), .25, Actions);
+    Zephyr.advertise(clock, this);
   }
 
   private Horde createHorde() {
@@ -80,6 +80,7 @@ public class CreateSurprise implements Runnable {
 
   @Override
   public void run() {
+    robot.fullMode();
     while (clock.tick()) {
       Observation o_tp1 = robot.waitNewRawObs();
       RealVector x_tp1 = agentState.update(a_t, o_tp1);

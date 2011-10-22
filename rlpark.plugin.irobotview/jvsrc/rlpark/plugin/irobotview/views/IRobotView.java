@@ -11,6 +11,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import rlpark.plugin.irobot.logfiles.IRobotLogFile;
 import rlpark.plugin.irobotview.filehandlers.IRobotLogFileHandler;
 import rlpark.plugin.robot.RobotLive;
+import rlpark.plugin.robot.Robots;
 import rltoys.math.ranges.Range;
 import rltoys.utils.Utils;
 import zephyr.ZephyrCore;
@@ -96,7 +97,7 @@ public abstract class IRobotView extends EnvironmentView<RobotLive> implements C
 
   @Override
   public boolean synchronize() {
-    currentObservation = environment.lastReceivedRawObs().doubleValues();
+    currentObservation = Robots.toDoubles(environment.lastReceivedRawObs());
     synchronize(currentObservation);
     return true;
   }
