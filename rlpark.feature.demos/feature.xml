@@ -9,7 +9,6 @@
       Demos for RLPark
    </description>
 
-
    <copyright url="http://www.eclipse.org/legal/epl-v10.html">
       See license.
    </copyright>
@@ -132,6 +131,13 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="rlpark.example.surprise"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="rlpark.example.javacv"
          download-size="0"
          install-size="0"
          version="0.0.0"
