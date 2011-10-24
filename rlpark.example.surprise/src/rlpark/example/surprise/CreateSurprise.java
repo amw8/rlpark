@@ -8,7 +8,6 @@ import rlpark.plugin.irobot.data.CreateAction;
 import rlpark.plugin.irobot.data.IRobotSongs;
 import rlpark.plugin.irobot.robots.CreateRobot;
 import rlpark.plugin.irobot.robots.IRobotEnvironment;
-import rltoys.algorithms.learning.predictions.td.GTD;
 import rltoys.algorithms.learning.predictions.td.GTDLambda;
 import rltoys.algorithms.learning.predictions.td.OnPolicyTD;
 import rltoys.algorithms.learning.predictions.td.TDLambda;
@@ -75,8 +74,8 @@ public class CreateSurprise implements Runnable {
 
   private PredictionOffPolicyDemon newOffPolicyPredictionDemon(RewardFunction rewardFunction, double gamma,
       Policy targetPolicy) {
-    GTD gtd = new GTDLambda(Lambda, gamma, .1 / agentState.stateNorm(), 0.0001 / agentState.stateNorm(),
-                            agentState.stateSize());
+    GTDLambda gtd = new GTDLambda(Lambda, gamma, .1 / agentState.stateNorm(), 0.0001 / agentState.stateNorm(),
+                                  agentState.stateSize());
     return new PredictionOffPolicyDemon(targetPolicy, robotBehaviour, gtd, rewardFunction);
   }
 

@@ -99,16 +99,6 @@ public class TDTest {
   }
 
   @Test
-  public void testGTDOnRandomWalkProblem() {
-    testTD(randomWalkProblem, new OnPolicyTDFactory() {
-      @Override
-      public OnPolicyTD create(int nbFeatures) {
-        return new GTD(0.9, 0.01, 0.5, nbFeatures);
-      }
-    });
-  }
-
-  @Test
   public void testGTDLambda0OnRandomWalkProblem() {
     testTD(randomWalkProblem, new OnPolicyTDFactory() {
       @Override

@@ -3,12 +3,16 @@ package rltoys.algorithms.learning.predictions.td;
 import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.RealVector;
+import rltoys.math.vector.implementations.PVector;
 import rltoys.math.vector.implementations.SVector;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 
 @Monitor
-public class GTDLambda extends GTD {
+public class GTDLambda extends TD implements GVF {
   private static final long serialVersionUID = 8687476023177671278L;
+  @Monitor(level = 4)
+  protected final PVector w;
+  public final double alpha_w;
   protected double lambda;
   private final Traces e;
 
@@ -17,8 +21,10 @@ public class GTDLambda extends GTD {
   }
 
   public GTDLambda(double lambda, double gamma, double alpha_v, double alpha_w, int nbFeatures, Traces prototype) {
-    super(gamma, alpha_v, alpha_w, nbFeatures);
+    super(gamma, alpha_v, nbFeatures);
     this.lambda = lambda;
+    this.alpha_w = alpha_w;
+    w = new PVector(nbFeatures);
     e = prototype.newTraces(nbFeatures);
   }
 
@@ -48,5 +54,29 @@ public class GTDLambda extends GTD {
   public void resetWeight(int index) {
     super.resetWeight(index);
     e.vect().setEntry(index, 0);
+  }
+
+  @Override
+  public double update(RealVector x_t, RealVector x_tp1, double r_tp1) {
+    return update(1.0, x_t, x_tp1, r_tp1, gamma, 0);
+  }
+
+  @Override
+  public double update(RealVector x_t, RealVector x_tp1, double r_tp1, double gamma_tp1) {
+    return update(1.0, x_t, x_tp1, r_tp1, gamma_tp1, 0);
+  }
+
+  @Override
+  public double update(double rho_t, RealVector x_t, RealVector x_tp1, double r_tp1) {
+    return update(rho_t, x_t, x_tp1, r_tp1, gamma, 0);
+  }
+
+  public double update(double rho_t, RealVector x_t, RealVector x_tp1, double r_tp1, double gamma_tp1) {
+    return update(rho_t, x_t, x_tp1, r_tp1, gamma_tp1, 0);
+  }
+
+  @Override
+  public PVector secondaryWeights() {
+    return w;
   }
 }

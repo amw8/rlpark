@@ -2,7 +2,7 @@ package rltoys.horde.demons;
 
 import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
-import rltoys.algorithms.learning.predictions.td.GTD;
+import rltoys.algorithms.learning.predictions.td.GTDLambda;
 import rltoys.algorithms.learning.predictions.td.GVF;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
@@ -29,7 +29,7 @@ public class PredictionOffPolicyDemon implements Demon, Labeled {
   private final OutcomeFunction outcomeFunction;
   private final GammaFunction gammaFunction;
 
-  public PredictionOffPolicyDemon(Policy target, Policy behaviour, GTD gtd, RewardFunction rewardFunction) {
+  public PredictionOffPolicyDemon(Policy target, Policy behaviour, GTDLambda gtd, RewardFunction rewardFunction) {
     this(target, behaviour, gtd, rewardFunction, new ConstantGamma(gtd.gamma()), new ConstantOutcomeFunction(0));
   }
 
