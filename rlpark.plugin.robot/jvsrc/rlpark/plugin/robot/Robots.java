@@ -23,7 +23,7 @@ public class Robots {
       monitor.add(label, 0, new Monitored() {
         @Override
         public double monitoredValue() {
-          double[] obs = problem.lastReceivedRawObs().doubleValues();
+          double[] obs = Robots.toDoubles(problem.lastReceivedRawObs());
           if (obs == null)
             return -1;
           return obs[obsIndex];
