@@ -27,7 +27,14 @@ public class DemonScheduler implements Serializable {
     public void run() {
       int currentPosition = offset;
       while (currentPosition < demons.size()) {
-        demons.get(currentPosition).update(x_t, a_t, x_tp1);
+        if (throwable != null)
+          return;
+        try {
+          demons.get(currentPosition).update(x_t, a_t, x_tp1);
+        } catch (Throwable throwable) {
+          DemonScheduler.this.throwable = throwable;
+          return;
+        }
         currentPosition += nbThread;
       }
     }
@@ -37,6 +44,7 @@ public class DemonScheduler implements Serializable {
   transient private DemonUpdater[] updaters;
   transient private Future<?>[] futurs;
   transient private Chrono chrono;
+  transient Throwable throwable = null;
   protected List<? extends Demon> demons;
   protected RealVector x_tp1;
   protected RealVector x_t;
@@ -65,6 +73,7 @@ public class DemonScheduler implements Serializable {
   public void update(List<? extends Demon> demons, RealVector x_t, Action a_t, RealVector x_tp1) {
     if (executor == null)
       initialize();
+    throwable = null;
     chrono.start();
     this.x_t = x_t;
     this.a_t = a_t;
@@ -80,6 +89,8 @@ public class DemonScheduler implements Serializable {
     } catch (ExecutionException e) {
       e.printStackTrace();
     }
+    if (throwable != null)
+      throw new RuntimeException(throwable);
     updateTimeAverage.update(chrono.getCurrentMillis());
   }
 

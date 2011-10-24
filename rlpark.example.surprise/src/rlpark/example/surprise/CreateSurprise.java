@@ -8,9 +8,12 @@ import rlpark.plugin.irobot.data.CreateAction;
 import rlpark.plugin.irobot.data.IRobotSongs;
 import rlpark.plugin.irobot.robots.CreateRobot;
 import rlpark.plugin.irobot.robots.IRobotEnvironment;
+import rltoys.algorithms.learning.predictions.td.GTD;
+import rltoys.algorithms.learning.predictions.td.GTDLambda;
 import rltoys.algorithms.learning.predictions.td.OnPolicyTD;
 import rltoys.algorithms.learning.predictions.td.TDLambda;
 import rltoys.algorithms.representations.AgentState;
+import rltoys.algorithms.representations.acting.ActionPolicy;
 import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.observations.Observation;
@@ -20,17 +23,16 @@ import rltoys.horde.Horde;
 import rltoys.horde.Surprise;
 import rltoys.horde.demons.Demon;
 import rltoys.horde.demons.PredictionDemon;
+import rltoys.horde.demons.PredictionOffPolicyDemon;
 import rltoys.horde.functions.RewardFunction;
 import rltoys.horde.functions.RewardObservationFunction;
 import rltoys.math.vector.RealVector;
 import zephyr.plugin.core.api.Zephyr;
 import zephyr.plugin.core.api.monitoring.annotations.Monitor;
-import zephyr.plugin.core.api.synchronization.Chrono;
 import zephyr.plugin.core.api.synchronization.Clock;
 
 @Monitor
 public class CreateSurprise implements Runnable {
-  static final private double MinSongPeriod = 2 * 60;
   static final private int SurpriseTrackingSpeed = 100;
   static final private Action[] Actions = new Action[] { CreateAction.DontMove, CreateAction.SpinLeft,
       CreateAction.SpinRight, CreateAction.Forward };
@@ -38,8 +40,9 @@ public class CreateSurprise implements Runnable {
       "DriveDistance", "DriveAngle", "BatteryCurrent", "BatteryCharge", "WallSignal", "CliffSignal",
       "ConnectedHomeBase", "OIMode", "WheelRequested" };
   static final private double[] Gammas = new double[] { .0, 0.9, 0.99 };
+  static final private Policy[] TargetPolicies = new Policy[] { new ActionPolicy(CreateAction.SpinLeft),
+      new ActionPolicy(CreateAction.Forward) };
   static final private double Lambda = .7;
-  final private Chrono lastSongTime = new Chrono(Chrono.longTimeAgo());
   final private IRobotEnvironment robot = new CreateRobot();
   final private Clock clock = new Clock("Surprise");
   final private Horde horde;
@@ -51,9 +54,9 @@ public class CreateSurprise implements Runnable {
 
   public CreateSurprise() {
     agentState = new RobotState();
+    robotBehaviour = new RobotBehaviour(new Random(0), .25, Actions);
     horde = createHorde();
     surprise = new Surprise(horde.demons(), SurpriseTrackingSpeed);
-    robotBehaviour = new RobotBehaviour(new Random(0), .25, Actions);
     Zephyr.advertise(clock, this);
   }
 
@@ -62,11 +65,24 @@ public class CreateSurprise implements Runnable {
     List<Demon> demons = new ArrayList<Demon>();
     for (RewardFunction rewardFunction : rewardFunctions) {
       for (double gamma : Gammas) {
-        OnPolicyTD td = new TDLambda(Lambda, gamma, .1 / agentState.stateNorm(), agentState.stateSize());
-        demons.add(new PredictionDemon(rewardFunction, td));
+        demons.add(newNextingPredictionDemon(rewardFunction, gamma));
+        for (Policy targetPolicy : TargetPolicies)
+          demons.add(newOffPolicyPredictionDemon(rewardFunction, gamma, targetPolicy));
       }
     }
     return new Horde(demons, rewardFunctions, null, null);
+  }
+
+  private PredictionOffPolicyDemon newOffPolicyPredictionDemon(RewardFunction rewardFunction, double gamma,
+      Policy targetPolicy) {
+    GTD gtd = new GTDLambda(Lambda, gamma, .1 / agentState.stateNorm(), 0.0001 / agentState.stateNorm(),
+                            agentState.stateSize());
+    return new PredictionOffPolicyDemon(targetPolicy, robotBehaviour, gtd, rewardFunction);
+  }
+
+  private PredictionDemon newNextingPredictionDemon(RewardFunction rewardFunction, double gamma) {
+    OnPolicyTD td = new TDLambda(Lambda, gamma, .1 / agentState.stateNorm(), agentState.stateSize());
+    return new PredictionDemon(rewardFunction, td);
   }
 
   private List<RewardFunction> createRewardFunctions() {
@@ -86,10 +102,8 @@ public class CreateSurprise implements Runnable {
       RealVector x_tp1 = agentState.update(a_t, o_tp1);
       horde.update(o_tp1, x_t, a_t, x_tp1);
       double surpriseMeasure = surprise.updateSurpriseMeasure();
-      if (surpriseMeasure > 8.0 && lastSongTime.getCurrentChrono() > MinSongPeriod) {
+      if (surpriseMeasure > 8.0)
         robot.playSong(IRobotSongs.composeHappySong());
-        lastSongTime.start();
-      }
       Action a_tp1 = robotBehaviour.decide(x_tp1);
       robot.sendAction((CreateAction) a_tp1);
       x_t = x_tp1;

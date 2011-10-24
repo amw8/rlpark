@@ -1,5 +1,6 @@
 package rltoys.algorithms.learning.predictions.td;
 
+import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.SVector;
@@ -10,6 +11,10 @@ public class GTDLambda extends GTD {
   private static final long serialVersionUID = 8687476023177671278L;
   protected double lambda;
   private final Traces e;
+
+  public GTDLambda(double lambda, double gamma, double alpha_v, double alpha_w, int nbFeatures) {
+    this(lambda, gamma, alpha_v, alpha_w, nbFeatures, new ATraces());
+  }
 
   public GTDLambda(double lambda, double gamma, double alpha_v, double alpha_w, int nbFeatures, Traces prototype) {
     super(gamma, alpha_v, alpha_w, nbFeatures);
