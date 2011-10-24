@@ -27,6 +27,15 @@
                      value="rlpark.example.surprise.createsurprise">
                </parameter>
             </command>
+            <command
+                  commandId="zephyr.plugin.core.command.startrunnable"
+                  label="Motion Detection on the Webcam"
+                  style="push">
+               <parameter
+                     name="zephyr.plugin.core.command.parameter.runnableid"
+                     value="rlpark.example.javacv.motiondetectionrunnable">
+               </parameter>
+            </command>
          </menu>
       </menuContribution>
    </extension>

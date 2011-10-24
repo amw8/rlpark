@@ -10,13 +10,13 @@ import com.googlecode.javacv.cpp.opencv_core;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 @Monitor
-public class MotionDetection implements Runnable {
+public class MotionDetectionRunnable implements Runnable {
   private static final int DEPTH = opencv_core.IPL_DEPTH_32F;
   private final Clock clock = new Clock();
   private final FrameGrabber grabber = new FrameGrabber(0, DEPTH, 1);
   private final MotionMeasure motionMeasure;
 
-  public MotionDetection() {
+  public MotionDetectionRunnable() {
     motionMeasure = new MotionMeasure(.99, grabber.width(), grabber.height(), DEPTH, 1);
     Zephyr.advertise(clock, this);
   }

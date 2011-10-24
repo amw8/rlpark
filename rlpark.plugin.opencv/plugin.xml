@@ -10,7 +10,7 @@
       </client>
       <client
             autostart="false"
-            class="rlpark.plugin.opencv.runnables.MotionDetection"
+            class="rlpark.plugin.opencv.runnables.MotionDetectionRunnable"
             id="rlpark.plugin.opencv.motiondetection">
       </client>
       <client
