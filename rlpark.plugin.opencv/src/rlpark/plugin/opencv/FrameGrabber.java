@@ -20,6 +20,7 @@ public class FrameGrabber implements ImageProvider {
   private final int height;
   private final int depth;
   private final int channels;
+  private IplImage grabberImage;
 
   public FrameGrabber(int deviceNumber) {
     this(deviceNumber, opencv_core.IPL_DEPTH_32F, 1);
@@ -74,12 +75,12 @@ public class FrameGrabber implements ImageProvider {
   }
 
   public IplImage grab() {
-    IplImage result = null;
+    grabberImage = null;
     try {
-      result = opencv_highgui.cvQueryFrame(grabber);
-      if (result == null)
+      grabberImage = opencv_highgui.cvQueryFrame(grabber);
+      if (grabberImage == null)
         return null;
-      lastImage.update(result);
+      lastImage.update(grabberImage);
       webcam.update(lastImage);
     } catch (Exception e) {
       e.printStackTrace();
@@ -93,5 +94,9 @@ public class FrameGrabber implements ImageProvider {
 
   public int channels() {
     return channels;
+  }
+
+  public IplImage grabberImage() {
+    return grabberImage;
   }
 }

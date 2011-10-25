@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.GC;
 import rltoys.algorithms.learning.control.actorcritic.policystructure.NormalDistribution;
 import rltoys.math.normalization.MinMaxNormalizer;
 import rltoys.utils.Utils;
-import zephyr.plugin.plotting.plot2d.Data2D;
+import zephyr.plugin.plotting.data.Data2D;
 import zephyr.plugin.plotting.plot2d.Plot2D;
 
 public class NormalDistributionDrawer {

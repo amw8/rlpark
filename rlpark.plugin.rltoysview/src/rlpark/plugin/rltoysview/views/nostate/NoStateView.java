@@ -18,7 +18,7 @@ import zephyr.plugin.core.api.synchronization.Clock;
 import zephyr.plugin.core.helpers.ClassViewProvider;
 import zephyr.plugin.core.utils.Colors;
 import zephyr.plugin.core.views.helpers.ForegroundCanvasView;
-import zephyr.plugin.plotting.plot2d.Data2D;
+import zephyr.plugin.plotting.data.Data2D;
 import zephyr.plugin.plotting.plot2d.Plot2D;
 import zephyr.plugin.plotting.plot2d.drawer2d.Drawer2D;
 
