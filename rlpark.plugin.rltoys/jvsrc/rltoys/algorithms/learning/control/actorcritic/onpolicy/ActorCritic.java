@@ -13,6 +13,7 @@ public class ActorCritic implements Control {
   public final OnPolicyTD critic;
   public final Actor[] actors;
   protected final Action[] lastAction;
+  protected double reward = 0.0;
 
   public ActorCritic(OnPolicyTD critic, Actor... actors) {
     this.critic = critic;
@@ -38,6 +39,7 @@ public class ActorCritic implements Control {
 
   @Override
   public Action step(RealVector x_t, Action a_t, RealVector x_tp1, double r_tp1) {
+    reward = r_tp1;
     double delta = updateCritic(x_t, x_tp1, r_tp1);
     updateActors(x_t, delta);
     return computeAction(x_tp1);
