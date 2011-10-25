@@ -5,10 +5,10 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
-            class="rlpark.plugin.rltoysview.internal.vectors.RealVectorView"
-            icon="icons/vectorview.gif"
-            id="zephyr.rlpark.plugin.rltoysview.vectorview"
-            name="Vector"
+            class="rlpark.plugin.rltoysview.internal.vectors.RealVectorMapView"
+            icon="icons/vectormapview.gif"
+            id="zephyr.rlpark.plugin.rltoysview.vectormapview"
+            name="Vector Map"
             restorable="true">
       </view>
       <view
@@ -33,6 +33,14 @@
             name="Policy"
             restorable="true">
       </view>
+      <view
+            allowMultiple="true"
+            class="rlpark.plugin.rltoysview.internal.vectors.RealVectorBarView"
+            icon="icons/vectorbarview.png"
+            id="zephyr.rlpark.plugin.rltoysview.vectorbarview"
+            name="Vector Bar"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="zephyr.viewprovider">
@@ -54,11 +62,18 @@
             viewid="zephyr.rlpark.plugin.rltoysview.policyview">
       </client>
       <client
-            class="rlpark.plugin.rltoysview.internal.vectors.RealVectorView$Provider"
-            icon="icons/vectorview.gif"
-            name="Vector View"
+            class="rlpark.plugin.rltoysview.internal.vectors.RealVectorMapView$Provider"
+            icon="icons/vectormapview.gif"
+            name="Vector Map View"
             popup="false"
-            viewid="zephyr.rlpark.plugin.rltoysview.vectorview">
+            viewid="zephyr.rlpark.plugin.rltoysview.vectormapview">
+      </client>
+      <client
+            class="rlpark.plugin.rltoysview.internal.vectors.RealVectorBarView$Provider"
+            icon="icons/vectorbarview.png"
+            name="Vector Bar View"
+            popup="false"
+            viewid="zephyr.rlpark.plugin.rltoysview.vectorbarview">
       </client>
    </extension>
    <extension
@@ -74,7 +89,7 @@
             locationURI="menu:window?before=zephyr.plugin.core.separator.closeview">
          <command
                commandId="zephyr.plugin.core.views.showView"
-               icon="icons/vectorview.gif"
+               icon="icons/vectormapview.gif"
                id="zephyr.plugin.core.views.showvectorview"
                label="New Vector View"
                style="push">

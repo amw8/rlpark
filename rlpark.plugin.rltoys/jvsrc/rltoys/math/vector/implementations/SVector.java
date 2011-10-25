@@ -370,4 +370,11 @@ public class SVector extends AbstractVector implements SparseRealVector {
       data[indexes[i]] = values[i];
     return data;
   }
+
+  @Override
+  public void accessData(float[] data) {
+    Arrays.fill(data, 0);
+    for (int i = 0; i < nbActive; i++)
+      data[indexes[i]] = (float) values[i];
+  }
 }

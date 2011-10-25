@@ -14,7 +14,7 @@ import zephyr.plugin.core.helpers.ClassViewProvider;
 import zephyr.plugin.core.utils.Colors;
 import zephyr.plugin.core.views.helpers.BackgroundCanvasView;
 
-public class RealVectorView extends BackgroundCanvasView<RealVector> {
+public class RealVectorMapView extends BackgroundCanvasView<RealVector> {
   public static class Provider extends ClassViewProvider {
     public Provider() {
       super(RealVector.class);

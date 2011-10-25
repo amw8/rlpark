@@ -221,4 +221,10 @@ public class PVector extends AbstractVector implements DenseVector {
   public String toString() {
     return Arrays.toString(data);
   }
+
+  @Override
+  public void accessData(float[] data) {
+    for (int i = 0; i < data.length; i++)
+      data[i] = (float) this.data[i];
+  }
 }
