@@ -5,7 +5,7 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="menu:org.eclipse.ui.main.menu?after=menu.run">
+            locationURI="menu:org.eclipse.ui.main.menu?after=zephyr.mainmenu.end">
          <menu
                id="zephyr.rlpark.menu.demos"
                label="Demos">
