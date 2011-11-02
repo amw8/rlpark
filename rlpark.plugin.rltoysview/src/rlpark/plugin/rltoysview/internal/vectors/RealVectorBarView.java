@@ -21,9 +21,8 @@ public class RealVectorBarView extends BackgroundCanvasView<RealVector> implemen
     }
   }
 
-  private RealVector copy;
+  protected double[] data;
   private final Bar2D bar = new Bar2D();
-  private float[] data;
   private MouseSearch mouseSearch;
 
   @Override
@@ -40,30 +39,16 @@ public class RealVectorBarView extends BackgroundCanvasView<RealVector> implemen
 
   @Override
   public boolean synchronize() {
-    copy = instance.current().copy();
+    data = instance().accessData();
     return true;
   }
+
 
   @Override
   public void paint(PainterMonitor painterListener, Image image, GC gc) {
     gc.setAntialias(SWT.OFF);
     bar.clear(gc);
-    if (data == null)
-      return;
-    copy.accessData(data);
     bar.draw(gc, data);
-  }
-
-  @Override
-  public void set(RealVector instance) {
-    setViewName();
-    data = new float[instance.getDimension()];
-  }
-
-  @Override
-  public void unset() {
-    copy = null;
-    data = null;
   }
 
   @Override
@@ -73,13 +58,22 @@ public class RealVectorBarView extends BackgroundCanvasView<RealVector> implemen
   }
 
   @Override
-  protected Class<?> classSupported() {
-    return RealVector.class;
-  }
-
-  @Override
   public void center() {
     bar.axes().x.reset();
     bar.axes().y.reset();
+  }
+
+  @Override
+  public void setLayout() {
+    setViewName();
+  }
+
+  @Override
+  public void unsetLayout() {
+  }
+
+  @Override
+  protected boolean isInstanceSupported(Object instance) {
+    return RealVector.class.isInstance(instance);
   }
 }

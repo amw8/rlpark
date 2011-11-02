@@ -24,6 +24,4 @@ public interface RealVector extends Serializable, Iterable<VectorEntry> {
   RealVector copy();
 
   double[] accessData();
-
-  void accessData(float[] data);
 }

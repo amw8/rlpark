@@ -21,9 +21,9 @@ public class RealVectorMapView extends BackgroundCanvasView<RealVector> {
     }
   }
 
-  private RealVector copy;
   private final Colors colors = new Colors();
   final ColorScale colorScale = new ColorScale(new RGB(255, 255, 255));
+  private RealVector copy;
 
   @Override
   public boolean synchronize() {
@@ -34,12 +34,8 @@ public class RealVectorMapView extends BackgroundCanvasView<RealVector> {
   @Override
   public void paint(PainterMonitor painterListener, Image image, final GC gc) {
     Rectangle clipping = gc.getClipping();
-    if (clipping.isEmpty())
-      return;
     gc.setBackground(colors.color(gc, Colors.COLOR_BLACK));
     gc.fillRectangle(clipping);
-    if (copy == null)
-      return;
     updateNormalizer();
     gc.setAntialias(SWT.OFF);
     double rootSize = Math.ceil(Math.sqrt(copy.getDimension()));
@@ -72,13 +68,13 @@ public class RealVectorMapView extends BackgroundCanvasView<RealVector> {
   }
 
   @Override
-  public void set(RealVector instance) {
+  public void setLayout() {
     colorScale.init();
     setViewName();
   }
 
   @Override
-  public void unset() {
+  public void unsetLayout() {
     copy = null;
   }
 
@@ -89,7 +85,7 @@ public class RealVectorMapView extends BackgroundCanvasView<RealVector> {
   }
 
   @Override
-  protected Class<?> classSupported() {
-    return RealVector.class;
+  protected boolean isInstanceSupported(Object instance) {
+    return RealVector.class.isInstance(instance);
   }
 }

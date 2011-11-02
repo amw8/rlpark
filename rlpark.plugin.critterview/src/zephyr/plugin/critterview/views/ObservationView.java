@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.eclipse.jface.action.IToolBarManager;
 
+import rltoys.environments.envio.observations.Legend;
 import rltoys.utils.Utils;
 import zephyr.ZephyrCore;
 import zephyr.plugin.core.actions.RestartAction;
@@ -55,7 +56,7 @@ public class ObservationView extends EnvironmentView<CritterbotProblem> implemen
 
     public IntegerTextClient(String obsLabel, String textLabel) {
       super(textLabel);
-      labelIndex = environment.legend().indexOf(obsLabel);
+      labelIndex = legend().indexOf(obsLabel);
     }
 
     @Override
@@ -77,6 +78,10 @@ public class ObservationView extends EnvironmentView<CritterbotProblem> implemen
     restartAction.setEnabled(false);
   }
 
+  public Legend legend() {
+    return instance().legend();
+  }
+
   @Override
   protected ObsLayout getObservationLayout() {
     SensorGroup irDistanceGroup = new SensorGroup("IR Distance Sensors", startsWith(IRDistance), 0, 255);
@@ -96,8 +101,7 @@ public class ObservationView extends EnvironmentView<CritterbotProblem> implemen
     SensorGroup rightMicrophoneGroup = new SensorGroup("Microphone Right", startsWith(MicrophoneFFT + "Right"), 0, 80);
     SensorTextGroup infoGroup = createInfoGroup();
     return new ObsLayout(new ObsWidget[][] { { infoGroup, irDistanceGroup, lightGroup },
-        { magGroup, motorCollection, inertialCollection },
-        { irLightGroup, thermalGroup },
+        { magGroup, motorCollection, inertialCollection }, { irLightGroup, thermalGroup },
         { leftMicrophoneGroup, rightMicrophoneGroup } });
   }
 
@@ -109,7 +113,7 @@ public class ObservationView extends EnvironmentView<CritterbotProblem> implemen
 
   private SensorTextGroup createInfoGroup() {
     TextClient busVoltageTextClient = new TextClient("Voltage:") {
-      int busVoltageIndex = environment.legend().indexOf(BusVoltage);
+      int busVoltageIndex = legend().indexOf(BusVoltage);
 
       @Override
       public String currentText() {
@@ -121,13 +125,13 @@ public class ObservationView extends EnvironmentView<CritterbotProblem> implemen
     TextClient loopTimeTextClient = new TextClient("Loop Time:") {
       @Override
       public String currentText() {
-        if (clock == null)
+        if (instance.isNull())
           return "00ms";
-        return Chrono.toPeriodString(clock.lastPeriodNano());
+        return Chrono.toPeriodString(instance.clock().lastPeriodNano());
       }
     };
     TextClient cycleTimeTextClient = new TextClient("Cycle Time:") {
-      int cycleTimeIndex = environment.legend().indexOf(CritterbotDrops.CycleTime);
+      int cycleTimeIndex = instance.current().legend().indexOf(CritterbotDrops.CycleTime);
 
       @Override
       public String currentText() {
@@ -137,8 +141,7 @@ public class ObservationView extends EnvironmentView<CritterbotProblem> implemen
       }
     };
     new IntegerTextClient(CritterbotDrops.CycleTime, "");
-    return new SensorTextGroup("Info", busVoltageTextClient, loopTimeTextClient,
-                               cycleTimeTextClient,
+    return new SensorTextGroup("Info", busVoltageTextClient, loopTimeTextClient, cycleTimeTextClient,
                                new IntegerTextClient(CritterbotDrops.PowerSource, "Power Source"),
                                new IntegerTextClient(CritterbotDrops.ChargeState, "Charge State"),
                                new IntegerTextClient(CritterbotDrops.MonitorState, "Monitor State"),
@@ -147,7 +150,7 @@ public class ObservationView extends EnvironmentView<CritterbotProblem> implemen
 
   private int[] startsWith(String prefix) {
     List<Integer> indexes = new ArrayList<Integer>();
-    for (Map.Entry<String, Integer> entry : environment.legend().legend().entrySet())
+    for (Map.Entry<String, Integer> entry : legend().legend().entrySet())
       if (entry.getKey().startsWith(prefix))
         indexes.add(entry.getValue());
     Collections.sort(indexes);
@@ -155,20 +158,19 @@ public class ObservationView extends EnvironmentView<CritterbotProblem> implemen
   }
 
   private void setViewTitle() {
-    if (environment == null)
+    if (instance.isNull())
       setViewName("Observation", "");
-    CrtrLogFile logFile = environment instanceof CrtrLogFile ? (CrtrLogFile) environment : null;
-    String viewTitle = logFile == null ? environment.getClass().getSimpleName() :
-                        new File(logFile.filepath).getName();
+    CrtrLogFile logFile = instance() instanceof CrtrLogFile ? (CrtrLogFile) instance() : null;
+    String viewTitle = logFile == null ? instance().getClass().getSimpleName() : new File(logFile.filepath).getName();
     String tooltip = logFile == null ? "" : logFile.filepath;
     setViewName(viewTitle, tooltip);
   }
 
   @Override
   public void restart() {
-    if (!(environment instanceof CrtrLogFile))
+    if (!(instance() instanceof CrtrLogFile))
       return;
-    final String filepath = ((CrtrLogFile) environment).filepath;
+    final String filepath = ((CrtrLogFile) instance()).filepath;
     close();
     ZephyrCore.start(new Runnable() {
       @Override
@@ -185,21 +187,21 @@ public class ObservationView extends EnvironmentView<CritterbotProblem> implemen
   }
 
   @Override
-  protected Class<?> classSupported() {
-    return CritterbotProblem.class;
+  protected boolean isInstanceSupported(Object instance) {
+    return CritterbotProblem.class.isInstance(instance);
   }
 
   @Override
-  protected void set(CritterbotProblem current) {
-    super.set(current);
-    restartAction.setEnabled(current instanceof CrtrLogFile);
+  protected void setLayout() {
+    super.setLayout();
+    restartAction.setEnabled(instance() instanceof CrtrLogFile);
     terminateAction.setEnabled(true);
     setViewTitle();
   }
 
   @Override
   protected boolean synchronize() {
-    currentObservation = environment.lastReceivedObs();
+    currentObservation = instance().lastReceivedObs();
     synchronize(currentObservation);
     return true;
   }
@@ -207,5 +209,12 @@ public class ObservationView extends EnvironmentView<CritterbotProblem> implemen
   @Override
   public void close() {
     instance.unset();
+  }
+
+  @Override
+  protected void unsetLayout() {
+    super.unsetLayout();
+    restartAction.setEnabled(false);
+    terminateAction.setEnabled(false);
   }
 }

@@ -41,7 +41,6 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
 
   private NormalDistributionDrawer initialNormalDistributionDrawer = null;
   private NormalDistributionDrawer normalDistributionDrawer = null;
-  private NormalDistribution normalDistribution = null;
   private MinMaxNormalizer tdErrorNormalized = null;
   private ActorCritic actorCritic = null;
   private final Listener<Clock> clockListener = new Listener<Clock>() {
@@ -56,9 +55,7 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
   private final Data2D data = new Data2D(HistoryLength);
 
   protected void updateData() {
-    if (normalDistribution == null)
-      return;
-    actionHistory.append(normalDistribution.a_t);
+    actionHistory.append(instance().a_t);
     if (actorCritic != null) {
       double delta_t = ((LinearLearner) actorCritic.critic).error();
       tdErrorNormalized.update(delta_t);
@@ -89,7 +86,7 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
   @Override
   public boolean synchronize() {
     if (initialNormalDistributionDrawer == null) {
-      initialNormalDistributionDrawer = new NormalDistributionDrawer(plot, normalDistribution);
+      initialNormalDistributionDrawer = new NormalDistributionDrawer(plot, instance());
       initialNormalDistributionDrawer.synchronize();
     }
     if (plot.axes().y.transformationValid) {
@@ -101,18 +98,6 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
     }
     normalDistributionDrawer.synchronize();
     return true;
-  }
-
-  @Override
-  protected void set(NormalDistribution current) {
-    CodeNode codeNode = instance.codeNode();
-    normalDistribution = instance.current();
-    normalDistributionDrawer = new NormalDistributionDrawer(plot, normalDistribution);
-    tdErrorNormalized = new MinMaxNormalizer(new Range(0, 1));
-    ClassNode actorCriticParentNode = CodeTrees.findParent(codeNode, ActorCritic.class);
-    actorCritic = actorCriticParentNode != null ? (ActorCritic) actorCriticParentNode.instance() : null;
-    setViewName(String.format("%s[%s]", normalDistribution.getClass().getSimpleName(), codeNode.label()), "");
-    CodeTrees.clockOf(codeNode).onTick.connect(clockListener);
   }
 
   @Override
@@ -149,19 +134,41 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
   }
 
   @Override
-  public void unset() {
+  public void onInstanceSet() {
+    CodeNode codeNode = instance.codeNode();
+    tdErrorNormalized = new MinMaxNormalizer(new Range(0, 1));
+    ClassNode actorCriticParentNode = CodeTrees.findParent(codeNode, ActorCritic.class);
+    actorCritic = actorCriticParentNode != null ? (ActorCritic) actorCriticParentNode.instance() : null;
+    CodeTrees.clockOf(codeNode).onTick.connect(clockListener);
+    super.onInstanceSet();
+  }
+
+  @Override
+  protected void setLayout() {
+    super.setLayout();
+    CodeNode codeNode = instance.codeNode();
+    normalDistributionDrawer = new NormalDistributionDrawer(plot, instance());
+    setViewName(String.format("%s[%s]", instance().getClass().getSimpleName(), codeNode.label()), "");
+  }
+
+  @Override
+  public void onInstanceUnset() {
     instance.clock().onTick.disconnect(clockListener);
-    initialNormalDistributionDrawer = null;
-    normalDistributionDrawer = null;
-    normalDistribution = null;
     tdErrorNormalized = null;
     actorCritic = null;
     actionHistory.reset();
     tdErrorHistory.reset();
+    super.onInstanceUnset();
   }
 
   @Override
-  protected Class<?> classSupported() {
-    return NormalDistribution.class;
+  public void unsetLayout() {
+    initialNormalDistributionDrawer = null;
+    normalDistributionDrawer = null;
+  }
+
+  @Override
+  protected boolean isInstanceSupported(Object instance) {
+    return NormalDistribution.class.isInstance(instance);
   }
 }

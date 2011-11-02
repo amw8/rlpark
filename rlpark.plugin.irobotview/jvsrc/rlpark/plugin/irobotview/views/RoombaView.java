@@ -56,51 +56,50 @@ public class RoombaView extends IRobotView {
     public boolean canViewDraw(CodeNode codeNode) {
       if (!super.canViewDraw(codeNode))
         return false;
-      RobotLive problem = (RobotLive) ((ClassNode) codeNode).instance();
-      return problem.legend().hasLabel(IRobotDrops.LightBumpSensorCenterLeft);
+      return canViewDrawInstance(((ClassNode) codeNode).instance());
     }
+  }
+
+  static boolean canViewDrawInstance(Object instance) {
+    if (!RobotLive.class.isInstance(instance))
+      return false;
+    RobotLive problem = (RobotLive) instance;
+    return problem.legend().hasLabel(IRobotDrops.LightBumpSensorCenterLeft);
   }
 
   @Override
   protected ObsLayout getObservationLayout() {
     SensorTextGroup infoGroup = createInfoGroup();
-    SensorCollection wallCollection = new SensorCollection("Walls",
-                                                           createSensorGroup("Virtual", WallVirtual),
+    SensorCollection wallCollection = new SensorCollection("Walls", createSensorGroup("Virtual", WallVirtual),
                                                            createSensorGroup("Sensor", WallSensor),
                                                            createSensorGroup("Signal", WallSignal));
-    SensorCollection odoCollection = new SensorCollection("Odometry",
-                                                          createSensorGroup("Distance", DriveDistance),
+    SensorCollection odoCollection = new SensorCollection("Odometry", createSensorGroup("Distance", DriveDistance),
                                                           createSensorGroup("Angle", DriveAngle),
                                                           createSensorGroup("Requested", DriveRequested));
-    SensorCollection icCollection = new SensorCollection("Infrared Character",
-                                                         createSensorGroup("Omni", ICOmni),
-                                                         createSensorGroup("Left", ICLeft),
-                                                         createSensorGroup("Right", ICRight));
-    SensorCollection powerCollection = new SensorCollection("Battery",
-                                                            createSensorGroup("Current", BatteryCurrent),
+    SensorCollection icCollection = new SensorCollection("Infrared Character", createSensorGroup("Omni", ICOmni),
+                                                         createSensorGroup("Left", ICLeft), createSensorGroup("Right",
+                                                                                                              ICRight));
+    SensorCollection powerCollection = new SensorCollection("Battery", createSensorGroup("Current", BatteryCurrent),
                                                             createSensorGroup("Temperature", BatteryTemperature),
                                                             createSensorGroup("Charge", BatteryCharge),
                                                             createSensorGroup("Capacity", BatteryCapacity));
-    SensorCollection cliffCollection = new SensorCollection("Cliffs",
-                                                            createSensorGroup("Sensors", CliffSensor),
+    SensorCollection cliffCollection = new SensorCollection("Cliffs", createSensorGroup("Sensors", CliffSensor),
                                                             createSensorGroup("Signal", CliffSignal));
-    SensorCollection wheelCollection = new SensorCollection("Wheels",
-                                                            createSensorGroup("Dropped", WheelDrop),
+    SensorCollection wheelCollection = new SensorCollection("Wheels", createSensorGroup("Dropped", WheelDrop),
                                                             createSensorGroup("Requested", WheelRequested),
                                                             createSensorGroup("Encoder", WheelEncoder),
                                                             createSensorGroup("Current", WheelMotorCurrent));
-    SensorCollection lightBumperCollection = new SensorCollection("Light Bumper",
-                                                                  createSensorGroup("Sensor", LightBumpSensor),
+    SensorCollection lightBumperCollection = new SensorCollection("Light Bumper", createSensorGroup("Sensor",
+                                                                                                    LightBumpSensor),
                                                                   createSensorGroup("Signal", LightBumpSignal));
-    SensorCollection motorCurrentCollection = new SensorCollection("Brushes",
-                                                                   createSensorGroup("Main", MotorCurrentMainBrush),
+    SensorCollection motorCurrentCollection = new SensorCollection("Brushes", createSensorGroup("Main",
+                                                                                                MotorCurrentMainBrush),
                                                                    createSensorGroup("Side", MotorCurrentSideBrush));
     return new ObsLayout(new ObsWidget[][] {
-        { infoGroup, createSensorGroup("Bumper", Bump), wheelCollection,
-            odoCollection, createSensorGroup("Dirt", DirtDetect) },
-        { icCollection, cliffCollection, createSensorGroup("Buttons", Button),
-            motorCurrentCollection, createSensorGroup("Statis", Stasis) },
-        { wallCollection, lightBumperCollection, powerCollection } });
+        { infoGroup, createSensorGroup("Bumper", Bump), wheelCollection, odoCollection,
+            createSensorGroup("Dirt", DirtDetect) },
+        { icCollection, cliffCollection, createSensorGroup("Buttons", Button), motorCurrentCollection,
+            createSensorGroup("Statis", Stasis) }, { wallCollection, lightBumperCollection, powerCollection } });
   }
 
   private SensorTextGroup createInfoGroup() {
@@ -108,18 +107,16 @@ public class RoombaView extends IRobotView {
       @SuppressWarnings("synthetic-access")
       @Override
       public String currentText() {
-        if (environment == null)
+        if (instance.isNull())
           return "0000ms";
-        return Chrono.toPeriodString(clock.lastPeriodNano());
+        return Chrono.toPeriodString(clock().lastPeriodNano());
       }
     };
-    return new SensorTextGroup("Info", loopTimeTextClient,
-                               new IntegerTextClient(ChargingState, "Charging State:"),
+    return new SensorTextGroup("Info", loopTimeTextClient, new IntegerTextClient(ChargingState, "Charging State:"),
                                new IntegerTextClient(BatteryVoltage, "Voltage:", "00000", "mV"),
                                new IntegerTextClient(ConnectedHomeBase, "Home base: "),
                                new IntegerTextClient(ConnectedInternalCharger, "Internal charger: "),
-                               new IntegerTextClient(OIMode, "OI Mode: "),
-                               new IntegerTextClient(SongNumber, "Song: "),
+                               new IntegerTextClient(OIMode, "OI Mode: "), new IntegerTextClient(SongNumber, "Song: "),
                                new IntegerTextClient(SongPlaying, "Playing: "),
                                new IntegerTextClient(NumberStreamPackets, "Packets: "));
   }
@@ -130,7 +127,7 @@ public class RoombaView extends IRobotView {
   }
 
   @Override
-  public boolean isSupported(CodeNode codeNode) {
-    return Provider.instance.canViewDraw(codeNode);
+  protected boolean isInstanceSupported(Object instance) {
+    return canViewDrawInstance(instance);
   }
 }

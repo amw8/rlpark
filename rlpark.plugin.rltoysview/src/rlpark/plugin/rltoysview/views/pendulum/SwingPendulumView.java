@@ -31,10 +31,8 @@ public class SwingPendulumView extends ForegroundCanvasView<SwingPendulum> {
   }
 
   @Override
-  protected void set(SwingPendulum current) {
-    theta_tm1 = instance.current().theta();
-    theta_t = instance.current().theta();
-
+  protected void setLayout() {
+    super.setLayout();
     String policyName = getName(instance.codeNode());
     setViewName("SwingPendulum" + (policyName.isEmpty() ? "" : "[" + policyName + "]"), "");
   }
@@ -48,8 +46,6 @@ public class SwingPendulumView extends ForegroundCanvasView<SwingPendulum> {
     gc.setBackground(colors.color(gc, Colors.COLOR_WHITE));
     Rectangle clipping = gc.getClipping();
     gc.fillRectangle(clipping);
-    if (instance.current() == null)
-      return;
     gc.setAntialias(SWT.ON);
     gc.setLineWidth(2);
     int length = (int) (Math.min(clipping.width * 0.8, clipping.height * 0.8) / 2);
@@ -76,11 +72,7 @@ public class SwingPendulumView extends ForegroundCanvasView<SwingPendulum> {
   }
 
   @Override
-  protected Class<?> classSupported() {
-    return SwingPendulum.class;
-  }
-
-  @Override
-  protected void unset() {
+  protected boolean isInstanceSupported(Object instance) {
+    return SwingPendulum.class.isInstance(instance);
   }
 }

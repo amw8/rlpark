@@ -271,11 +271,4 @@ public class BVector extends AbstractVector implements BinaryVector {
       data[i] = 1.0;
     return data;
   }
-
-  @Override
-  public void accessData(float[] data) {
-    Arrays.fill(data, 0);
-    for (int i : activeIndexes())
-      data[i] = 1.0f;
-  }
 }

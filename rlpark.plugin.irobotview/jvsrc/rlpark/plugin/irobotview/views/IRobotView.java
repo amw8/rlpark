@@ -12,6 +12,7 @@ import rlpark.plugin.irobot.logfiles.IRobotLogFile;
 import rlpark.plugin.irobotview.filehandlers.IRobotLogFileHandler;
 import rlpark.plugin.robot.RobotLive;
 import rlpark.plugin.robot.Robots;
+import rltoys.environments.envio.observations.Legend;
 import rltoys.math.ranges.Range;
 import rltoys.utils.Utils;
 import zephyr.ZephyrCore;
@@ -47,7 +48,7 @@ public abstract class IRobotView extends EnvironmentView<RobotLive> implements C
     @SuppressWarnings("synthetic-access")
     public IntegerTextClient(String obsLabel, String textLabel, String defaultString, String suffix) {
       super(textLabel);
-      labelIndex = environment.legend().indexOf(obsLabel);
+      labelIndex = instance().legend().indexOf(obsLabel);
       this.defaultString = defaultString;
       this.suffix = suffix;
       assert labelIndex >= 0;
@@ -86,7 +87,7 @@ public abstract class IRobotView extends EnvironmentView<RobotLive> implements C
 
   private int[] startsWith(String prefix) {
     List<Integer> result = new ArrayList<Integer>();
-    for (Map.Entry<String, Integer> entry : environment.legend().legend().entrySet()) {
+    for (Map.Entry<String, Integer> entry : legend().legend().entrySet()) {
       String label = entry.getKey();
       if (label.startsWith(prefix))
         result.add(entry.getValue());
@@ -95,43 +96,48 @@ public abstract class IRobotView extends EnvironmentView<RobotLive> implements C
     return Utils.asIntArray(result);
   }
 
+  protected Legend legend() {
+    return instance().legend();
+  }
+
   @Override
   public boolean synchronize() {
-    currentObservation = Robots.toDoubles(environment.lastReceivedRawObs());
+    currentObservation = Robots.toDoubles(instance().lastReceivedRawObs());
     synchronize(currentObservation);
     return true;
   }
 
   @Override
-  protected void set(RobotLive current) {
-    super.set(current);
-    restartAction.setEnabled(current instanceof IRobotLogFile);
+  protected void setLayout() {
+    super.setLayout();
+    restartAction.setEnabled(instance() instanceof IRobotLogFile);
     terminateAction.setEnabled(true);
     setViewTitle();
   }
 
   private void setViewTitle() {
-    if (environment == null)
+    if (instance.isNull()) {
       setViewName("Observation", "");
-    IRobotLogFile logFile = environment instanceof IRobotLogFile ? (IRobotLogFile) environment : null;
-    String viewTitle = logFile == null ? environment.getClass().getSimpleName() : new File(logFile.filepath())
-        .getName();
+      return;
+    }
+    IRobotLogFile logFile = instance() instanceof IRobotLogFile ? (IRobotLogFile) instance() : null;
+    String viewTitle = logFile == null ? instance().getClass().getSimpleName() : new File(logFile.filepath()).getName();
     String tooltip = logFile == null ? "" : logFile.filepath();
     setViewName(viewTitle, tooltip);
   }
 
   @Override
-  protected void unset() {
-    super.unset();
+  protected void unsetLayout() {
+    super.unsetLayout();
     restartAction.setEnabled(false);
     terminateAction.setEnabled(false);
   }
 
   @Override
   public void restart() {
-    if (!(environment instanceof IRobotLogFile))
+    if (!(instance() instanceof IRobotLogFile))
       return;
-    final String filepath = ((IRobotLogFile) environment).filepath();
+    final String filepath = ((IRobotLogFile) instance()).filepath();
     close();
     ZephyrCore.start(new Runnable() {
       @Override

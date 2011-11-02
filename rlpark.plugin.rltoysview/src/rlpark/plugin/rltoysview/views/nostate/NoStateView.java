@@ -36,9 +36,8 @@ public class NoStateView extends ForegroundCanvasView<NoStateExperiment> {
 
     @Override
     public void listen(Clock eventInfo) {
-      if (experiment == null)
-        return;
-      TRStep step = experiment.step();
+      @SuppressWarnings("synthetic-access")
+      TRStep step = instance().step();
       final double action = ((ActionArray) step.a_t).actions[0];
       actionHistory.append(action);
       rewardHistory.append(step.r_tp1);
@@ -54,8 +53,7 @@ public class NoStateView extends ForegroundCanvasView<NoStateExperiment> {
     }
   }
 
-  final ExperimentData experimentData = new ExperimentData();
-  NoStateExperiment experiment = null;
+  final ExperimentData experimentData = null;
   private final Plot2D plot = new Plot2D();
   private final Drawer2D rewardDrawer = new Drawer2D() {
     @Override
@@ -86,8 +84,6 @@ public class NoStateView extends ForegroundCanvasView<NoStateExperiment> {
   protected void paint(GC gc) {
     plot.clear(gc);
     gc.setAntialias(ZephyrPlotting.preferredAntiAliasing() ? SWT.ON : SWT.OFF);
-    if (experiment == null)
-      return;
     gc.setForeground(colors.color(gc, Colors.COLOR_DARK_RED));
     radius = ZephyrPlotting.preferredLineSize();
     gc.setLineWidth(ZephyrPlotting.preferredLineSize());
@@ -104,24 +100,23 @@ public class NoStateView extends ForegroundCanvasView<NoStateExperiment> {
   }
 
   @Override
-  public void unset() {
-    experiment = null;
-  }
-
-  @Override
-  protected void set(NoStateExperiment current) {
-    experiment = current;
+  public void onInstanceSet() {
     experimentData.reset();
     rewardNormalizer.reset();
-    data = new Data2D("Reward", experimentData.actionHistory.length);
-    NormalDistribution policy = (NormalDistribution) ((ActorCritic) experiment.control).actors[0].policy();
-    normalDistributionDrawer = new NormalDistributionDrawer(plot, policy, rewardNormalizer.newInstance());
-    setViewName(policy.getClass().getSimpleName(), "");
     instance.clock().onTick.connect(experimentData);
+    super.onInstanceSet();
   }
 
   @Override
-  protected Class<?> classSupported() {
-    return NoStateExperiment.class;
+  protected void setLayout() {
+    NormalDistribution policy = (NormalDistribution) ((ActorCritic) instance().control).actors[0].policy();
+    data = new Data2D("Reward", experimentData.actionHistory.length);
+    normalDistributionDrawer = new NormalDistributionDrawer(plot, policy, rewardNormalizer.newInstance());
+    setViewName(policy.getClass().getSimpleName(), "");
+  }
+
+  @Override
+  protected boolean isInstanceSupported(Object instance) {
+    return NoStateExperiment.class.isInstance(instance);
   }
 }

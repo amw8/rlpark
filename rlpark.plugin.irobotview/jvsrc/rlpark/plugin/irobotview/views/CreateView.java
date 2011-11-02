@@ -45,35 +45,37 @@ public class CreateView extends IRobotView {
     public boolean canViewDraw(CodeNode codeNode) {
       if (!super.canViewDraw(codeNode))
         return false;
-      RobotLive problem = (RobotLive) ((ClassNode) codeNode).instance();
-      return problem.legend().hasLabel(IRobotDrops.CargoBayAnalogSignal);
+      return canViewDrawInstance(((ClassNode) codeNode).instance());
     }
+  }
+
+  static boolean canViewDrawInstance(Object instance) {
+    if (!RobotLive.class.isInstance(instance))
+      return false;
+    RobotLive problem = (RobotLive) instance;
+    return problem.legend().hasLabel(IRobotDrops.CargoBayAnalogSignal);
   }
 
   @Override
   protected ObsLayout getObservationLayout() {
     SensorTextGroup infoGroup = createInfoGroup();
-    SensorCollection wallCollection = new SensorCollection("Walls",
-                                                           createSensorGroup("Virtual", WallVirtual),
+    SensorCollection wallCollection = new SensorCollection("Walls", createSensorGroup("Virtual", WallVirtual),
                                                            createSensorGroup("Sensor", WallSensor),
                                                            createSensorGroup("Signal", WallSignal));
-    SensorCollection wheelCollection = new SensorCollection("Wheels",
-                                                            createSensorGroup("Dropped", WheelDrop),
+    SensorCollection wheelCollection = new SensorCollection("Wheels", createSensorGroup("Dropped", WheelDrop),
                                                             createSensorGroup("Requested", WheelRequested),
                                                             createSensorGroup("Over Current", WheelOverCurrent));
-    SensorCollection cliffCollection = new SensorCollection("Cliffs",
-                                                            createSensorGroup("Sensors", CliffSensor),
+    SensorCollection cliffCollection = new SensorCollection("Cliffs", createSensorGroup("Sensors", CliffSensor),
                                                             createSensorGroup("Signal", CliffSignal));
-    SensorCollection powerCollection = new SensorCollection("Battery",
-                                                            createSensorGroup("Current", BatteryCurrent),
+    SensorCollection powerCollection = new SensorCollection("Battery", createSensorGroup("Current", BatteryCurrent),
                                                             createSensorGroup("Temperature", BatteryTemperature),
                                                             createSensorGroup("Charge", BatteryCharge),
                                                             createSensorGroup("Capacity", BatteryCapacity));
-    SensorCollection odoCollection = new SensorCollection("Odometry",
-                                                          createSensorGroup("Distance", DriveDistance),
+    SensorCollection odoCollection = new SensorCollection("Odometry", createSensorGroup("Distance", DriveDistance),
                                                           createSensorGroup("Angle", DriveAngle));
-    return new ObsLayout(new ObsWidget[][] { { infoGroup, createSensorGroup("Bumper", Bump), wallCollection,
-        cliffCollection, createSensorGroup("Buttons", Button) }, { wheelCollection, odoCollection, powerCollection } });
+    return new ObsLayout(new ObsWidget[][] {
+        { infoGroup, createSensorGroup("Bumper", Bump), wallCollection, cliffCollection,
+            createSensorGroup("Buttons", Button) }, { wheelCollection, odoCollection, powerCollection } });
   }
 
   private SensorTextGroup createInfoGroup() {
@@ -81,19 +83,18 @@ public class CreateView extends IRobotView {
       @SuppressWarnings("synthetic-access")
       @Override
       public String currentText() {
-        if (environment == null)
+        if (instance.isNull())
           return "0000ms";
-        return Chrono.toPeriodString(clock.lastPeriodNano());
+        return Chrono.toPeriodString(instance.clock().lastPeriodNano());
       }
     };
-    return new SensorTextGroup("Info", loopTimeTextClient,
-                               new IntegerTextClient(ICOmni, "IR:"),
-                               new IntegerTextClient(OIMode, "OI Mode: "),
-                               new IntegerTextClient(ChargingState, "Charging State:"),
+    return new SensorTextGroup("Info", loopTimeTextClient, new IntegerTextClient(ICOmni, "IR:"),
+                               new IntegerTextClient(OIMode, "OI Mode: "), new IntegerTextClient(ChargingState,
+                                                                                                 "Charging State:"),
                                new IntegerTextClient(ConnectedHomeBase, "Home base: "),
                                new IntegerTextClient(ConnectedInternalCharger, "Internal charger: "),
-                               new IntegerTextClient(SongNumber, "Song: "),
-                               new IntegerTextClient(SongPlaying, "Playing: "),
+                               new IntegerTextClient(SongNumber, "Song: "), new IntegerTextClient(SongPlaying,
+                                                                                                  "Playing: "),
                                new IntegerTextClient(NumberStreamPackets, "Packets: "));
   }
 
@@ -105,5 +106,10 @@ public class CreateView extends IRobotView {
   @Override
   public boolean isSupported(CodeNode codeNode) {
     return Provider.instance.canViewDraw(codeNode);
+  }
+
+  @Override
+  protected boolean isInstanceSupported(Object instance) {
+    return canViewDrawInstance(instance);
   }
 }
