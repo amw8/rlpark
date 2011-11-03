@@ -3,7 +3,6 @@ package rlpark.plugin.rltoysview.internal.vectors;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
 import rltoys.math.vector.RealVector;
@@ -45,7 +44,7 @@ public class RealVectorBarView extends BackgroundCanvasView<RealVector> implemen
 
 
   @Override
-  public void paint(PainterMonitor painterListener, Image image, GC gc) {
+  public void paint(PainterMonitor painterListener, GC gc) {
     gc.setAntialias(SWT.OFF);
     bar.clear(gc);
     bar.draw(gc, data);
@@ -64,16 +63,15 @@ public class RealVectorBarView extends BackgroundCanvasView<RealVector> implemen
   }
 
   @Override
-  public void setLayout() {
-    setViewName();
-  }
-
-  @Override
-  public void unsetLayout() {
-  }
-
-  @Override
   protected boolean isInstanceSupported(Object instance) {
     return RealVector.class.isInstance(instance);
+  }
+
+  @Override
+  protected void setLayout() {
+  }
+
+  @Override
+  protected void unsetLayout() {
   }
 }

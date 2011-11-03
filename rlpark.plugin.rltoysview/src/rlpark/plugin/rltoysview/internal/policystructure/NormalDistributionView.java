@@ -4,7 +4,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
@@ -101,9 +100,7 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
   }
 
   @Override
-  public void paint(PainterMonitor painterListener, Image image, GC gc) {
-    if (normalDistributionDrawer == null)
-      return;
+  public void paint(PainterMonitor painterListener, GC gc) {
     plot.clear(gc);
     gc.setAntialias(ZephyrPlotting.preferredAntiAliasing() ? SWT.ON : SWT.OFF);
     gc.setLineWidth(ZephyrPlotting.preferredLineSize());
@@ -145,7 +142,6 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
 
   @Override
   protected void setLayout() {
-    super.setLayout();
     CodeNode codeNode = instance.codeNode();
     normalDistributionDrawer = new NormalDistributionDrawer(plot, instance());
     setViewName(String.format("%s[%s]", instance().getClass().getSimpleName(), codeNode.label()), "");

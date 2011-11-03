@@ -2,7 +2,6 @@ package rlpark.plugin.rltoysview.internal.vectors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 
@@ -32,7 +31,7 @@ public class RealVectorMapView extends BackgroundCanvasView<RealVector> {
   }
 
   @Override
-  public void paint(PainterMonitor painterListener, Image image, final GC gc) {
+  public void paint(PainterMonitor painterListener, GC gc) {
     Rectangle clipping = gc.getClipping();
     gc.setBackground(colors.color(gc, Colors.COLOR_BLACK));
     gc.fillRectangle(clipping);
@@ -70,7 +69,6 @@ public class RealVectorMapView extends BackgroundCanvasView<RealVector> {
   @Override
   public void setLayout() {
     colorScale.init();
-    setViewName();
   }
 
   @Override
