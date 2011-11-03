@@ -53,7 +53,9 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
   private final History tdErrorHistory = new History(HistoryLength);
   private final Data2D data = new Data2D(HistoryLength);
 
-  protected void updateData() {
+  synchronized protected void updateData() {
+    if (instance.isNull())
+      return;
     actionHistory.append(instance().a_t);
     if (actorCritic != null) {
       double delta_t = ((LinearLearner) actorCritic.critic).error();
@@ -83,7 +85,7 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
   }
 
   @Override
-  public boolean synchronize() {
+  synchronized public boolean synchronize() {
     if (initialNormalDistributionDrawer == null) {
       initialNormalDistributionDrawer = new NormalDistributionDrawer(plot, instance());
       initialNormalDistributionDrawer.synchronize();
@@ -131,36 +133,36 @@ public class NormalDistributionView extends Plot2DView<NormalDistribution> {
   }
 
   @Override
-  public void onInstanceSet() {
+  synchronized public void onInstanceSet() {
     CodeNode codeNode = instance.codeNode();
     tdErrorNormalized = new MinMaxNormalizer(new Range(0, 1));
     ClassNode actorCriticParentNode = CodeTrees.findParent(codeNode, ActorCritic.class);
     actorCritic = actorCriticParentNode != null ? (ActorCritic) actorCriticParentNode.instance() : null;
     CodeTrees.clockOf(codeNode).onTick.connect(clockListener);
+    normalDistributionDrawer = new NormalDistributionDrawer(plot, instance());
     super.onInstanceSet();
   }
 
   @Override
   protected void setLayout() {
     CodeNode codeNode = instance.codeNode();
-    normalDistributionDrawer = new NormalDistributionDrawer(plot, instance());
     setViewName(String.format("%s[%s]", instance().getClass().getSimpleName(), codeNode.label()), "");
   }
 
   @Override
-  public void onInstanceUnset() {
+  synchronized public void onInstanceUnset() {
     instance.clock().onTick.disconnect(clockListener);
     tdErrorNormalized = null;
     actorCritic = null;
     actionHistory.reset();
     tdErrorHistory.reset();
+    initialNormalDistributionDrawer = null;
+    normalDistributionDrawer = null;
     super.onInstanceUnset();
   }
 
   @Override
   public void unsetLayout() {
-    initialNormalDistributionDrawer = null;
-    normalDistributionDrawer = null;
   }
 
   @Override
