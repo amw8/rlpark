@@ -16,14 +16,14 @@ public abstract class ActionValueMountainCarAgentFactory implements MountainCarC
   @Override
   public Control createControl(MountainCar mountainCar, TileCoders tilesCoder) {
     StateToStateAction toStateAction = new TabularAction(mountainCar.actions(), tilesCoder.vectorSize());
-    Predictor predictor = createPredictor(mountainCar.actions(), toStateAction,
-                                          tilesCoder.nbActive(), toStateAction.vectorSize());
-    EpsilonGreedy acting = new EpsilonGreedy(new Random(0), mountainCar.actions(), toStateAction, predictor, 0.1);
+    Predictor predictor = createPredictor(mountainCar.actions(), toStateAction, tilesCoder.nbActive(),
+                                          toStateAction.vectorSize());
+    EpsilonGreedy acting = new EpsilonGreedy(new Random(0), mountainCar.actions(), toStateAction, predictor, 0.01);
     return createControl(predictor, tilesCoder, toStateAction, acting);
   }
 
-  protected abstract Predictor createPredictor(Action[] actions, StateToStateAction toStateAction,
-      int nbActiveFatures, int nbFeatures);
+  protected abstract Predictor createPredictor(Action[] actions, StateToStateAction toStateAction, int nbActiveFatures,
+      int nbFeatures);
 
   protected abstract Control createControl(Predictor predictor, TileCoders tilesCoder,
       StateToStateAction toStateAction, EpsilonGreedy acting);

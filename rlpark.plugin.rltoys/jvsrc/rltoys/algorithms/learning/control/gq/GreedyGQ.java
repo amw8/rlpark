@@ -47,7 +47,7 @@ public class GreedyGQ implements OffPolicyLearner {
         sa_bar_tp1.addToSelf(sa_tp1.mapMultiply(pi));
       }
     }
-    RealVector phi_stat = toStateAction.stateAction(s_t, a_t);
+    RealVector phi_stat = s_t != null ? toStateAction.stateAction(s_t, a_t) : null;
     return gq.update(phi_stat, rho_t, r_tp1, sa_bar_tp1, z_tp1);
   }
 

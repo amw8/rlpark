@@ -10,11 +10,11 @@ import zephyr.plugin.core.api.monitoring.annotations.Monitor;
 public class SarsaControl implements Control {
   private static final long serialVersionUID = 2848271828496458933L;
   @Monitor
-  private final Sarsa sarsa;
+  protected final Sarsa sarsa;
   @Monitor
-  private final Policy acting;
-  private final StateToStateAction toStateAction;
-  private RealVector xa_t = null;
+  protected final Policy acting;
+  protected final StateToStateAction toStateAction;
+  protected RealVector xa_t = null;
 
   public SarsaControl(Policy acting, StateToStateAction toStateAction, Sarsa sarsa) {
     this.sarsa = sarsa;

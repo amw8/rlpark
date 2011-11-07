@@ -42,12 +42,12 @@ public class ActorCriticMountainCarTest extends MountainCarOnPolicyTest {
 
   @Test
   public void testDiscreteActorCriticOnMountainCar() {
-    runTestOnOnMountainCar(2000, new MountainCarActorCriticControlFactory());
+    runTestOnOnMountainCar(new MountainCarActorCriticControlFactory());
   }
 
   @Test
   public void testDiscreteAutostepActorCriticOnMountainCar() {
-    runTestOnOnMountainCar(2000, new MountainCarActorCriticControlFactory() {
+    runTestOnOnMountainCar(new MountainCarActorCriticControlFactory() {
       @Override
       protected OnPolicyTD createCritic(TileCoders tilesCoder, final double lambda, final double gamma) {
         return new TDLambdaAutostep(lambda, gamma, tilesCoder.vectorSize());

@@ -14,7 +14,7 @@ import rltoys.algorithms.representations.tilescoding.TileCoders;
 public class GQOnPolicyTest extends MountainCarOnPolicyTest {
   @Test
   public void testGQOnMountainCar() {
-    runTestOnOnMountainCar(2000, new ActionValueMountainCarAgentFactory() {
+    runTestOnOnMountainCar(new ActionValueMountainCarAgentFactory() {
       @Override
       protected Control createControl(Predictor predictor, TileCoders tilesCoder, StateToStateAction toStateAction,
           EpsilonGreedy acting) {

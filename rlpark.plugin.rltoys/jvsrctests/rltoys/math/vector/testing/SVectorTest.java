@@ -1,6 +1,7 @@
 package rltoys.math.vector.testing;
 
 import java.util.Iterator;
+import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,11 +10,14 @@ import rltoys.math.vector.MutableVector;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.VectorEntry;
 import rltoys.math.vector.implementations.BVector;
+import rltoys.math.vector.implementations.PVector;
 import rltoys.math.vector.implementations.SVector;
 import rltoys.math.vector.implementations.Vectors;
 
 
 public class SVectorTest extends VectorTest {
+  private final Random random = new Random(0);
+
   @Test
   public void testIteratorRemove() {
     MutableVector v = a.copyAsMutable();
@@ -55,5 +59,46 @@ public class SVectorTest extends VectorTest {
   @Override
   protected RealVector newVector(int s) {
     return new SVector(s);
+  }
+
+  @Test
+  public void addRandomVectors() {
+    int size = 10;
+    int active = 4;
+    for (int i = 0; i < 10000; i++) {
+      SVector a = createRandomSVector(active, size);
+      SVector b = createRandomSVector(active, size);
+      testVectorOperation(a, b);
+      testVectorOperation(a, new PVector(b.accessData()));
+      testVectorOperation(a, createRandomBVector(active, size));
+    }
+  }
+
+  private void testVectorOperation(SVector a, RealVector b) {
+    PVector pa = new PVector(a.accessData());
+    PVector pb = new PVector(b.accessData());
+    VectorsTestsUtils.assertEquals(pa, a);
+    VectorsTestsUtils.assertEquals(pb, b);
+    VectorsTestsUtils.assertEquals(pa.add(pb), a.add(b));
+    VectorsTestsUtils.assertEquals(pa.subtract(pb), a.subtract(b));
+    VectorsTestsUtils.assertEquals(pa.ebeMultiply(pb), a.ebeMultiply(b));
+    float factor = random.nextFloat();
+    VectorsTestsUtils.assertEquals(pa.addToSelf(factor, pb), a.add(b.mapMultiply(factor)));
+  }
+
+  private BVector createRandomBVector(int maxActive, int size) {
+    BVector result = new BVector(size);
+    int nbActive = random.nextInt(maxActive);
+    for (int i = 0; i < nbActive; i++)
+      result.setOn(random.nextInt(size));
+    return result;
+  }
+
+  private SVector createRandomSVector(int maxActive, int size) {
+    SVector result = new SVector(size);
+    int nbActive = random.nextInt(maxActive);
+    for (int i = 0; i < nbActive; i++)
+      result.setEntry(random.nextInt(size), random.nextDouble() * 2 - 1);
+    return result;
   }
 }

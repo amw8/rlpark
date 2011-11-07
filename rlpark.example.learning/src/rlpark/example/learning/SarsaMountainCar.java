@@ -19,7 +19,8 @@ public class SarsaMountainCar {
   public static void main(String[] args) {
     MountainCar problem = new MountainCar(null);
     TileCodersNoHashing tileCoders = new TileCodersNoHashing(problem.getObservationRanges());
-    tileCoders.addFullTilings(8, 8);
+    tileCoders.addFullTilings(10, 10);
+    tileCoders.includeActiveFeature();
     TabularAction toStateAction = new TabularAction(problem.actions(), tileCoders.vectorSize());
     double alpha = .2 / tileCoders.nbActive();
     double gamma = 0.99;
@@ -30,20 +31,18 @@ public class SarsaMountainCar {
     SarsaControl control = new SarsaControl(acting, toStateAction, sarsa);
     TRStep step = problem.initialize();
     int nbEpisode = 0;
-    Action action = null;
     RealVector x_t = null;
     while (nbEpisode < 1000) {
-      if (!step.isEpisodeEnding())
-        step = problem.step(action);
-      else {
+      BinaryVector x_tp1 = tileCoders.project(step.o_tp1);
+      Action action = control.step(x_t, step.a_t, x_tp1, step.r_tp1);
+      x_t = x_tp1;
+      if (step.isEpisodeEnding()) {
         System.out.println(String.format("Episode %d: %d steps", nbEpisode, step.time));
         step = problem.initialize();
         x_t = null;
         nbEpisode++;
-      }
-      BinaryVector x_tp1 = tileCoders.project(step.o_tp1);
-      action = control.step(x_t, step.a_t, x_tp1, step.r_tp1);
-      x_t = x_tp1;
+      } else
+        step = problem.step(action);
     }
   }
 }

@@ -18,7 +18,7 @@ public abstract class VectorTest {
 
   protected final RealVector a = newVector(0.0, 1.0, 2.0, 0.0, 3.0);
   protected final RealVector b = newVector(3.0, 4.0, 0.0, 0.0, 4.0);
-  protected final RealVector c = BVector.toBVector(2, new int[] { 1 });
+  protected final BVector c = BVector.toBVector(2, new int[] { 1 });
 
   @After
   public void after() {
@@ -66,7 +66,9 @@ public abstract class VectorTest {
   @Test
   public void testDotProductSVector() {
     Assert.assertEquals(16.0, a.dotProduct(newSVector(b)), 0.0);
-    Assert.assertEquals(1.0, a.dotProduct(c), 0.0);
+    BVector cResized = new BVector(a.getDimension());
+    cResized.setOrderedIndexes(c.activeIndexes());
+    Assert.assertEquals(1.0, a.dotProduct(cResized), 0.0);
   }
 
   @Test

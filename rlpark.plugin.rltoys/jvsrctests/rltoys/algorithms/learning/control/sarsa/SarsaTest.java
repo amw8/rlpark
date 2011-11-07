@@ -21,7 +21,6 @@ import rltoys.algorithms.representations.traces.ATraces;
 import rltoys.algorithms.representations.traces.RTraces;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.ranges.Range;
-import rltoys.math.vector.RealVector;
 
 
 public class SarsaTest extends MountainCarOnPolicyTest {
@@ -39,7 +38,7 @@ public class SarsaTest extends MountainCarOnPolicyTest {
     @Override
     protected Predictor createPredictor(Action[] actions, StateToStateAction toStateAction, int nbActiveFatures,
         int nbFeatures) {
-      return new Sarsa(0.1 / nbActiveFatures, 0.9, 0.3, nbFeatures, traces);
+      return new Sarsa(0.2 / nbActiveFatures, 0.99, 0.3, nbFeatures, traces);
     }
 
     @Override
@@ -51,42 +50,9 @@ public class SarsaTest extends MountainCarOnPolicyTest {
     abstract protected Control createControl(EpsilonGreedy acting, StateToStateAction toStateAction, Sarsa predictor);
   }
 
-  static protected class ExpectedSarsaControl implements Control {
-    private static final long serialVersionUID = 1L;
-    private final ExpectedSarsa expectedSarsa;
-    private final EpsilonGreedy acting;
-
-    protected ExpectedSarsaControl(ExpectedSarsa expectedSarsa, EpsilonGreedy acting) {
-      this.expectedSarsa = expectedSarsa;
-      this.acting = acting;
-    }
-
-    @Override
-    public Action step(RealVector s_t, Action a_t, RealVector s_tp1, double r_tp1) {
-      Action a_tp1 = acting.decide(s_tp1);
-      expectedSarsa.update(s_t, a_t, r_tp1, s_tp1);
-      return a_tp1;
-    }
-
-    @Override
-    public Action proposeAction(RealVector x) {
-      return acting.decide(x);
-    }
-  }
-
-  @Test
-  public void testExpectedSarsaOnMountainCar() {
-    runTestOnOnMountainCar(2000, new SarsaControlFactory() {
-      @Override
-      protected Control createControl(EpsilonGreedy acting, StateToStateAction toStateAction, Sarsa predictor) {
-        return new ExpectedSarsaControl(new ExpectedSarsa(acting.actions(), acting, toStateAction, predictor), acting);
-      }
-    });
-  }
-
   @Test
   public void testSarsaOnMountainCar() {
-    runTestOnOnMountainCar(2000, new SarsaControlFactory() {
+    runTestOnOnMountainCar(new SarsaControlFactory() {
       @Override
       protected Control createControl(EpsilonGreedy acting, StateToStateAction toStateAction, Sarsa predictor) {
         return new SarsaControl(acting, toStateAction, predictor);
@@ -95,8 +61,18 @@ public class SarsaTest extends MountainCarOnPolicyTest {
   }
 
   @Test
+  public void testExpectedSarsaOnMountainCar() {
+    runTestOnOnMountainCar(new SarsaControlFactory() {
+      @Override
+      protected Control createControl(EpsilonGreedy acting, StateToStateAction toStateAction, Sarsa predictor) {
+        return new ExpectedSarsaControl(acting.actions(), acting, toStateAction, predictor);
+      }
+    });
+  }
+
+  @Test
   public void testSarsaOnMountainCarAccumulatingTraces() {
-    runTestOnOnMountainCar(2000, new SarsaControlFactory(new ATraces()) {
+    runTestOnOnMountainCar(new SarsaControlFactory(new ATraces()) {
       @Override
       protected Control createControl(EpsilonGreedy acting, StateToStateAction toStateAction, Sarsa predictor) {
         return new SarsaControl(acting, toStateAction, predictor);
@@ -106,7 +82,7 @@ public class SarsaTest extends MountainCarOnPolicyTest {
 
   @Test
   public void testSarsaOnMountainCarAMaxTraces() {
-    runTestOnOnMountainCar(2000, new SarsaControlFactory(new AMaxTraces()) {
+    runTestOnOnMountainCar(new SarsaControlFactory(new AMaxTraces()) {
       @Override
       protected Control createControl(EpsilonGreedy acting, StateToStateAction toStateAction, Sarsa predictor) {
         return new SarsaControl(acting, toStateAction, predictor);
@@ -116,7 +92,7 @@ public class SarsaTest extends MountainCarOnPolicyTest {
 
   @Test
   public void testSarsaOnMountainCarReplacingTraces() {
-    runTestOnOnMountainCar(2000, new SarsaControlFactory(new RTraces()) {
+    runTestOnOnMountainCar(new SarsaControlFactory(new RTraces()) {
       @Override
       protected Control createControl(EpsilonGreedy acting, StateToStateAction toStateAction, Sarsa predictor) {
         return new SarsaControl(acting, toStateAction, predictor);
@@ -135,7 +111,7 @@ public class SarsaTest extends MountainCarOnPolicyTest {
         TileCoders tileCoders = new TileCodersHashing(new UNH(random, 10000), discretizerFactory, ranges.length);
         return tileCoders;
       }
-    }, 2000, new SarsaControlFactory(new AMaxTraces()) {
+    }, new SarsaControlFactory(new AMaxTraces()) {
       @Override
       protected Control createControl(EpsilonGreedy acting, StateToStateAction toStateAction, Sarsa predictor) {
         return new SarsaControl(acting, toStateAction, predictor);

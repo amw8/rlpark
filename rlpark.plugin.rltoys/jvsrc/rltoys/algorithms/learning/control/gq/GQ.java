@@ -51,8 +51,8 @@ public class GQ implements Predictor, LinearLearner {
     MutableVector delta_e = e.vect().mapMultiply(delta_t);
     RealVector tdCorrection = x_bar_tp1 != null ? x_bar_tp1.mapMultiply((1 - beta_tp1) * (1 - lambda_t)
         * e.vect().dotProduct(w)) : new SVector(v.size);
-    v.addToSelf(delta_e.subtract(tdCorrection).mapMultiply(alpha_v));
-    w.addToSelf(delta_e.subtractToSelf(x_t.mapMultiply(w.dotProduct(x_t))).mapMultiply(alpha_w));
+    v.addToSelf(alpha_v, delta_e.subtract(tdCorrection));
+    w.addToSelf(alpha_w, delta_e.subtractToSelf(x_t.mapMultiply(w.dotProduct(x_t))));
     return delta_t;
   }
 

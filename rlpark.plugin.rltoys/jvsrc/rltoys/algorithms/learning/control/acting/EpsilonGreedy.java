@@ -22,22 +22,20 @@ public class EpsilonGreedy extends Greedy {
 
   @Override
   public Action decide(RealVector s) {
-    Action bestAction = pickupBestAction(s);
+    Action bestAction = computeBestAction(s);
     if (random.nextFloat() < epsilon)
-      return Utils.choose(random, availableActions);
+      return Utils.choose(random, actions);
     return bestAction;
   }
 
   @Override
   public double pi(RealVector s, Action a) {
-    pickupBestAction(s);
-    double probability = 0.0;
-    if (a == bestAction)
-      return 1.0 - epsilon;
-    return probability + epsilon / availableActions.length;
+    computeBestAction(s);
+    double probability = a == bestAction ? 1.0 - epsilon : 0.0;
+    return probability + epsilon / actions.length;
   }
 
   public Action[] actions() {
-    return availableActions;
+    return actions;
   }
 }

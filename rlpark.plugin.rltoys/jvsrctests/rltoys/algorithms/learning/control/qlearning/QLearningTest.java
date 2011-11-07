@@ -15,7 +15,7 @@ import rltoys.algorithms.representations.traces.ATraces;
 public class QLearningTest extends MountainCarOnPolicyTest {
   @Test
   public void testQLearningOnMountainCar() {
-    runTestOnOnMountainCar(2000, new ActionValueMountainCarAgentFactory() {
+    runTestOnOnMountainCar(new ActionValueMountainCarAgentFactory() {
       @Override
       protected Control createControl(Predictor predictor, TileCoders tilesCoder, StateToStateAction toStateAction,
           EpsilonGreedy acting) {

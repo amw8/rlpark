@@ -10,39 +10,65 @@ public class Greedy implements Policy {
   private static final long serialVersionUID = 1675962692054005355L;
   protected final StateToStateAction toStateAction;
   protected final Predictor predictor;
-  protected final Action[] availableActions;
+  protected final Action[] actions;
+  protected final double[] actionValues;
   protected Action bestAction;
   private double bestValue;
+  private RealVector lastUpdate = null;
 
   public Greedy(Predictor predictor, Action[] actions, StateToStateAction toStateAction) {
     this.toStateAction = toStateAction;
     this.predictor = predictor;
-    availableActions = actions;
+    this.actions = actions;
+    actionValues = new double[actions.length];
   }
 
   @Override
   public Action decide(RealVector s) {
-    return pickupBestAction(s);
+    return computeBestAction(s);
   }
 
-  protected Action pickupBestAction(RealVector s_tp1) {
+  public Action computeBestAction(RealVector s_tp1) {
     if (s_tp1 == null)
+      return null;
+    if (lastUpdate == s_tp1)
       return bestAction;
-    bestAction = null;
-    for (Action a : availableActions) {
-      RealVector phi_sa = toStateAction.stateAction(s_tp1, a);
-      double value = predictor.predict(phi_sa);
-      if (bestAction == null || value > bestValue) {
+    updateActionValues(s_tp1);
+    findBestAction();
+    lastUpdate = s_tp1;
+    return bestAction;
+  }
+
+  private void findBestAction() {
+    bestValue = actionValues[0];
+    bestAction = actions[0];
+    for (int i = 1; i < actions.length; i++) {
+      double value = actionValues[i];
+      if (value > bestValue) {
         bestValue = value;
-        bestAction = a;
+        bestAction = actions[i];
       }
     }
-    return bestAction;
+  }
+
+  private void updateActionValues(RealVector s_tp1) {
+    for (int i = 0; i < actions.length; i++) {
+      RealVector phi_sa = toStateAction.stateAction(s_tp1, actions[i]);
+      actionValues[i] = predictor.predict(phi_sa);
+    }
   }
 
   @Override
   public double pi(RealVector s, Action a) {
-    pickupBestAction(s);
+    computeBestAction(s);
     return a == bestAction ? 1 : 0;
+  }
+
+  public StateToStateAction toStateAction() {
+    return toStateAction;
+  }
+
+  public double bestActionValue() {
+    return bestValue;
   }
 }

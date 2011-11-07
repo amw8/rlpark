@@ -19,7 +19,7 @@ import rltoys.math.vector.implementations.SVector;
 
 public class TracesTest extends MountainCarOnPolicyTest {
   private void testTraces(final Traces traces) {
-    runTestOnOnMountainCar(2000, new SarsaControlFactory(traces) {
+    runTestOnOnMountainCar(new SarsaControlFactory(traces) {
       @Override
       protected Control createControl(EpsilonGreedy acting, StateToStateAction toStateAction, Sarsa predictor) {
         return new SarsaControl(acting, toStateAction, predictor);

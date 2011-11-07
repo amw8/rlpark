@@ -1,13 +1,16 @@
 package rltoys.algorithms.learning.control.qlearning;
 
+import rltoys.algorithms.learning.control.acting.Greedy;
+import rltoys.algorithms.learning.predictions.LinearLearner;
 import rltoys.algorithms.learning.predictions.Predictor;
+import rltoys.algorithms.representations.acting.Policy;
 import rltoys.algorithms.representations.actions.Action;
 import rltoys.algorithms.representations.actions.StateToStateAction;
 import rltoys.algorithms.representations.traces.Traces;
 import rltoys.math.vector.RealVector;
 import rltoys.math.vector.implementations.PVector;
 
-public class QLearning implements Predictor {
+public class QLearning implements Predictor, LinearLearner {
   private static final long serialVersionUID = -404558746167490755L;
   protected final PVector theta;
   private final Traces e;
@@ -15,9 +18,9 @@ public class QLearning implements Predictor {
   private final double gamma;
   private final double alpha;
   private final StateToStateAction toStateAction;
-  private Action a_star = null;
-  private double q_sa_tp1 = 0.0;
-  private final Action[] actions;
+  private double delta;
+  private final Greedy greedy;
+  private Action at_star;
 
   public QLearning(Action[] actions, double alpha, double gamma, double lambda, StateToStateAction toStateAction,
       int nbFeatures, Traces prototype) {
@@ -25,44 +28,34 @@ public class QLearning implements Predictor {
     this.gamma = gamma;
     this.lambda = lambda;
     this.toStateAction = toStateAction;
-    this.actions = actions;
+    greedy = new Greedy(this, actions, toStateAction);
     theta = new PVector(nbFeatures);
     e = prototype.newTraces(nbFeatures);
   }
 
-  private void pickupBestAction(RealVector s_tp1) {
-    q_sa_tp1 = -Double.MAX_VALUE;
-    for (Action a : actions) {
-      RealVector phi_sa = toStateAction.stateAction(s_tp1, a);
-      double q_sa = theta.dotProduct(phi_sa);
-      if (q_sa > q_sa_tp1) {
-        a_star = a;
-        q_sa_tp1 = q_sa;
-      }
-    }
-  }
-
-  public double update(RealVector s_t, Action a_t, RealVector s_tp1, Action a_tp1, double r_tp1) {
-    if (s_t == null)
+  public double update(RealVector x_t, Action a_t, RealVector x_tp1, Action a_tp1, double r_tp1) {
+    if (x_t == null)
       return initEpisode();
-    pickupBestAction(s_tp1);
-    RealVector phi_sa_t = toStateAction.stateAction(s_t, a_t);
-    double delta = r_tp1 + gamma * q_sa_tp1 - theta.dotProduct(phi_sa_t);
-    if (a_tp1 == a_star)
+    Action atp1_star = greedy.decide(x_tp1);
+    RealVector phi_sa_t = toStateAction.stateAction(x_t, a_t);
+    delta = r_tp1 + gamma * greedy.bestActionValue() - theta.dotProduct(phi_sa_t);
+    if (a_t == at_star)
       e.update(gamma * lambda, phi_sa_t);
     else {
       e.clear();
       e.update(0, phi_sa_t);
     }
     theta.addToSelf(alpha * delta, e.vect());
+    at_star = atp1_star;
     return delta;
   }
 
   private double initEpisode() {
     if (e != null)
       e.clear();
-    a_star = null;
-    return 0.0;
+    delta = 0.0;
+    at_star = null;
+    return delta;
   }
 
   @Override
@@ -72,5 +65,24 @@ public class QLearning implements Predictor {
 
   public PVector theta() {
     return theta;
+  }
+
+  @Override
+  public void resetWeight(int index) {
+    theta.setEntry(index, 0);
+  }
+
+  @Override
+  public PVector weights() {
+    return theta;
+  }
+
+  @Override
+  public double error() {
+    return delta;
+  }
+
+  public Policy greedy() {
+    return greedy;
   }
 }
