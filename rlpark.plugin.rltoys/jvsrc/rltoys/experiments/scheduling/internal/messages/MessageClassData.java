@@ -4,8 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
-
 import rltoys.experiments.scheduling.internal.messages.Messages.MessageType;
 
 public class MessageClassData extends Message {
