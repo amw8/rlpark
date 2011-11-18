@@ -16,6 +16,7 @@ public class GTDLambda implements OnPolicyTD, GVF, EligibilityTraceAlgorithm {
   public final double alpha_w;
   protected double lambda;
   private double gamma_t;
+  @Monitor(level = 4)
   final public PVector v;
   @Monitor(level = 4)
   protected final PVector w;
