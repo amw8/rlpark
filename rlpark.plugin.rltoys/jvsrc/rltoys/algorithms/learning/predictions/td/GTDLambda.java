@@ -73,13 +73,6 @@ public class GTDLambda implements OnPolicyTD, GVF, EligibilityTraceAlgorithm {
     return update(1.0, x_t, x_tp1, r_tp1, gamma, 0);
   }
 
-  //
-  // @Override
-  // public double update(RealVector x_t, RealVector x_tp1, double r_tp1, double
-  // gamma_tp1) {
-  // return update(1.0, x_t, x_tp1, r_tp1, gamma_tp1, 0);
-  // }
-
   @Override
   public double update(double rho_t, RealVector x_t, RealVector x_tp1, double r_tp1) {
     return update(rho_t, x_t, x_tp1, r_tp1, gamma, 0);
